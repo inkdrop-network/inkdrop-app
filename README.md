@@ -8,7 +8,8 @@
 - Map user address to its likes and prohibit double likes etc.
 
 
-# Truffle Comands
-1. truffle compile
-2. truffle migrate (--reset)
-3. npm run dev
+# Instructions
+1. Run [Ganache app](http://truffleframework.com/ganache/)
+2. truffle compile
+3. truffle migrate (--reset)
+4. npm run dev
