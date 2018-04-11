@@ -163,15 +163,8 @@ App = {
           var sortedRes = result.sort(function(a, b){ return a[2] - b[2] });
           var sectionContent = '';
           for(var i = 0; i < sortedRes.length; i++) {
-            sectionContent += `<div class="message-box">
-              <div>${web3.toAscii(sortedRes[i][1])} says:</div>
-              <div>${sortedRes[i][0]}</div>
-              <div>${moment.unix(sortedRes[i][2]).fromNow()}</div>
-              <div class="message-likes" data-value="${sortedRes[i][3]}">Likes: ${sortedRes[i][3]}</div>
-              <button class="like-message-button" data-value="${i}">Like</button>
-              <div class="message-drops" data-value="${sortedRes[i][4]}">Drops: ${sortedRes[i][4]}</div>
-              <button class="drop-message-button" data-value="${i}">Drop</button>
-              </div>`;
+            // get the styled html for message
+            sectionContent += App.formatMessage(web3.toAscii(sortedRes[i][1]), sortedRes[i][0], sortedRes[i][2], i, sortedRes[i][3], sortedRes[i][4], 0);
           }
           $('#messages').html(sectionContent);
         }).catch(function(err) {
@@ -302,12 +295,49 @@ dropMessage: function() {
       console.log(err.message);
     });
   });
+},
+
+formatMessage: function(username, content, time, msgId, likes, drops, comments) {
+  var sectionContent = `<div class="card message-card mb-4">
+                        <div class="card-body d-flex flex-row pb-2">
+                            <img class="mr-2 profile-img" src="http://via.placeholder.com/50/85bd3e/85bd3e">
+                            <div>
+                                <strong class="align-top d-block card-username">c/${username}</strong>
+                                <span class="card-message-time">${moment.unix(time).fromNow()}</span>
+                            </div>
+                        </div>
+                        <div class="card-body py-2">
+                            ${content}
+                        </div>
+                        <div class="card-body pt-2">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="drop-message-button float-left" data-value="${msgId}">
+                                        <img src="icons/inkdrop_logo.svg" width="20" height="20" class="" alt="">
+                                        <span class="icon-number">${drops}</span>
+                                    </div>
+                                </div>
+                                <div class="col text-center">
+                                    <div class="like-message-button" data-value="${msgId}">
+                                        <img src="icons/like.svg" width="20" height="20" class="" alt="">
+                                        <span class="icon-number">${likes}</span>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="comment-message-button float-right" data-value="${msgId}">
+                                        <img src="icons/comment.svg" width="20" height="20" class="" alt="">
+                                        <span class="icon-number">${comments}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+
+  return sectionContent;
 }
 
 };
 
-$(function() {
-  $(window).load(function() {
-    App.init();
-  });
+$(document).ready(function() {
+  App.init();
 });

@@ -1,8 +1,11 @@
 # TODO
 - Frontend
-- Like message
+- formatMessage in watchMsgEvents einbauen
+- like und drop nummern aktualisieren (likeMessage, dropMessage)
+- write message opacits & icons
+- Set & show profile
 - Comment message
-- Show profile
+
 
 # TODO nice to have
 - Map user address to its likes and prohibit double likes etc.
