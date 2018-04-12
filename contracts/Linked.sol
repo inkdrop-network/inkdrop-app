@@ -8,6 +8,7 @@ contract Linked {
         bytes32 occupation;
         string bio;
         uint256 drops;
+        string imgUrl;
     }
     
     // The structure of a message
@@ -43,12 +44,12 @@ contract Linked {
     event MessageSend(address indexed writtenBy, bytes32 name, uint256 msgCount);
 
     // Set the user profile
-    function setProfile(bytes32 _name, bytes32 _occupation, string _bio) public {
+    function setProfile(bytes32 _name, bytes32 _occupation, string _bio, string _url) public {
         uint256 _drops = 0;
         if(userInfo[msg.sender].drops > 0) {
             _drops = userInfo[msg.sender].drops;
         }
-        User memory user = User(_name, _occupation, _bio, _drops);
+        User memory user = User(_name, _occupation, _bio, _drops, _url);
         userInfo[msg.sender] = user;
     }
 
@@ -61,9 +62,9 @@ contract Linked {
         msgCount += 1;
     }
 
-    function getMessage(uint _id) public view returns (string, bytes32, uint256, uint256, uint256) {
+    function getMessage(uint _id) public view returns (string, bytes32, uint256, uint256, uint256, string) {
         Message memory showMsg = messages[_id];
-        return (showMsg.content, userInfo[showMsg.writtenBy].name, showMsg.timestamp, showMsg.likes, showMsg.drops);
+        return (showMsg.content, userInfo[showMsg.writtenBy].name, showMsg.timestamp, showMsg.likes, showMsg.drops, userInfo[showMsg.writtenBy].imgUrl);
     }
 
     function likeMessage(uint _id) public {

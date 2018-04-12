@@ -2,6 +2,7 @@ App = {
   web3Provider: null,
   contracts: {},
   watchEvents: false,
+  user: {},
 
   init: function() {
     return App.initWeb3();
@@ -41,6 +42,20 @@ App = {
     return App.bindEvents();
   },
 
+  bindEvents: function() {
+    $(document).on('click', '#set-profile-button', App.setProfile);
+    $(document).on('click', '#save-profile-button', App.saveSetProfile);
+    $(document).on('click', '#cancel-profile-button', App.cancelSetProfile);
+    $(document).on('click', '#write-message-button', App.sendMessage);
+    $(document).on('click', '.like-message-button', App.likeMessage);
+    $(document).on('click', '.drop-message-button', App.dropMessage);
+    $("#write-message").focus(function(event){
+      $("#post-message").css('opacity', '1');
+    }).blur(function(event){
+      $("#post-message").css('opacity', '0.5');
+    });
+  },
+
   initMyProfile: function () {
     console.log('Init MyProfile');
 
@@ -62,14 +77,18 @@ App = {
         var myName = web3.toUtf8(result[0]);
         var myOccupation = web3.toUtf8(result[1]);
         var myBio = result[2];
-        var myDrops = result[3];
-        profileContent += `
-            Name: <span id="my-name">${myName}</span> <br/>
-            Occupation: <span id="my-occupation">${myOccupation}</span> <br/>
-            Bio: <span id="my-bio">${myBio}</span> <br/>
-            Drops: <span id="my-drops">${myDrops}</span> <br/>
-            <button id="set-profile-button" class="align-center">Set Profile</button>`;
-        $('#profile-content').html(profileContent);
+        var myDrops = parseInt(result[3].toNumber(), 10);
+        var myImgUrl = result[4];
+
+        App.user = {
+          username: myName,
+          occupation: myOccupation,
+          bio: myBio,
+          drops: myDrops,
+          picture: myImgUrl
+        };
+        
+        App.updateProfile();
       }).catch(function(err) {
         console.log(err.message);
       });
@@ -77,27 +96,36 @@ App = {
 
   },
 
-  bindEvents: function() {
-    $(document).on('click', '#set-profile-button', App.setProfile);
-    $(document).on('click', '#save-profile-button', App.saveSetProfile);
-    $(document).on('click', '#cancel-profile-button', App.cancelSetProfile);
-    $(document).on('click', '#write-message-button', App.sendMessage);
-    $(document).on('click', '.like-message-button', App.likeMessage);
-    $(document).on('click', '.drop-message-button', App.dropMessage);
+  setProfile: function(e) {
+    // stop dropdown close on click
+    e.stopPropagation();
+    $('#profile-username').html('<input type="text" id="set-profile-name" placeholder="Type your name..."/>');
+    $('#profile-occupation').html('<input type="text" id="set-profile-occupation" placeholder="Type your occupation..."/>');
+    $('#profile-bio').html('<input type="text" id="set-profile-bio" placeholder="Type your bio..."/>');
+    $('#profile-drop-number').html(App.user.drops);
+    $('#profile-buttons').html(`<button id="save-profile-button" class="btn btn-green btn-sm mx-2">Save</button>
+                          <button id="cancel-profile-button" class="btn btn-outline-danger btn-sm mx-2 float-right">Cancel</button>`);
   },
 
-  setProfile: function() {
-    console.log('Click setProfile');
-    var profileContent = `Name: <input type="text" id="set-profile-name" placeholder="Type your name..."/> <br/><br/>
-        Occupation: <input type="text" id="set-profile-occupation" placeholder="Type your occupation..."/> <br/><br/>
-        Bio: <input type="text" id="set-profile-bio" placeholder="Type your bio..."/> <br/><br/>
-        <button id="save-profile-button">Save Changes</button>
-        <button id="cancel-profile-button">Cancel Changes</button>`;
-
-    $('#profile-content').html(profileContent);
+  updateProfile: function() {
+    console.log('Update profile: ' + App.user.drops);
+    var imgUrl = App.user.picture;
+    if(imgUrl == "") {
+      imgUrl = "http://via.placeholder.com/50/85bd3e/85bd3e"
+    }
+    $('#profile-picture').attr("src", imgUrl);
+    $('#profile-username').html("c/" + App.user.username);
+    $('#post-message-username').html("c/" + App.user.username);
+    $('#post-message-profile-picture').attr("src", imgUrl);
+    $('#profile-occupation').html(App.user.occupation);
+    $('#profile-bio').html(App.user.bio);
+    // TODO: fix update drop number issue
+    $('#profile-drop-number').html(App.user.drops);
+    $('#profile-buttons').html(`<button id="set-profile-button" class="btn btn-green btn-sm mx-2">Change</button>
+      <button id="close-profile-button" class="btn btn-outline-secondary btn-sm mx-2 float-right">close</button>`);
   },
 
-  saveSetProfile: function() {
+  saveSetProfile: function(e) {
     console.log('Click saveSetProfile');
     var myName = $('#set-profile-name').val();
     var myOccupation = $('#set-profile-occupation').val();
@@ -116,22 +144,30 @@ App = {
         var myName = $('#set-profile-name').val();
         var myOccupation = $('#set-profile-occupation').val();
         var myBio = $('#set-profile-bio').val();
+        var randInt = Math.floor(Math.random()*90);
+        var imgUrlM = "https://randomuser.me/api/portraits/men/" + randInt + ".jpg"
+        var imgUrlW = "https://randomuser.me/api/portraits/women/" + randInt + ".jpg"
+        var myImgUrl = imgUrlM;
+        if(myName == "Red Cross") {
+          myImgUrl = "https://upload.wikimedia.org/wikipedia/commons/0/07/Redcross.png";
+        }
 
         LinkedInstance = instance;
 
-        return LinkedInstance.setProfile(myName, myOccupation, myBio);
+        return LinkedInstance.setProfile(myName, myOccupation, myBio, myImgUrl);
       }).then(function(result) {
-        App.initMyProfile();
+        App.updateProfile();
       }).catch(function(err) {
         console.log(err.message);
       });
     });
   },
 
-  cancelSetProfile: function() {
+  cancelSetProfile: function(e) {
     console.log('Click cancelSetProfile');
-
-    App.initMyProfile();
+    // stop dropdown close on click
+    e.stopPropagation();
+    App.updateProfile();
   },
 
   initMessages: function() {
@@ -160,11 +196,11 @@ App = {
         Promise.all(promiseChain).then(function(result) {
           // result as an array of all callbacks from the getMessage function calls in the promise chain
           // sort the result array descending
-          var sortedRes = result.sort(function(a, b){ return a[2] - b[2] });
+          var sortedRes = result.sort(function(a, b){ return b[2] - a[2] });
           var sectionContent = '';
           for(var i = 0; i < sortedRes.length; i++) {
             // get the styled html for message
-            sectionContent += App.formatMessage(web3.toAscii(sortedRes[i][1]), sortedRes[i][0], sortedRes[i][2], i, sortedRes[i][3], sortedRes[i][4], 0);
+            sectionContent += App.formatMessage(web3.toAscii(sortedRes[i][1]), sortedRes[i][0], sortedRes[i][2], i, sortedRes[i][3], sortedRes[i][4], 0, sortedRes[i][5]);
           }
           $('#messages').html(sectionContent);
         }).catch(function(err) {
@@ -179,6 +215,8 @@ App = {
 
   sendMessage: function() {
     console.log('Click sendMessage');
+    // make card still og higher opacity
+    $("#post-message").css('opacity', '1');
     var LinkedInstance;
 
     web3.eth.getAccounts(function(error, accounts) {
@@ -225,17 +263,9 @@ App = {
               LinkedInstance = instance;
               return LinkedInstance.getMessage(result.args.msgCount);
             }).then(function(result) {
-              var sectionContent = `<div class="message-box">
-              <div>${web3.toAscii(result[1])} says:</div>
-              <div>${result[0]}</div>
-              <div>${moment.unix(result[2]).fromNow()}</div>
-              <div class="message-likes" data-value="${result[3]}"">Likes: ${result[3]}</div>
-              <button class="like-message-button" data-value="${msgId}">Like</button>
-              <div class="message-drops" data-value="${result[4]}"">Drops: ${result[4]}</div>
-              <button class="drop-message-button" data-value="${msgId}">Drop</button>
-              </div>`;
+              var sectionContent = App.formatMessage(web3.toAscii(result[1]), result[0], result[2], msgId, result[3], result[4], 0, result[5]);
               $('#messages').prepend(sectionContent);
-              
+              $("#post-message").css('opacity', '0.5');
             }).catch(function(err) {
               console.log(err.message);
             });
@@ -249,8 +279,8 @@ App = {
 
 likeMessage: function() {
   var msgId = $(this).attr('data-value');
-  var likeDiv = $(this).siblings('.message-likes');
-  var likeCount = $(this).siblings('.message-likes').attr('data-value');
+  var likeDiv = $(this).children('.like-number');
+  var likeCount = $(this).children('.like-number').attr('data-value');
   web3.eth.getAccounts(function(error, accounts) {
     if (error) {
       console.log(error);
@@ -264,7 +294,7 @@ likeMessage: function() {
     }).then(function(result) {
       // App.initMessages(); 
       likeCount++;
-      likeDiv.text('Likes: ' + likeCount);
+      likeDiv.text(likeCount);
       likeDiv.attr('data-value', likeCount);
     }).catch(function(err) {
       console.log(err.message);
@@ -274,8 +304,8 @@ likeMessage: function() {
 
 dropMessage: function() {
   var msgId = $(this).attr('data-value');
-  var likeDiv = $(this).siblings('.message-drops');
-  var likeCount = $(this).siblings('.message-drops').attr('data-value');
+  var likeDiv = $(this).children('.drop-number');
+  var likeCount = $(this).children('.drop-number').attr('data-value');
   web3.eth.getAccounts(function(error, accounts) {
     if (error) {
       console.log(error);
@@ -288,19 +318,19 @@ dropMessage: function() {
       return LinkedInstance.dropMessage(msgId, 1);
     }).then(function(result) {
       likeCount++;
-      likeDiv.text('Drops: ' + likeCount);
+      likeDiv.text(likeCount);
       likeDiv.attr('data-value', likeCount);
-      App.initMyProfile(); 
+      App.updateProfile(); 
     }).catch(function(err) {
       console.log(err.message);
     });
   });
 },
 
-formatMessage: function(username, content, time, msgId, likes, drops, comments) {
+formatMessage: function(username, content, time, msgId, likes, drops, comments, imgUrl) {
   var sectionContent = `<div class="card message-card mb-4">
                         <div class="card-body d-flex flex-row pb-2">
-                            <img class="mr-2 profile-img" src="http://via.placeholder.com/50/85bd3e/85bd3e">
+                            <img class="mr-2 profile-img" src="${imgUrl}">
                             <div>
                                 <strong class="align-top d-block card-username">c/${username}</strong>
                                 <span class="card-message-time">${moment.unix(time).fromNow()}</span>
@@ -313,20 +343,20 @@ formatMessage: function(username, content, time, msgId, likes, drops, comments) 
                             <div class="row">
                                 <div class="col">
                                     <div class="drop-message-button float-left" data-value="${msgId}">
-                                        <img src="icons/inkdrop_logo.svg" width="20" height="20" class="" alt="">
-                                        <span class="icon-number">${drops}</span>
+                                        <img src="icons/icon-inkdrop-dark.svg" width="20" height="20" class="" alt="">
+                                        <span class="drop-number icon-number" data-value="${drops}">${drops}</span>
                                     </div>
                                 </div>
                                 <div class="col text-center">
-                                    <div class="like-message-button" data-value="${msgId}">
-                                        <img src="icons/like.svg" width="20" height="20" class="" alt="">
-                                        <span class="icon-number">${likes}</span>
+                                    <div class="like-message-button mx-auto" data-value="${msgId}">
+                                        <img src="icons/icon-like.svg" width="20" height="20" class="" alt="">
+                                        <span class="like-number icon-number" data-value="${likes}">${likes}</span>
                                     </div>
                                 </div>
                                 <div class="col">
                                     <div class="comment-message-button float-right" data-value="${msgId}">
-                                        <img src="icons/comment.svg" width="20" height="20" class="" alt="">
-                                        <span class="icon-number">${comments}</span>
+                                        <img src="icons/icon-comments.svg" width="20" height="20" class="" alt="">
+                                        <span class="comment-number icon-number" data-value="${comments}">${comments}</span>
                                     </div>
                                 </div>
                             </div>

@@ -106,12 +106,34 @@ footer .list-inline {
     background: rgba(255,255,255,0.10);
     box-shadow: 0 0 5px 0 rgba(0,0,0,0.15);
     border-radius: 5px;
-    /* Search …: */
     opacity: 0.6;
     color: var(--white);
     border: none;
     width: 340px;
 
+}
+
+.navbar .dropdown-menu input {
+    box-shadow: 0 0 5px 0 rgba(0,0,0,0.15);
+    border-radius: 5px;
+    border: none;
+    min-width: 14rem;
+}
+
+.navbar .navbar-nav .nav-item .nav-icons {
+    margin-top: 15px;
+}
+
+.navbar .navbar-nav .nav-item .nav-icon-nr {
+    font-weight: bolder;
+}
+
+.navbar .dropdown-menu {
+    min-width: 15rem;
+}
+
+#post-message {
+    opacity: 0.5;
 }
 
 .card.message-card {
@@ -123,10 +145,17 @@ footer .list-inline {
     display: flex;
 }
 
-.card .profile-img {
+.profile-img {
    border-radius: 100%; 
    width: 50px; 
    height: 50px;
+}
+
+.profile-img-lg {
+   border-radius: 100%; 
+   width: 190px; 
+   height: 190px;
+   margin-top: -8.5rem;
 }
 
 .card .icon-number {
@@ -143,4 +172,16 @@ footer .list-inline {
 #post-message textarea {
     width: 100%;
     border: none;
+}
+
+#post-message #write-message-photo,
+#post-message #write-message-video,
+#post-message #write-message-place {
+    width: 40px;
+}
+
+.profile-page .nav-profile {
+    background-color: var(--green) !important;
+    height: 50px;
+    width: 100%;
 }

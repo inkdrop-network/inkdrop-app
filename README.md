@@ -1,9 +1,9 @@
 # TODO
 - Frontend
-- formatMessage in watchMsgEvents einbauen
+- formatMessage in watchMsgEvents einbauen - DONE
 - like und drop nummern aktualisieren (likeMessage, dropMessage)
-- write message opacits & icons
-- Set & show profile
+- write message opacits & icons 
+- Set & show profile - DONE
 - Comment message
 
 

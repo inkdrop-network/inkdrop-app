@@ -1,40 +1,209 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>Decentralized Linkedin</title>
-        <link rel="stylesheet" href="css/main.css">
-    </head>
-    <body>
-        <div id="band"></div>
-        <div id="sections">
-            <!-- 3 sections. Your user profile, the messages of other users and the accounts that you can follow -->
-            <section>
-                <h3>My Profile</h3>
-                <div id="profile-content"></div>
-            </section>
+<!doctype html>
+<html lang="en">
 
-            <section>
-                <h3>Messages</h3>
-                <div id="send-area">
-                    <textarea id="write-message" rows="3" placeholder="Write a message..."></textarea>
-                    <button id="write-message-button">Send</button>
-                </div>
-                <div id="messages"></div>
-            </section>
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Microblogging done right with blockchain technology">
+    <meta name="author" content="InkDrop">
+    <link rel="icon" type="image/svg+xml" href="icons/inkdrop_logo.svg">
+    <link rel="apple-touch-icon" sizes="180x180" href="favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicons/favicon-16x16.png">
+    <link rel="manifest" href="favicons/site.webmanifest">
+    <link rel="mask-icon" href="favicons/safari-pinned-tab.svg" color="#85bd3e">
+    <meta name="msapplication-TileColor" content="#29313e">
+    <meta name="theme-color" content="#29313e">
 
-            <section>
-                <h3>People to follow</h3>
-                <div id="people-to-follow"></div>
-            </section>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href='https://fonts.googleapis.com/css?family=Overpass:200,300,400,600' rel='stylesheet'>
+    <link rel="stylesheet" href="css/app.css">
+
+    <title>InkDrop - Microblogging done right.</title>
+</head>
+
+<body class="bg-dark-light">
+    <nav class="navbar sticky-top navbar-expand-md navbar-dark bg-dark justify-content-between">
+        <div class="container">
+            <a class="navbar-brand" href="/"><img src="icons/inkdrop_logo.svg" width="30" height="30" class="d-inline-block align-top py-1" alt="InkDrop Logo">InkDrop<span class="font-green">.</span></a>
+
+            <form class="form-inline">
+                <input id="navbar-search" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+            </form>
+
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown mr-4">
+                    <a class="nav-link dropdown-toggle py-0" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <img id="profile-picture" class="mr-1 profile-img" src="http://via.placeholder.com/50/85bd3e/85bd3e">
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <div id="profile-username" class="dropdown-item px-2"></div>
+                      <div id="profile-occupation" class="dropdown-item px-2"></div>
+                      <div class="dropdown-divider"></div>
+                      <div id="profile-bio" class="dropdown-item px-2"></div>
+                      <div class="dropdown-divider"></div>
+                      <div id="profile-buttons">
+                          <button id="set-profile-button" class="btn btn-green btn-sm mx-2">Change</button>
+                          <button id="close-profile-button" class="btn btn-outline-secondary btn-sm mx-2 float-right">close</button>
+                      </div>
+                    </div>
+                </li>
+                <li class="nav-item mr-4">
+                    <img src="icons/icon-alarm.svg" class="align-middle nav-icons" width="20" height="20">
+                    <span id="profile-alarm-number" class=" nav-icon-nr font-white align-bottom" data-value=""></span>
+                </li>
+                <li class="nav-item mr-4">
+                    <img src="icons/icon-message.svg" class="align-middle nav-icons" width="20" height="20">
+                    <span id="profile-message-number" class="nav-icon-nr font-white align-bottom" data-value=""></span>
+                </li>
+                <li class="nav-item">
+                    <img src="icons/icon-inkdrop-white.svg" class="align-middle nav-icons" width="20" height="20">
+                    <span id="profile-drop-number" class="nav-icon-nr font-white align-bottom" data-value=""></span>
+                </li>
+            </ul>
+
+          <!--   <form class="form-inline">
+                <button class="btn btn-outline-success" type="button">P</button>
+                <img class="mr-2" style="border-radius: 100%;" src="http://via.placeholder.com/50/85bd3e/85bd3e">
+                <button class="btn btn-sm btn-outline-secondary" type="button">N</button>
+                <button class="btn btn-sm btn-outline-secondary" type="button">M</button>
+                <button class="btn btn-sm btn-outline-secondary" type="button">D</button>
+            </form> -->
         </div>
+    </nav>
 
-        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.0/moment.min.js"></script>
-        <!-- Include all compiled plugins (below), or include individual files as needed -->
-        <script src="js/web3.min.js"></script>
-        <script src="js/truffle-contract.js"></script>
-        <script src="js/main.js"></script>
-    </body>
+    <main role="main">
+        <div class="container">
+            <div class="row justify-content-center my-4">
+                <!-- <div class="col-sm-7 bg-white message-card card"> -->
+                <div id="post-message" class="col-sm-7">
+                    <div class="card message-card">
+                        <div class="card-body d-flex flex-row pb-2">
+                            <img id="post-message-profile-picture" class="mr-2 profile-img" src="http://via.placeholder.com/50/85bd3e/85bd3e">
+                            <div>
+                                <strong id="post-message-username" class="align-top d-block card-username">c/username</strong>
+                                <span class="card-message-time">now</span>
+                            </div>
+                        </div>
+                        <div class="card-body py-2">
+                            <div id="send-area">
+                                <textarea id="write-message" rows="2" placeholder="Share something valuable"></textarea>
+                                <button id="write-message-button" class="btn btn-green px-4">Send</button>
+                            </div>
+                        </div>
+                        <div class="card-body pt-2">
+                            <div class="row">
+                                <div class="col">
+                                    <div id="write-message-photo" class="float-left">
+                                        <img src="icons/icon-photo.svg" width="20" height="20" class="" alt="">
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div id="write-message-video" class="mx-auto">
+                                        <img src="icons/icon-video.svg" width="20" height="20" class="" alt="">
+                                    </div>
+                                </div>
+                                <div class="col text-right">
+                                    <div id="write-message-place" class="float-right mr-3">
+                                        <img src="icons/icon-place.svg" width="20" height="20" class="" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row justify-content-center my-4">
+                <!-- <div class="col-sm-7 bg-white message-card card"> -->
+                <div id="messages" class="col-sm-7">
+
+<!--                     <div class="card message-card">
+                        <div class="card-body d-flex flex-row pb-2">
+                            <img class="mr-2 profile-img" src="http://via.placeholder.com/50/85bd3e/85bd3e">
+                            <div>
+                                <strong class="align-top d-block card-username">c/username</strong>
+                                <span class="card-message-time">6d</span>
+                            </div>
+                        </div>
+                        <div class="card-body py-2">
+                            Message goes here
+                        </div>
+                        <div class="card-body pt-2">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="drop-message-button" data-value="">
+                                        <img src="icons/inkdrop_logo.svg" width="20" height="20" class="" alt="">
+                                        <span class="icon-number">1</span>
+                                    </div>
+                                </div>
+                                <div class="col text-center">
+                                    <div class="like-message-button" data-value="">
+                                        <img src="icons/like.svg" width="20" height="20" class="" alt="">
+                                        <span class="icon-number">1</span>
+                                    </div>
+                                </div>
+                                <div class="col text-right">
+                                    <div class="comment-message-button" data-value="">
+                                        <img src="icons/comment.svg" width="20" height="20" class="" alt="">
+                                        <span class="icon-number">1</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- <footer class="py-4">
+        <div class="container">
+            <div class="row justify-content-between">
+                <div class="col">
+                    &copy; InkDrop 2018
+                </div>
+                <div class="col text-right">
+                    <ul class="list-inline">
+                        <li class="list-inline-item"><a href="https://medium.com/inkdrop">Blog</a></li>
+                        <li class="list-inline-item"><a href="/imprint.html">Imprint</a></li>
+                        <li class="list-inline-item">
+                            <a href="&#x6d;&#97;&#105;&#108;&#x74;&#x6f;&#58;&#104;&#x65;&#x6c;&#x6c;&#x6f;&#64;&#105;&#x6e;&#107;&#x64;&#114;&#x6f;&#x70;&#x2e;&#x74;&#x65;&#99;&#104;">Contact us</a>
+                        </li>
+                    </ul>
+
+                </div>
+
+            </div>
+        </div>
+    </footer> -->
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>-->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.0/moment.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/web3.min.js"></script>
+    <script src="js/truffle-contract.js"></script>
+    <script src="js/main.js"></script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-113478171-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+        gtag('config', 'UA-113478171-1');
+
+    </script>
+</body>
+
 </html>
