@@ -9,6 +9,7 @@ contract Linked {
         string bio;
         uint256 drops;
         string imgUrl;
+        uint256 followers;
     }
     
     // The structure of a message
@@ -49,7 +50,11 @@ contract Linked {
         if(userInfo[msg.sender].drops > 0) {
             _drops = userInfo[msg.sender].drops;
         }
-        User memory user = User(_name, _occupation, _bio, _drops, _url);
+        uint256 _followers = 0;
+        if(userInfo[msg.sender].followers > 0) {
+            _followers = userInfo[msg.sender].followers;
+        }
+        User memory user = User(_name, _occupation, _bio, _drops, _url, _followers);
         userInfo[msg.sender] = user;
     }
 
@@ -62,9 +67,9 @@ contract Linked {
         msgCount += 1;
     }
 
-    function getMessage(uint _id) public view returns (string, bytes32, uint256, uint256, uint256, string) {
+    function getMessage(uint _id) public view returns (string, bytes32, uint256, uint256, uint256, string, address) {
         Message memory showMsg = messages[_id];
-        return (showMsg.content, userInfo[showMsg.writtenBy].name, showMsg.timestamp, showMsg.likes, showMsg.drops, userInfo[showMsg.writtenBy].imgUrl);
+        return (showMsg.content, userInfo[showMsg.writtenBy].name, showMsg.timestamp, showMsg.likes, showMsg.drops, userInfo[showMsg.writtenBy].imgUrl, showMsg.writtenBy);
     }
 
     function likeMessage(uint _id) public {
@@ -120,6 +125,7 @@ contract Linked {
     // Follow a user
     function followUser(address _user) public {
         userFollowers[msg.sender].push(_user);
+        userInfo[_user].followers += 1;
     }
 
     // Unfollow a user
@@ -129,6 +135,7 @@ contract Linked {
             // delete the unfollowering entry
             if(userFollowers[msg.sender][i] == _user) {
                 delete userFollowers[msg.sender][i];
+                userInfo[_user].followers -= 1;
             }
         }
     }

@@ -37,6 +37,8 @@ App = {
       App.initMyProfile();
       App.initMessages();
       App.watchMsgEvents();
+      // Only for profile page init
+      App.profilePage();
     });
 
     return App.bindEvents();
@@ -200,7 +202,7 @@ App = {
           var sectionContent = '';
           for(var i = 0; i < sortedRes.length; i++) {
             // get the styled html for message
-            sectionContent += App.formatMessage(web3.toAscii(sortedRes[i][1]), sortedRes[i][0], sortedRes[i][2], i, sortedRes[i][3], sortedRes[i][4], 0, sortedRes[i][5]);
+            sectionContent += App.formatMessage(web3.toAscii(sortedRes[i][1]), sortedRes[i][0], sortedRes[i][2], i, sortedRes[i][3], sortedRes[i][4], 0, sortedRes[i][5], sortedRes[i][6]);
           }
           $('#messages').html(sectionContent);
         }).catch(function(err) {
@@ -263,7 +265,7 @@ App = {
               LinkedInstance = instance;
               return LinkedInstance.getMessage(result.args.msgCount);
             }).then(function(result) {
-              var sectionContent = App.formatMessage(web3.toAscii(result[1]), result[0], result[2], msgId, result[3], result[4], 0, result[5]);
+              var sectionContent = App.formatMessage(web3.toAscii(result[1]), result[0], result[2], msgId, result[3], result[4], 0, result[5], result[6]);
               $('#messages').prepend(sectionContent);
               $("#post-message").css('opacity', '0.5');
             }).catch(function(err) {
@@ -327,12 +329,12 @@ dropMessage: function() {
   });
 },
 
-formatMessage: function(username, content, time, msgId, likes, drops, comments, imgUrl) {
+formatMessage: function(username, content, time, msgId, likes, drops, comments, imgUrl, address) {
   var sectionContent = `<div class="card message-card mb-4">
                         <div class="card-body d-flex flex-row pb-2">
                             <img class="mr-2 profile-img" src="${imgUrl}">
                             <div>
-                                <strong class="align-top d-block card-username">c/${username}</strong>
+                                <a href="/profile.html?address=${address}"><strong class="align-top d-block card-username">c/${username}</strong></a>
                                 <span class="card-message-time">${moment.unix(time).fromNow()}</span>
                             </div>
                         </div>
@@ -364,6 +366,51 @@ formatMessage: function(username, content, time, msgId, likes, drops, comments, 
                     </div>`;
 
   return sectionContent;
+},
+
+urlParam: function(name){
+    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+    return results[1] || 0;
+},
+
+profilePage: function(address) {
+  if(window.location.pathname != "/profile.html") {
+    return;
+  }
+  var address = App.urlParam('address');
+  console.log('Profile page address: ' + address);
+
+  var LinkedInstance;
+
+    web3.eth.getAccounts(function(error, accounts) {
+      if (error) {
+        console.log(error);
+      }
+
+      var account = accounts[0];
+
+      App.contracts.Linked.deployed().then(function(instance) {
+        LinkedInstance = instance;
+
+        return LinkedInstance.userInfo(address);
+      }).then(function(result) {
+        var profileContent = '';
+        var myName = web3.toUtf8(result[0]);
+        var myOccupation = web3.toUtf8(result[1]);
+        var myBio = result[2];
+        var myDrops = parseInt(result[3].toNumber(), 10);
+        var myImgUrl = result[4];
+        var myFollowers = result[5];
+
+        $('#profile-page-picture').attr("src", myImgUrl);
+        $('#profile-page-username').html("c/" + myName);
+        $('#profile-page-occupation').html(myOccupation);
+        $('#profile-page-drops').html(myDrops);
+        $('#profile-page-subs').html(myFollowers);
+      }).catch(function(err) {
+        console.log(err.message);
+      });
+    });
 }
 
 };
