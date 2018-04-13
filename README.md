@@ -5,7 +5,7 @@
 - write message opacits & icons - DONE
 - Set & show profile - DONE
 - Comment message
-- Get all messages of a user in the profile page
+- Get all messages of a user in the profile page - DONE
 
 
 # TODO nice to have

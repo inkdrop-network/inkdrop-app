@@ -51,6 +51,8 @@ App = {
     $(document).on('click', '#write-message-button', App.sendMessage);
     $(document).on('click', '.like-message-button', App.likeMessage);
     $(document).on('click', '.drop-message-button', App.dropMessage);
+    $(document).on('click', '#follow-user-button', App.followUser);
+    $(document).on('click', '#unfollow-user-button', App.unfollowUser);
     $("#write-message").focus(function(event){
       $("#post-message").css('opacity', '1');
     }).blur(function(event){
@@ -322,6 +324,9 @@ dropMessage: function() {
       likeCount++;
       likeDiv.text(likeCount);
       likeDiv.attr('data-value', likeCount);
+      // update drops also on profile page
+      var newDrops = parseInt($('#profile-page-drops').text()) + 1;
+      $('#profile-page-drops').html(newDrops);
       App.updateProfile(); 
     }).catch(function(err) {
       console.log(err.message);
@@ -380,6 +385,7 @@ profilePage: function(address) {
   var address = App.urlParam('address');
   console.log('Profile page address: ' + address);
 
+
   var LinkedInstance;
 
     web3.eth.getAccounts(function(error, accounts) {
@@ -400,18 +406,100 @@ profilePage: function(address) {
         var myBio = result[2];
         var myDrops = parseInt(result[3].toNumber(), 10);
         var myImgUrl = result[4];
-        var myFollowers = result[5];
+        var myFollowers = parseInt(result[5], 10);
 
         $('#profile-page-picture').attr("src", myImgUrl);
         $('#profile-page-username').html("c/" + myName);
         $('#profile-page-occupation').html(myOccupation);
         $('#profile-page-drops').html(myDrops);
         $('#profile-page-subs').html(myFollowers);
+
+        LinkedInstance.getUserMessages(address).then(function(result) {
+          var length = result.length;
+          // create promise array for looping through it
+          var promiseChain = [];
+          for(var i = 0; i < length; i++) {
+            promiseChain.push(LinkedInstance.getMessage(parseInt(result[i].toNumber(), 10)));
+          }
+
+          Promise.all(promiseChain).then(function(result) {
+            // result as an array of all callbacks from the getMessage function calls in the promise chain
+            // sort the result array descending
+            var sortedRes = result.sort(function(a, b){ return b[2] - a[2] });
+            var sectionContent = '';
+            for(var i = 0; i < sortedRes.length; i++) {
+              // get the styled html for message
+              sectionContent += App.formatMessage(web3.toAscii(sortedRes[i][1]), sortedRes[i][0], sortedRes[i][2], i, sortedRes[i][3], sortedRes[i][4], 0, sortedRes[i][5], sortedRes[i][6]);
+            }
+            $('#profile-page-messages').html(sectionContent);
+          });
+        }).catch(function(err) {
+          console.log(err.message);
+        });
       }).catch(function(err) {
         console.log(err.message);
       });
     });
-}
+  },
+
+  followUser: function() {
+    console.log('Click follow User');
+    if(window.location.pathname != "/profile.html") {
+      return;
+    }
+    var address = App.urlParam('address');
+    // make card still og higher opacity
+    var LinkedInstance;
+
+    web3.eth.getAccounts(function(error, accounts) {
+      if (error) {
+        console.log(error);
+      }
+
+      var account = accounts[0];
+
+      App.contracts.Linked.deployed().then(function(instance) {
+        LinkedInstance = instance;
+        return LinkedInstance.followUser(address);
+      }).then(function(result) {
+        var newFollowers = parseInt($('#profile-page-subs').text()) + 1;
+        $('#profile-page-subs').html(newFollowers)
+        $('#follow-buttons').html(`<button id="unfollow-user-button" class="btn btn-green my-4 px-4 d-block">Unfollow</button>`);
+        // App.initMessages();
+      }).catch(function(err) {
+        console.log(err.message);
+      });
+    });
+  },
+  unfollowUser: function() {
+    console.log('Click unfollow User');
+    if(window.location.pathname != "/profile.html") {
+      return;
+    }
+    var address = App.urlParam('address');
+    // make card still og higher opacity
+    var LinkedInstance;
+
+    web3.eth.getAccounts(function(error, accounts) {
+      if (error) {
+        console.log(error);
+      }
+
+      var account = accounts[0];
+
+      App.contracts.Linked.deployed().then(function(instance) {
+        LinkedInstance = instance;
+        return LinkedInstance.unfollowUser(address);
+      }).then(function(result) {
+        var newFollowers = parseInt($('#profile-page-subs').text()) + 1;
+        $('#profile-page-subs').html(newFollowers)
+        $('#follow-buttons').html(`<button id="follow-user-button" class="btn btn-green my-4 px-4 d-block">Follow</button>`);
+        // App.initMessages();
+      }).catch(function(err) {
+        console.log(err.message);
+      });
+    });
+  }
 
 };
 

@@ -17,8 +17,8 @@
     <meta name="theme-color" content="#29313e">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link href='https://fonts.googleapis.com/css?family=Overpass:200,300,400,600' rel='stylesheet'>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/overpass.css">
     <link rel="stylesheet" href="css/app.css">
 
     <title>InkDrop - Microblogging done right.</title>
@@ -76,7 +76,7 @@
 
     <main class="profile-page" role="main">
         <div class="container-fluid px-0">
-            <img id="profile-top-picture" class="" src="http://via.placeholder.com/1440x350/ffffff/ffffff">
+            <img id="profile-top-picture" class="" src="https://picsum.photos/1440/350/?random">
             <div class="nav-profile">
                 
             </div>
@@ -88,15 +88,16 @@
                     <img id="profile-page-picture" class="profile-img-lg" class="" src="http://via.placeholder.com/190/29313e/29313e">
                     <h3 id="profile-page-username" class="mt-4 mb-1">c/</h3>
                     <div id="profile-page-occupation"></div>
-                    <button id="follow-user-button" class="btn btn-green my-4 px-4 d-block">Follow</button>
-
+                    <div id="follow-buttons">
+                        <button id="follow-user-button" class="btn btn-green my-4 px-4 d-block">Follow</button>
+                    </div>
                     <img src="icons/icon-profile-drop.svg" width="35" height="35" class="" alt="">
                     <span id="profile-page-drops" class="ml-1"></span>
 
                     <img src="icons/icon-profile-subs.svg" width="35" height="35" class="ml-5" alt="">
                     <span id="profile-page-subs" class="ml-1"></span>
                 </div>
-                <div id="messages" class="col-sm-7">
+                <div id="profile-page-messages" class="col-sm-7">
 
 <!--                     <div class="card message-card">
                         <div class="card-body d-flex flex-row pb-2">
@@ -161,27 +162,15 @@
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="js/jquery-3.3.1.min.js"></script>
     <!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>-->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.0/moment.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/moment.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/web3.min.js"></script>
     <script src="js/truffle-contract.js"></script>
     <script src="js/main.js"></script>
 
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-113478171-1"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-        gtag('js', new Date());
-        gtag('config', 'UA-113478171-1');
-
-    </script>
 </body>
 
 </html>

@@ -27,8 +27,8 @@ contract Linked {
     // Each address is linked to several follower addresses
     mapping(address => address[]) public userFollowers;
     
-    // Each address is linked to its written messages
-    mapping(address => Message[]) public userMessages;
+    // Each address is linked to its written message ids
+    mapping(address => uint256[]) public userMessages;
 
     // Each address is linked to its liked messages
     mapping(address => uint256[]) public userLikes;
@@ -61,7 +61,7 @@ contract Linked {
     // Write a message
     function writeMessage(string _content) public {
         Message memory message = Message(_content, msg.sender, now, 0, 0);
-        userMessages[msg.sender].push(message);
+        userMessages[msg.sender].push(msgCount);
         messages.push(message);
         emit MessageSend(msg.sender, userInfo[msg.sender].name, msgCount);
         msgCount += 1;
@@ -70,6 +70,10 @@ contract Linked {
     function getMessage(uint _id) public view returns (string, bytes32, uint256, uint256, uint256, string, address) {
         Message memory showMsg = messages[_id];
         return (showMsg.content, userInfo[showMsg.writtenBy].name, showMsg.timestamp, showMsg.likes, showMsg.drops, userInfo[showMsg.writtenBy].imgUrl, showMsg.writtenBy);
+    }
+
+    function getUserMessages(address _address) public view returns (uint[]) {
+        return userMessages[_address];
     }
 
     function likeMessage(uint _id) public {

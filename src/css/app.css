@@ -194,3 +194,7 @@ footer .list-inline {
     height: 50px;
     width: 100%;
 }
+
+.profile-page #profile-top-picture {
+    height: 350px;
+}
