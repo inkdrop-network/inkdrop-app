@@ -200,7 +200,7 @@ App = {
         Promise.all(promiseChain).then(function(result) {
           // result as an array of all callbacks from the getMessage function calls in the promise chain
           // sort the result array descending
-          var sortedRes = result.sort(function(a, b){ return b[2] - a[2] });
+          var sortedRes = result.sort(function(a, b){ return parseInt(b[4]) - parseInt(a[4]) });
           var sectionContent = '';
           for(var i = 0; i < sortedRes.length; i++) {
             // get the styled html for message
@@ -268,7 +268,7 @@ App = {
               return LinkedInstance.getMessage(result.args.msgCount);
             }).then(function(result) {
               var sectionContent = App.formatMessage(web3.toAscii(result[1]), result[0], result[2], msgId, result[3], result[4], 0, result[5], result[6]);
-              $('#messages').prepend(sectionContent);
+              $('#messages').append(sectionContent);
               $("#post-message").css('opacity', '0.5');
             }).catch(function(err) {
               console.log(err.message);
@@ -425,7 +425,7 @@ profilePage: function(address) {
           Promise.all(promiseChain).then(function(result) {
             // result as an array of all callbacks from the getMessage function calls in the promise chain
             // sort the result array descending
-            var sortedRes = result.sort(function(a, b){ return b[2] - a[2] });
+            var sortedRes = result.sort(function(a, b){ return parseInt(b[4]) - parseInt(a[4]) });
             var sectionContent = '';
             for(var i = 0; i < sortedRes.length; i++) {
               // get the styled html for message
