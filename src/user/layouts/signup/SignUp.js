@@ -1,15 +1,24 @@
 import React, { Component } from 'react'
+import { Card, CardBody } from 'reactstrap'
 import SignUpFormContainer from '../../ui/signupform/SignUpFormContainer'
 
 class SignUp extends Component {
   render() {
-    return(
+    return (
       <main className="container">
-        <div className="pure-g">
-          <div className="pure-u-1-1">
+        <div className="row justify-content-center my-4">
+          <div className="col-sm-7">
             <h1>Sign Up</h1>
-            <p>We've got your wallet information, simply input your name and your account is made!</p>
-            <SignUpFormContainer />
+            <p>
+              We've got your wallet information, simply input your name and your account is made!
+            </p>
+            <div id="signup-form">
+              <Card className="profile-card">
+                <CardBody>
+                  <SignUpFormContainer />
+                </CardBody>
+              </Card>
+            </div>
           </div>
         </div>
       </main>

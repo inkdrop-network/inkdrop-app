@@ -4,7 +4,7 @@ export const USER_LOGGED_OUT = 'USER_LOGGED_OUT'
 function userLoggedOut(user) {
   return {
     type: USER_LOGGED_OUT,
-    payload: user
+    payload: user,
   }
 }
 

@@ -6,19 +6,16 @@ const mapStateToProps = (state, ownProps) => {
   return {}
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    onLogoutUserClick: (event) => {
-      event.preventDefault();
+    onLogoutUserClick: event => {
+      event.preventDefault()
 
       dispatch(logoutUser())
-    }
+    },
   }
 }
 
-const LogoutButtonContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(LogoutButton)
+const LogoutButtonContainer = connect(mapStateToProps, mapDispatchToProps)(LogoutButton)
 
 export default LogoutButtonContainer

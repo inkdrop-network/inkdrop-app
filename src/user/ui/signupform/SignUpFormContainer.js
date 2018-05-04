@@ -6,17 +6,14 @@ const mapStateToProps = (state, ownProps) => {
   return {}
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    onSignUpFormSubmit: (name, bio) => {
-      dispatch(signUpUser(name, bio))
-    }
+    onSignUpFormSubmit: (name, bio, buffer) => {
+      dispatch(signUpUser(name, bio, buffer))
+    },
   }
 }
 
-const SignUpFormContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(SignUpForm)
+const SignUpFormContainer = connect(mapStateToProps, mapDispatchToProps)(SignUpForm)
 
 export default SignUpFormContainer

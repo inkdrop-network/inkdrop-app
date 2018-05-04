@@ -6,19 +6,16 @@ const mapStateToProps = (state, ownProps) => {
   return {}
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    onLoginUserClick: (event) => {
-      event.preventDefault();
+    onLoginUserClick: event => {
+      event.preventDefault()
 
       dispatch(loginUser())
-    }
+    },
   }
 }
 
-const LoginButtonContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(LoginButton)
+const LoginButtonContainer = connect(mapStateToProps, mapDispatchToProps)(LoginButton)
 
 export default LoginButtonContainer

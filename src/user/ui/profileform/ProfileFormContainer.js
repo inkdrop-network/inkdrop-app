@@ -6,22 +6,20 @@ const mapStateToProps = (state, ownProps) => {
   return {
     name: state.user.data.name,
     bio: state.user.data.bio,
+    drops: state.user.data.drops,
+    imgUrl: state.user.data.imgUrl,
+    followers: state.user.data.followers,
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    onProfileFormSubmit: (name, bio) => {
-      event.preventDefault();
-
-      dispatch(updateUser(name, bio))
-    }
+    onProfileFormSubmit: (name, bio, buffer) => {
+      dispatch(updateUser(name, bio, buffer))
+    },
   }
 }
 
-const ProfileFormContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ProfileForm)
+const ProfileFormContainer = connect(mapStateToProps, mapDispatchToProps)(ProfileForm)
 
 export default ProfileFormContainer

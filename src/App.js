@@ -1,53 +1,75 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router'
 import { HiddenOnlyAuth, VisibleOnlyAuth } from './util/wrappers.js'
+import { Navbar, Nav, NavItem, Form, Input } from 'reactstrap'
 
 // UI Components
 import LoginButtonContainer from './user/ui/loginbutton/LoginButtonContainer'
-import LogoutButtonContainer from './user/ui/logoutbutton/LogoutButtonContainer'
+import ProfileHeaderContainer from './user/ui/profileheader/ProfileHeaderContainer'
 
 // Styles
-import './css/oswald.css'
-import './css/open-sans.css'
-import './css/pure-min.css'
+import 'bootstrap/dist/css/bootstrap.css'
+import './css/Overpass.css'
 import './App.css'
 
 class App extends Component {
   render() {
-    const OnlyAuthLinks = VisibleOnlyAuth(() =>
-      <span>
-        <li className="pure-menu-item">
-          <Link to="/newsfeed" className="pure-menu-link">Newsfeed</Link>
-        </li>
-        <li className="pure-menu-item">
-          <Link to="/profile" className="pure-menu-link">Profile</Link>
-        </li>
-        <LogoutButtonContainer />
-      </span>
-    )
+    const OnlyAuthLinks = VisibleOnlyAuth(() => (
+      <div className="container">
+        <Link to="/newsfeed" className="navbar-brand">
+          <img
+            src="icons/inkdrop_logo.svg"
+            width="30"
+            height="30"
+            className="d-inline-block align-top py-1"
+            alt="InkDrop Logo"
+          />InkDrop<span className="font-green">.</span>
+        </Link>
+        <Form inline>
+          <Input
+            id="navbar-search"
+            className="form-control mr-sm-2"
+            type="search"
+            placeholder="Search"
+            aria-label="Search"
+          />
+        </Form>
+        <ProfileHeaderContainer />
+      </div>
+    ))
 
-    const OnlyGuestLinks = HiddenOnlyAuth(() =>
-      <span>
-        <li className="pure-menu-item">
-          <Link to="/signup" className="pure-menu-link">Sign Up</Link>
-        </li>
-        <LoginButtonContainer />
-      </span>
-    )
+    const OnlyGuestLinks = HiddenOnlyAuth(() => (
+      <div className="container">
+        <Link to="/newsfeed" className="navbar-brand">
+          <img
+            src="icons/inkdrop_logo.svg"
+            width="30"
+            height="30"
+            className="d-inline-block align-top py-1"
+            alt="InkDrop Logo"
+          />InkDrop<span className="font-green">.</span>
+        </Link>
+
+        <Nav navbar>
+          <NavItem className="mr-4">
+            <Link to="/signup" className="">
+              Sign Up
+            </Link>
+          </NavItem>
+          <LoginButtonContainer />
+        </Nav>
+      </div>
+    ))
 
     return (
       <div className="App">
-        <nav className="navbar pure-menu pure-menu-horizontal">
-          <ul className="pure-menu-list navbar-right">
-            <OnlyGuestLinks />
-            <OnlyAuthLinks />
-          </ul>
-          <Link to="/" className="pure-menu-heading pure-menu-link">Truffle Box</Link>
-        </nav>
-
+        <Navbar color="dark" dark expand="md" className="sticky-top justify-content-between">
+          <OnlyGuestLinks />
+          <OnlyAuthLinks />
+        </Navbar>
         {this.props.children}
       </div>
-    );
+    )
   }
 }
 

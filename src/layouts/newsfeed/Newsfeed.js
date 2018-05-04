@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import MessageFormContainer from '../../user/ui/messageform/MessageFormContainer'
-import MessageList from '../../user/ui/messagelist/MessageList'
+import MessageFormContainer from '../../messages/ui/messageform/MessageFormContainer'
+import MessageListContainer from '../../messages/ui/messagelist/MessageListContainer'
 
 class Newsfeed extends Component {
   constructor(props, { authData }) {
@@ -9,15 +9,14 @@ class Newsfeed extends Component {
   }
 
   render() {
-    return(
+    return (
       <main className="container">
-        <div className="pure-g">
-          <div className="pure-u-1-1">
-            <h1>Newsfeed</h1>
-            <p><strong>{this.props.authData.name}!</strong></p>
-            <p>{this.props.authData.bio}</p>
-            <MessageFormContainer />
-            <MessageList />
+        <div className="row justify-content-center my-4">
+          <MessageFormContainer />
+        </div>
+        <div>
+          <div className="row justify-content-center my-4">
+            <MessageListContainer />
           </div>
         </div>
       </main>

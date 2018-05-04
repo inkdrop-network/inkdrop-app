@@ -1,15 +1,15 @@
 import AuthenticationContract from '../../../../build/contracts/Authentication.json'
 import { loginUser } from '../loginbutton/LoginButtonActions'
 import store from '../../../store'
+import ipfs from '../../../ipfs'
 
 const contract = require('truffle-contract')
 
-export function signUpUser(name, bio) {
+export function signUpUser(name, bio, buffer) {
   let web3 = store.getState().web3.web3Instance
 
   // Double-check web3's status.
   if (typeof web3 !== 'undefined') {
-
     return function(dispatch) {
       // Using truffle-contract we create the authentication object.
       const authentication = contract(AuthenticationContract)
@@ -22,29 +22,43 @@ export function signUpUser(name, bio) {
       web3.eth.getCoinbase((error, coinbase) => {
         // Log errors, if any.
         if (error) {
-          console.error(error);
+          console.error(error)
         }
 
         authentication.deployed().then(function(instance) {
           authenticationInstance = instance
 
-          // Attempt to sign up user.
-          authenticationInstance.signup(name, bio, {from: coinbase})
-          .then(function(result) {
-            // If no error, login user.
-            console.log('Signed up!');
-            // var userName = web3.toUtf8(result[0]);
-            // var userBio = result[1];
-            // console.log('User: ' + userName + ' ('+ userBio + ') signed up!');
-            return dispatch(loginUser())
-          })
-          .catch(function(result) {
-            // If error...
-          })
+          ipfs
+            .add(buffer)
+            .then(function(ipfsHash) {
+              // TODO: signup not triggered anymore
+              console.log(ipfsHash[0].hash)
+              // If you are connected to an IPFS node, then you should be able to see your file at one of the IPFS gateways.
+              // https://gateway.ipfs.io/ipfs/ + your IPFShash#
+
+              // Attempt to sign up user.
+              authenticationInstance
+                .signup(name, bio, ipfsHash[0].hash, { from: coinbase })
+                .then(function(result) {
+                  // If no error, login user.
+                  console.log('Signed up!')
+                  // var userName = web3.toUtf8(result[0]);
+                  // var userBio = result[1];
+                  // console.log('User: ' + userName + ' ('+ userBio + ') signed up!');
+                  return dispatch(loginUser())
+                })
+                .catch(function(err) {
+                  // If error...
+                  console.log(err)
+                })
+            })
+            .catch(function(err) {
+              console.log(err)
+            })
         })
       })
     }
   } else {
-    console.error('Web3 is not initialized.');
+    console.error('Web3 is not initialized.')
   }
 }

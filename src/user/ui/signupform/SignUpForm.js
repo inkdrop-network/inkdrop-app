@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Button, Form, FormGroup, FormText, Input } from 'reactstrap'
 
 class SignUpForm extends Component {
   constructor(props) {
@@ -7,6 +8,8 @@ class SignUpForm extends Component {
     this.state = {
       name: '',
       bio: '',
+      userUrl: '',
+      buffer: '',
     }
   }
 
@@ -21,28 +24,76 @@ class SignUpForm extends Component {
   handleSubmit(event) {
     event.preventDefault()
 
-    if (this.state.name.length < 2)
-    {
+    if (this.state.name.length < 2) {
       return alert('Please fill in your name.')
     }
 
-    this.props.onSignUpFormSubmit(this.state.name, this.state.bio)
+    this.props.onSignUpFormSubmit(this.state.name, this.state.bio, this.state.buffer)
+  }
+
+  captureFile(event) {
+    event.stopPropagation()
+    event.preventDefault()
+    const file = event.target.files[0]
+    let reader = new window.FileReader()
+    reader.readAsArrayBuffer(file)
+    reader.onloadend = () => this.convertToBuffer(reader)
+
+    const file2 = event.target.files[0]
+    let reader2 = new window.FileReader()
+    reader2.readAsDataURL(file2)
+    reader2.onloadend = () => this.setState({ userUrl: reader2.result })
+  }
+
+  async convertToBuffer(reader) {
+    //file is converted to a buffer to prepare for uploading to IPFS
+    const buffer = await Buffer.from(reader.result)
+    //set this buffer -using es6 syntax
+    this.setState({ buffer: buffer })
   }
 
   render() {
-    return(
-      <form className="pure-form pure-form-stacked" onSubmit={this.handleSubmit.bind(this)}>
-        <fieldset>
-          <label htmlFor="name">Name</label>
-          <input id="name" type="text" value={this.state.name} onChange={this.onNameChange.bind(this)} placeholder="Name" />
-          <input id="bio" type="text" value={this.state.bio} onChange={this.onBioChange.bind(this)} placeholder="Bio" />
-          <span className="pure-form-message">This is a required field.</span>
-
-          <br />
-
-          <button type="submit" className="pure-button pure-button-primary">Sign Up</button>
-        </fieldset>
-      </form>
+    return (
+      <Form onSubmit={this.handleSubmit.bind(this)}>
+        <FormGroup>
+          <img
+            id="signup-profile-picture"
+            className="profile-img mb-2"
+            src={this.state.userUrl || 'http://via.placeholder.com/150/85bd3e/85bd3e'}
+            alt="profile"
+          />
+          <Input
+            type="file"
+            name="file"
+            id="signup-user-img"
+            onChange={this.captureFile.bind(this)}
+            accept="image/gif, image/jpeg, image/png"
+          />
+          <FormText color="muted">
+            Upload an image with square format and a minimum resolution of 150x150px. Only .jpeg,
+            .png and .gif files are allowed.
+          </FormText>
+        </FormGroup>
+        <FormGroup>
+          <Input
+            id="name"
+            type="text"
+            value={this.state.name}
+            onChange={this.onNameChange.bind(this)}
+            placeholder="Your name"
+          />
+        </FormGroup>
+        <FormGroup>
+          <Input
+            id="bio"
+            type="text"
+            value={this.state.bio}
+            onChange={this.onBioChange.bind(this)}
+            placeholder="Tell us something about yourself"
+          />
+        </FormGroup>
+        <Button color="green">Sign Up</Button>
+      </Form>
     )
   }
 }
