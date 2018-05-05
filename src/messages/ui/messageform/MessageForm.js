@@ -9,7 +9,7 @@ class MessageForm extends Component {
       content: this.props.content,
       username: this.props.username,
       imgUrl: this.props.imgUrl || 'http://via.placeholder.com/50/85bd3e/85bd3e',
-      focus: false,
+      focus: false
     }
   }
 

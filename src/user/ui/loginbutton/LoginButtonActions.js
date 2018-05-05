@@ -8,7 +8,7 @@ export const USER_LOGGED_IN = 'USER_LOGGED_IN'
 function userLoggedIn(user) {
   return {
     type: USER_LOGGED_IN,
-    payload: user,
+    payload: user
   }
 }
 
@@ -53,7 +53,7 @@ export function loginUser() {
                   bio: userBio,
                   drops: userDrops,
                   imgUrl: userImgUrl,
-                  followers: userFollowers,
+                  followers: userFollowers
                 })
               )
 

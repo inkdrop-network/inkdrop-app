@@ -6,7 +6,7 @@ import {
   UncontrolledDropdown,
   DropdownToggle,
   DropdownMenu,
-  DropdownItem,
+  DropdownItem
 } from 'reactstrap'
 import LogoutButtonContainer from '../logoutbutton/LogoutButtonContainer'
 

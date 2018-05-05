@@ -229,7 +229,7 @@ export function getComments(parent, comments) {
                   timestamp: new Date(sortedRes[i][2] * 1000),
                   likes: parseInt(sortedRes[i][3], 10),
                   drops: parseInt(sortedRes[i][4], 10),
-                  userUrl: sortedRes[i][5],
+                  userUrl: `https://gateway.ipfs.io/ipfs/${sortedRes[i][5]}`,
                   userAdr: sortedRes[i][6],
                   id: parseInt(sortedRes[i][7], 10),
                   comments: sortedRes[i][9],

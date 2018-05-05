@@ -47,8 +47,8 @@ export function getMessages() {
               Promise.all(promiseChain)
                 .then(function(result) {
                   // result as an array of all callbacks from the getMessage function calls in the promise chain
-                  // sort the result array according their drop count
                   let sortedRes = result.sort(function(a, b) {
+                    // sort the result array according their drop count
                     return parseInt(b[4], 10) - parseInt(a[4], 10)
                   })
                   let allMsgs = []

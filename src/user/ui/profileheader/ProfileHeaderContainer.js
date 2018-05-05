@@ -7,7 +7,7 @@ const mapStateToProps = (state, ownProps) => {
     bio: state.user.data.bio,
     drops: state.user.data.drops,
     imgUrl: state.user.data.imgUrl,
-    followers: state.user.data.followers,
+    followers: state.user.data.followers
   }
 }
 

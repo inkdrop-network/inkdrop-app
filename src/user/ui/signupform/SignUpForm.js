@@ -9,7 +9,7 @@ class SignUpForm extends Component {
       name: '',
       bio: '',
       userUrl: '',
-      buffer: '',
+      buffer: ''
     }
   }
 

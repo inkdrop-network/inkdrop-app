@@ -11,7 +11,7 @@ class MessageItem extends Component {
       username: this.props.username,
       newcomment: '',
       comments: this.props.message.comments || [],
-      showComments: false,
+      showComments: false
     }
 
     this.handleComment = this.handleComment.bind(this)
@@ -20,7 +20,7 @@ class MessageItem extends Component {
   }
 
   componentDidMount() {
-    // Fetch comments only for messages that are already on the blockchain and not virutal local messages
+    // Fetch comments only for messages that are already on the blockchain and not virutal local messages -------------------
     if (this.props.message.fromBlockchain) {
       this.props.getComments(this.props.message.id, this.props.message.comments)
     }
@@ -87,8 +87,7 @@ class MessageItem extends Component {
             <div className="col">
               <div
                 className="drop-message-button float-left"
-                onClick={() => this.dropMessage(msg.id, msg.drops)}
-              >
+                onClick={() => this.dropMessage(msg.id, msg.drops)}>
                 <img
                   src="icons/icon-inkdrop-dark.svg"
                   width="20"
@@ -102,8 +101,7 @@ class MessageItem extends Component {
             <div className="col text-center">
               <div
                 className="like-message-button mx-auto"
-                onClick={() => this.likeMessage(msg.id, msg.likes)}
-              >
+                onClick={() => this.likeMessage(msg.id, msg.likes)}>
                 <img src="icons/icon-like.svg" width="20" height="20" className="" alt="likes" />
                 <span className="like-number icon-number ml-1">{msg.likes}</span>
               </div>
@@ -111,8 +109,7 @@ class MessageItem extends Component {
             <div className="col">
               <div
                 className="comment-message-button float-right"
-                onClick={() => this.toggleComments()}
-              >
+                onClick={() => this.toggleComments()}>
                 <img
                   src="icons/icon-comments.svg"
                   width="20"

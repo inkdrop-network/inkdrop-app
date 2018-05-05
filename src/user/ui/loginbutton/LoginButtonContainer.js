@@ -12,7 +12,7 @@ const mapDispatchToProps = dispatch => {
       event.preventDefault()
 
       dispatch(loginUser())
-    },
+    }
   }
 }
 

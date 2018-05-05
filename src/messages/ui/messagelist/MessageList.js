@@ -6,7 +6,7 @@ class MessageList extends Component {
     super(props)
 
     this.state = {
-      messages: this.props.messages,
+      messages: this.props.messages
     }
   }
 

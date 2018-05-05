@@ -4,7 +4,7 @@ import { likeMessage, dropMessage, commentMessage, getComments } from './Message
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    username: state.user.data.name,
+    username: state.user.data.name
   }
 }
 
@@ -21,7 +21,7 @@ const mapDispatchToProps = dispatch => {
     },
     getComments: (parent, comments) => {
       dispatch(getComments(parent, comments))
-    },
+    }
   }
 }
 
