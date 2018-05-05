@@ -1,11 +1,12 @@
 # TODOs
 
 *   Show profile
+*   Fix comment redux state update
 *   Refactor comments (commentlist, commentitem, commentform)
 *   Trigger messagelist re-render if message gets drops (ranking should be changed according to the messages' drops)
 *   Check out drizzle
 
-## TODOs nice to have
+### TODOs nice to have
 
 *   Map user address to its likes and prohibit double likes etc.
 *   Improved error handling
