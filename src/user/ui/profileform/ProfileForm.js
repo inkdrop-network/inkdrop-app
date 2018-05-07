@@ -9,7 +9,7 @@ class ProfileForm extends Component {
       name: this.props.name,
       bio: this.props.bio,
       userUrl: this.props.imgUrl,
-      buffer: ''
+      buffer: '',
     }
   }
 

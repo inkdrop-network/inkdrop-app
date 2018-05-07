@@ -2,14 +2,6 @@ import React, { Component } from 'react'
 import MessageItemContainer from '../messageitem/MessageItemContainer'
 
 class MessageList extends Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      messages: this.props.messages
-    }
-  }
-
   componentDidMount() {
     this.props.getAllMessages()
   }

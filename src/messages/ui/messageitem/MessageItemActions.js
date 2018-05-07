@@ -133,7 +133,7 @@ export function dropMessage(id, dropsAdd, dropsTotal) {
   }
 }
 
-export function commentMessage(parent, username, message) {
+export function commentMessage(parent, username, imgUrl, message) {
   let web3 = store.getState().web3.web3Instance
 
   // Double-check web3's status.
@@ -166,7 +166,7 @@ export function commentMessage(parent, username, message) {
                 timestamp: Date.now(),
                 likes: 0,
                 drops: 0,
-                userUrl: '',
+                userUrl: imgUrl,
                 userAdr: coinbase,
                 id: Date.now(),
                 parent: parent,
@@ -236,7 +236,6 @@ export function getComments(parent, comments) {
                 }
                 allMsgs.comments.push(msg)
               }
-
               return dispatch(gotComments(parent, allMsgs))
             })
             .catch(function(err) {

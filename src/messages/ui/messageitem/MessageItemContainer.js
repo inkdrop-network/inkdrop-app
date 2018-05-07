@@ -4,7 +4,8 @@ import { likeMessage, dropMessage, commentMessage, getComments } from './Message
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    username: state.user.data.name
+    username: state.user.data.name,
+    imgUrl: state.user.data.imgUrl,
   }
 }
 
@@ -16,12 +17,12 @@ const mapDispatchToProps = dispatch => {
     dropMessage: (id, dropsAdd, dropsTotal) => {
       dispatch(dropMessage(id, dropsAdd, dropsTotal))
     },
-    commentMessage: (parent, username, message) => {
-      dispatch(commentMessage(parent, username, message))
+    commentMessage: (parent, username, imgUrl, message) => {
+      dispatch(commentMessage(parent, username, imgUrl, message))
     },
     getComments: (parent, comments) => {
       dispatch(getComments(parent, comments))
-    }
+    },
   }
 }
 

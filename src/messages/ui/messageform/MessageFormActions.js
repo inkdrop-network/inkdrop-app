@@ -7,7 +7,7 @@ export const MESSAGE_POSTED = 'MESSAGE_POSTED'
 function messagePosted(content) {
   return {
     type: MESSAGE_POSTED,
-    payload: content
+    payload: content,
   }
 }
 
@@ -48,7 +48,7 @@ export function postMessage(content, username, imgUrl) {
                 userAdr: coinbase,
                 id: Date.now(),
                 comments: [],
-                fromBlockchain: false
+                fromBlockchain: false,
               }
 
               return dispatch(messagePosted(newMsg))

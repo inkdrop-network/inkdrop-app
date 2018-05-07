@@ -9,7 +9,7 @@ class SignUpForm extends Component {
       name: '',
       bio: '',
       userUrl: '',
-      buffer: ''
+      buffer: '',
     }
   }
 
@@ -68,6 +68,7 @@ class SignUpForm extends Component {
             id="signup-user-img"
             onChange={this.captureFile.bind(this)}
             accept="image/gif, image/jpeg, image/png"
+            required
           />
           <FormText color="muted">
             Upload an image with square format and a minimum resolution of 150x150px. Only .jpeg,
@@ -81,6 +82,7 @@ class SignUpForm extends Component {
             value={this.state.name}
             onChange={this.onNameChange.bind(this)}
             placeholder="Your name"
+            required
           />
         </FormGroup>
         <FormGroup>

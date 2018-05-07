@@ -8,7 +8,7 @@ export const USER_UPDATED = 'USER_UPDATED'
 function userUpdated(user) {
   return {
     type: USER_UPDATED,
-    payload: user
+    payload: user,
   }
 }
 
@@ -49,7 +49,7 @@ export function updateUser(name, bio, buffer) {
                     userUpdated({
                       name: name,
                       bio: bio,
-                      imgUrl: `https://gateway.ipfs.io/ipfs/${ipfsHash[0].hash}`
+                      imgUrl: `https://gateway.ipfs.io/ipfs/${ipfsHash[0].hash}`,
                     })
                   )
                 })

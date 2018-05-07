@@ -1,17 +1,17 @@
 const initialState = {
-  data: null
+  data: null,
 }
 
 const messagesReducer = (state = initialState, action) => {
   if (action.type === 'MESSAGES_GOT') {
     return Object.assign({}, state, {
-      data: action.payload
+      data: action.payload,
     })
   }
 
   if (action.type === 'MESSAGE_POSTED') {
     return Object.assign({}, state, {
-      data: state.data.concat(action.payload)
+      data: state.data.concat(action.payload),
     })
   }
 
@@ -23,7 +23,7 @@ const messagesReducer = (state = initialState, action) => {
         }
 
         return item
-      })
+      }),
     })
   }
 
@@ -35,7 +35,7 @@ const messagesReducer = (state = initialState, action) => {
         }
 
         return item
-      })
+      }),
     })
   }
 
@@ -43,13 +43,15 @@ const messagesReducer = (state = initialState, action) => {
     let newState = Object.assign({}, state, {
       data: state.data.map((item, index) => {
         if (item.id === action.parent) {
-          let newItem = item
-          newItem.comments.concat(action.payload)
+          let newItem = {
+            ...item,
+            comments: [...item.comments, action.payload],
+          }
           return newItem
         }
 
         return item
-      })
+      }),
     })
     return newState
   }
@@ -62,7 +64,7 @@ const messagesReducer = (state = initialState, action) => {
         }
 
         return item
-      })
+      }),
     })
     return newState
   }

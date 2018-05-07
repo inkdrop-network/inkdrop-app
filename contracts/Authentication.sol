@@ -104,15 +104,15 @@ contract Authentication is Killable {
   // Write a comment
   function commentMessage(uint256 parent, string _content) public payable onlyExistingUser returns (uint256) {
       // Message memory message = Message(_content, msg.sender, now, 0, 0, parent, comments);
+      uint256 commentId = comments.length;
       Message memory message;
       message.content = _content;
       message.writtenBy = msg.sender;
       message.timestamp = now;
       message.likes = 0;
       message.drops = 0;
-      message.id = parent;
+      message.id = commentId;
       comments.push(message);
-      uint256 commentId = comments.length - 1;
       // add comment id to parent message
       messages[parent].comments.push(commentId);
       return commentId;

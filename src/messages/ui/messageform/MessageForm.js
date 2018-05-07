@@ -9,7 +9,7 @@ class MessageForm extends Component {
       content: this.props.content,
       username: this.props.username,
       imgUrl: this.props.imgUrl || 'http://via.placeholder.com/50/85bd3e/85bd3e',
-      focus: false
+      focus: false,
     }
   }
 
@@ -32,7 +32,7 @@ class MessageForm extends Component {
 
   handleSubmit(event) {
     event.preventDefault()
-    if (this.state.content.length < 2) {
+    if (this.state.content === '' && this.state.content.length < 2) {
       return alert('Please share something valuable.')
     }
 

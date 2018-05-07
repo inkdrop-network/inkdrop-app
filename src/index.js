@@ -13,6 +13,7 @@ import Dashboard from './layouts/dashboard/Dashboard'
 import Newsfeed from './layouts/newsfeed/Newsfeed'
 import SignUp from './user/layouts/signup/SignUp'
 import Profile from './user/layouts/profile/Profile'
+import UserPage from './user/layouts/user/UserPage'
 
 // Redux Store
 import store from './store'
@@ -29,8 +30,6 @@ getWeb3
     console.log('Error in web3 initialization.')
   })
 
-// <Route path="user/:id" component={UserIsAuthenticated(UserPage)} />
-
 ReactDOM.render(
   <Provider store={store}>
     <Router history={history}>
@@ -40,6 +39,7 @@ ReactDOM.render(
         <Route path="newsfeed" component={UserIsAuthenticated(Newsfeed)} />
         <Route path="signup" component={UserIsNotAuthenticated(SignUp)} />
         <Route path="profile" component={UserIsAuthenticated(Profile)} />
+        <Route path="user/:id" component={UserIsAuthenticated(UserPage)} />
       </Route>
     </Router>
   </Provider>,

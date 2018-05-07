@@ -10,7 +10,7 @@ const mapDispatchToProps = dispatch => {
   return {
     onSignUpFormSubmit: (name, bio, buffer) => {
       dispatch(signUpUser(name, bio, buffer))
-    }
+    },
   }
 }
 

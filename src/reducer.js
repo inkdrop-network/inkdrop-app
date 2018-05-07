@@ -8,7 +8,7 @@ const reducer = combineReducers({
   routing: routerReducer,
   web3: web3Reducer,
   user: userReducer,
-  messages: messagesReducer
+  messages: messagesReducer,
 })
 
 export default reducer
