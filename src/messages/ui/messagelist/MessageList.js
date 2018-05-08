@@ -8,7 +8,7 @@ class MessageList extends Component {
 
   render() {
     return (
-      <div id="messages" className="col-sm-7">
+      <div id="messages" className="">
         {this.props.messages.map(msg => <MessageItemContainer message={msg} key={msg.id} />)}
       </div>
     )

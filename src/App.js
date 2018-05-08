@@ -12,13 +12,16 @@ import 'bootstrap/dist/css/bootstrap.css'
 import './css/Overpass.css'
 import './App.css'
 
+// Images
+import inkdropLogo from '../public/icons/inkdrop_logo.svg'
+
 class App extends Component {
   render() {
     const OnlyAuthLinks = VisibleOnlyAuth(() => (
       <div className="container">
         <Link to="/newsfeed" className="navbar-brand">
           <img
-            src="icons/inkdrop_logo.svg"
+            src={inkdropLogo}
             width="30"
             height="30"
             className="d-inline-block align-top py-1"
@@ -42,7 +45,7 @@ class App extends Component {
       <div className="container">
         <Link to="/newsfeed" className="navbar-brand">
           <img
-            src="icons/inkdrop_logo.svg"
+            src={inkdropLogo}
             width="30"
             height="30"
             className="d-inline-block align-top py-1"

@@ -211,7 +211,7 @@ export function getComments(parent, comments) {
 
           let promiseChain = []
           for (let i = 0; i < comments.length; i++) {
-            promiseChain.push(authenticationInstance.getComment(comments[i]))
+            promiseChain.push(authenticationInstance.getComment(parseInt(comments[i], 10)))
           }
 
           Promise.all(promiseChain)
@@ -232,14 +232,16 @@ export function getComments(parent, comments) {
                   userUrl: `https://gateway.ipfs.io/ipfs/${sortedRes[i][5]}`,
                   userAdr: sortedRes[i][6],
                   id: parseInt(sortedRes[i][7], 10),
-                  comments: sortedRes[i][9],
+                  comments: sortedRes[i][9].map(function(e) {
+                    return parseInt(e, 10)
+                  }),
                 }
                 allMsgs.comments.push(msg)
               }
               return dispatch(gotComments(parent, allMsgs))
             })
             .catch(function(err) {
-              console.log(err.message)
+              console.log(err)
             })
         })
       })

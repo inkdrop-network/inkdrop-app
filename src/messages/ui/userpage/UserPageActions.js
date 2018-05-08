@@ -3,15 +3,30 @@ import store from '../../../store'
 
 const contract = require('truffle-contract')
 
-export const MESSAGES_GOT = 'MESSAGES_GOT'
-function gotMessages(messages) {
+export const USER_MESSAGES_GOT = 'USER_MESSAGES_GOT'
+function gotUserMessages(messages) {
   return {
-    type: MESSAGES_GOT,
+    type: USER_MESSAGES_GOT,
     payload: messages,
   }
 }
 
-export function getMessages() {
+export const USER_MESSAGES_RESET = 'USER_MESSAGES_RESET'
+function dispResetUserMessages(messages) {
+  return {
+    type: USER_MESSAGES_RESET,
+    payload: messages,
+  }
+}
+
+export function resetUserMessages() {
+  return function(dispatch) {
+    // reset usermessages with empty array
+    dispatch(dispResetUserMessages([]))
+  }
+}
+
+export function getUserMessages(adr) {
   let web3 = store.getState().web3.web3Instance
 
   // Double-check web3's status.
@@ -35,13 +50,14 @@ export function getMessages() {
           authenticationInstance = instance
 
           // Attempt to login user.
-          authenticationInstance.msgCount
-            .call()
+          authenticationInstance
+            .getUserMessages(adr)
             .then(function(result) {
-              let length = parseInt(result, 10)
+              let length = result.length
               let promiseChain = []
               for (let i = 0; i < length; i++) {
-                promiseChain.push(authenticationInstance.getMessage(i))
+                let id = parseInt(result[i], 10)
+                promiseChain.push(authenticationInstance.getMessage(id))
               }
 
               Promise.all(promiseChain)
@@ -69,11 +85,51 @@ export function getMessages() {
                     }
                     allMsgs.push(msg)
                   }
-                  return dispatch(gotMessages(allMsgs))
+                  return dispatch(gotUserMessages(allMsgs))
                 })
                 .catch(function(err) {
                   console.log(err.message)
                 })
+            })
+            .catch(function(result) {
+              // If error...
+            })
+        })
+      })
+    }
+  } else {
+    console.error('Web3 is not initialized.')
+  }
+}
+
+export function getUserInfo(adr) {
+  let web3 = store.getState().web3.web3Instance
+
+  // Double-check web3's status.
+  if (typeof web3 !== 'undefined') {
+    return function(dispatch) {
+      // Using truffle-contract we create the authentication object.
+      const authentication = contract(AuthenticationContract)
+      authentication.setProvider(web3.currentProvider)
+
+      // Declaring this for later so we can chain functions on Authentication.
+      var authenticationInstance
+
+      // Get current ethereum wallet.
+      web3.eth.getCoinbase((error, coinbase) => {
+        // Log errors, if any.
+        if (error) {
+          console.error(error)
+        }
+
+        authentication.deployed().then(function(instance) {
+          authenticationInstance = instance
+
+          // Attempt to login user.
+          authenticationInstance
+            .getUserMessages(adr)
+            .then(function(result) {
+              // TODO: get user info via userInfo.call(adr)
             })
             .catch(function(result) {
               // If error...

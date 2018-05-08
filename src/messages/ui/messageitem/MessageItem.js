@@ -3,6 +3,11 @@ import { Link } from 'react-router'
 import { Card, CardBody, CardFooter, Form, FormGroup, Button, Input } from 'reactstrap'
 import Moment from 'react-moment'
 
+// Images
+import inkdropDark from '../../../../public/icons/icon-inkdrop-dark.svg'
+import iconLike from '../../../../public/icons/icon-like.svg'
+import iconComment from '../../../../public/icons/icon-comments.svg'
+
 class MessageItem extends Component {
   constructor(props) {
     super(props)
@@ -127,13 +132,7 @@ class MessageItem extends Component {
               <div
                 className="drop-message-button float-left"
                 onClick={() => this.dropMessage(msg.id, msg.drops)}>
-                <img
-                  src="icons/icon-inkdrop-dark.svg"
-                  width="20"
-                  height="20"
-                  className="drops"
-                  alt=""
-                />
+                <img src={inkdropDark} width="20" height="20" className="drops" alt="" />
                 <span className="drop-number icon-number ml-1">{msg.drops}</span>
               </div>
             </div>
@@ -141,7 +140,7 @@ class MessageItem extends Component {
               <div
                 className="like-message-button mx-auto"
                 onClick={() => this.likeMessage(msg.id, msg.likes)}>
-                <img src="icons/icon-like.svg" width="20" height="20" className="" alt="likes" />
+                <img src={iconLike} width="20" height="20" className="" alt="likes" />
                 <span className="like-number icon-number ml-1">{msg.likes}</span>
               </div>
             </div>
@@ -149,13 +148,7 @@ class MessageItem extends Component {
               <div
                 className="comment-message-button float-right"
                 onClick={() => this.toggleComments()}>
-                <img
-                  src="icons/icon-comments.svg"
-                  width="20"
-                  height="20"
-                  className=""
-                  alt="comments"
-                />
+                <img src={iconComment} width="20" height="20" className="" alt="comments" />
                 <span className={`comment-number icon-number ml-1 ${commentsNrClass}`}>
                   {msg.comments.length}
                 </span>

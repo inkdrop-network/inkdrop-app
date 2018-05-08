@@ -10,6 +10,11 @@ import {
 } from 'reactstrap'
 import LogoutButtonContainer from '../logoutbutton/LogoutButtonContainer'
 
+// Images
+import iconAlarm from '../../../../public/icons/icon-alarm.svg'
+import iconMessage from '../../../../public/icons/icon-message.svg'
+import inkdropWhite from '../../../../public/icons/icon-inkdrop-white.svg'
+
 class ProfileHeader extends Component {
   render() {
     return (
@@ -39,7 +44,7 @@ class ProfileHeader extends Component {
         </UncontrolledDropdown>
         <NavItem className="mr-4">
           <img
-            src="icons/icon-alarm.svg"
+            src={iconAlarm}
             className="align-middle nav-icons"
             width="20"
             height="20"
@@ -49,7 +54,7 @@ class ProfileHeader extends Component {
         </NavItem>
         <NavItem className="mr-4">
           <img
-            src="icons/icon-message.svg"
+            src={iconMessage}
             className="align-middle nav-icons"
             width="20"
             height="20"
@@ -59,7 +64,7 @@ class ProfileHeader extends Component {
         </NavItem>
         <NavItem className="mr-4">
           <img
-            src="icons/icon-inkdrop-white.svg"
+            src={inkdropWhite}
             className="align-middle nav-icons"
             width="20"
             height="20"

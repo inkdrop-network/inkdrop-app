@@ -1,11 +1,24 @@
 const initialState = {
   data: null,
+  userdata: null,
 }
 
 const messagesReducer = (state = initialState, action) => {
   if (action.type === 'MESSAGES_GOT') {
     return Object.assign({}, state, {
       data: action.payload,
+    })
+  }
+
+  if (action.type === 'USER_MESSAGES_GOT') {
+    return Object.assign({}, state, {
+      userdata: action.payload,
+    })
+  }
+
+  if (action.type === 'USER_MESSAGES_RESET') {
+    return Object.assign({}, state, {
+      userdata: action.payload,
     })
   }
 

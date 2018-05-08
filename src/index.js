@@ -13,7 +13,7 @@ import Dashboard from './layouts/dashboard/Dashboard'
 import Newsfeed from './layouts/newsfeed/Newsfeed'
 import SignUp from './user/layouts/signup/SignUp'
 import Profile from './user/layouts/profile/Profile'
-import UserPage from './user/layouts/user/UserPage'
+import UserPageContainer from './messages/ui/userpage/UserPageContainer'
 
 // Redux Store
 import store from './store'
@@ -39,7 +39,7 @@ ReactDOM.render(
         <Route path="newsfeed" component={UserIsAuthenticated(Newsfeed)} />
         <Route path="signup" component={UserIsNotAuthenticated(SignUp)} />
         <Route path="profile" component={UserIsAuthenticated(Profile)} />
-        <Route path="user/:id" component={UserIsAuthenticated(UserPage)} />
+        <Route path="user/:id" component={UserIsAuthenticated(UserPageContainer)} />
       </Route>
     </Router>
   </Provider>,

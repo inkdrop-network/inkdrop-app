@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-class UserPage extends Component {
+class User extends Component {
   render() {
     return (
       <main className="user-page">
@@ -51,4 +51,4 @@ class UserPage extends Component {
   }
 }
 
-export default UserPage
+export default User
