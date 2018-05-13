@@ -54,7 +54,6 @@ contract Authentication is Killable {
 
   modifier onlyValidName(bytes32 name) {
     // Only valid names allowed
-
     require(!(name == 0x0));
     _;
   }
