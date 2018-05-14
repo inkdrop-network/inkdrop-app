@@ -31,8 +31,8 @@ contract InkDrop {
   mapping(uint => Message) private messageStructs;
   uint[] private messageList;
 
-  event LogNewUser   (address indexed userAddress, uint index, bytes32 username);
-  event LogUpdateUser(address indexed userAddress, uint index, bytes32 username);
+  event LogNewUser   (address indexed userAddress, uint index, bytes32 username, string bio, string ipfsHash);
+  event LogUpdateUser(address indexed userAddress, uint index, bytes32 username, string bio, string ipfsHash);
   event LogDeleteUser(address indexed userAddress, uint index);
   
   function isUser(address _userAddress) private view returns(bool isIndeed) {
@@ -45,6 +45,22 @@ contract InkDrop {
   function isValidName(bytes32 _username) private pure returns(bool isValid) {
     return (!(_username == 0x0));
   }
+
+  function getUserCount() public constant returns(uint count) {
+    return userList.length;
+  }
+
+  function getUserAtIndex(uint _index) public constant returns(address userAddress) {
+    require(_index <= userList.length);
+    return userList[_index];
+  }
+  
+  function getUser(address _userAddress) public constant returns(bytes32 username, string bio, uint drops, string ipfsHash, uint followers) {
+    require(isUser(_userAddress)); 
+    return (userStructs[_userAddress].username, userStructs[_userAddress].bio, 
+      userStructs[_userAddress].drops, userStructs[_userAddress].ipfsHash, 
+      userStructs[_userAddress].followers.length);
+  } 
   
   function createUser(address _userAddress, bytes32 _username, string _bio, string _ipfsHash) public returns(uint index) {
     require(!isUser(_userAddress)); 
@@ -53,8 +69,8 @@ contract InkDrop {
     userStructs[_userAddress].username = _username;
     userStructs[_userAddress].bio = _bio;
     userStructs[_userAddress].ipfsHash = _ipfsHash;
-    userStructs[_userAddress].index = userList.push(msg.sender) - 1;
-    emit LogNewUser(_userAddress, userStructs[msg.sender].index, _username);
+    userStructs[_userAddress].index = userList.push(_userAddress) - 1;
+    emit LogNewUser(_userAddress, userStructs[_userAddress].index, _username, _bio, _ipfsHash);
     return userList.length - 1;
   }
 
@@ -68,43 +84,57 @@ contract InkDrop {
     userStructs[keyToMove].index = rowToDelete; 
     userList.length--;
     emit LogDeleteUser(_userAddress, rowToDelete);
-    emit LogUpdateUser(keyToMove, rowToDelete, userStructs[keyToMove].username);
+    emit LogUpdateUser(keyToMove, rowToDelete, userStructs[keyToMove].username, userStructs[keyToMove].bio, userStructs[keyToMove].ipfsHash);
     return rowToDelete;
   }
   
-  function getUser(address _userAddress) public constant returns(bytes32 username, string bio, uint drops, string ipfsHash, uint followers) {
+  function updateUserIpfsHash(address _userAddress, string _ipfsHash) public returns(bool success) {
     require(isUser(_userAddress)); 
-    return (userStructs[_userAddress].username, userStructs[_userAddress].bio, 
-      userStructs[_userAddress].drops, userStructs[_userAddress].ipfsHash, 
-      userStructs[_userAddress].followers.length);
-  } 
-  
-  function updateUserEmail(address _userAddress, bytes32 _username) public returns(bool success) {
-    require(isUser(_userAddress)); 
-    userStructs[_userAddress].username = _username;
-    emit LogUpdateUser(
-      _userAddress, 
-      userStructs[_userAddress].index,
-      _username);
+    require(bytes(_ipfsHash).length > 0);
+    userStructs[_userAddress].ipfsHash = _ipfsHash;
+    emit LogUpdateUser(_userAddress, userStructs[_userAddress].index, userStructs[_userAddress].username, userStructs[_userAddress].bio, _ipfsHash);
     return true;
   }
 
-
-  function getUserCount() public constant returns(uint count) {
-    return userList.length;
+  function updateUserBio(address _userAddress, string _bio) public returns(bool success) {
+    require(isUser(_userAddress)); 
+    require(bytes(_bio).length > 0);
+    userStructs[_userAddress].bio = _bio;
+    emit LogUpdateUser(_userAddress, userStructs[_userAddress].index, userStructs[_userAddress].username, _bio, userStructs[_userAddress].ipfsHash);
+    return true;
   }
 
-  function getUserAtIndex(uint _index) public constant returns(address userAddress) {
-    return userList[_index];
+  function updateUsername(address _userAddress, bytes32 _username) public returns(bool success) {
+    require(isUser(_userAddress)); 
+    require(isValidName(_username));
+    userStructs[_userAddress].username = _username;
+    emit LogUpdateUser(_userAddress, userStructs[_userAddress].index, _username, userStructs[_userAddress].bio, userStructs[_userAddress].ipfsHash);
+    return true;
+  }
+
+  function updateUser(address _userAddress, bytes32 _username, string _bio, string _ipfsHash) public returns(bool success) {
+    require(isUser(_userAddress)); 
+    require(isValidName(_username));
+    require(bytes(_bio).length > 0);
+    require(bytes(_ipfsHash).length > 0);
+    userStructs[_userAddress].username = _username;
+    userStructs[_userAddress].bio = _bio;
+    userStructs[_userAddress].ipfsHash = _ipfsHash;
+    emit LogUpdateUser(_userAddress, userStructs[_userAddress].index, _username, _bio, _ipfsHash);
+    return true;
   }
   
   function followUser(address _user) public returns(uint followers) {
     require(isUser(_user));
+    require(isUser(msg.sender));
+    //TODO: require that a user can not follow a user twice
     return userStructs[msg.sender].followers.push(_user);
   }
   
   function unfollowUser(address _user) public returns(uint followers) {
     require(isUser(_user));
+    require(isUser(msg.sender));
+    //TODO: require that a user can not unfollow a user twice
     for(uint i = 0; i < userStructs[msg.sender].followers.length; i++) {
         // delete the unfollowering entry
         if(userStructs[msg.sender].followers[i] == _user) {

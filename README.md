@@ -1,6 +1,7 @@
 # TODOs
 
 *   !!! Halbwertszeit !!!
+*   change InkDrop.sol functions to msg.sender approach in order to prevent scam/hijacking of user accounts
 *   Show profile --> get user info via userInfo.call(adr)
 *   Refactor comments (commentlist, commentitem, commentform)
 *   Trigger messagelist re-render if message gets drops (ranking should be changed according to the messages' drops)
