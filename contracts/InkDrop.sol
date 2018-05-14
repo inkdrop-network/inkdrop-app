@@ -44,24 +44,24 @@ contract InkDrop {
   }
 
   function deleteUser(address _userAddress) public returns(uint index) {
-    require(isUser(msg.sender)); 
+    require(isUser(_userAddress)); 
     // this would break referential integrity
-    // require(userStructs[msg.sender].messageIds.length <= 0);
-    uint rowToDelete = userStructs[msg.sender].index;
+    // require(userStructs[_userAddress].messageIds.length <= 0);
+    uint rowToDelete = userStructs[_userAddress].index;
     address keyToMove = userIndex[userIndex.length-1];
     userIndex[rowToDelete] = keyToMove;
     userStructs[keyToMove].index = rowToDelete; 
     userIndex.length--;
-    emit LogDeleteUser(msg.sender, rowToDelete);
+    emit LogDeleteUser(_userAddress, rowToDelete);
     emit LogUpdateUser(keyToMove, rowToDelete, userStructs[keyToMove].username);
     return rowToDelete;
   }
   
   function getUser(address _userAddress) public constant returns(bytes32 username, string bio, uint drops, string ipfsHash, uint followers) {
-    require(isUser(msg.sender)); 
-    return (userStructs[msg.sender].username, userStructs[msg.sender].bio, 
-      userStructs[msg.sender].drops, userStructs[msg.sender].ipfsHash, 
-      userStructs[msg.sender].followers.length);
+    require(isUser(_userAddress)); 
+    return (userStructs[_userAddress].username, userStructs[_userAddress].bio, 
+      userStructs[_userAddress].drops, userStructs[_userAddress].ipfsHash, 
+      userStructs[_userAddress].followers.length);
   } 
   
   function updateUserEmail(address _userAddress, bytes32 _username) public returns(bool success) {
