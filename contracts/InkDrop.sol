@@ -18,14 +18,14 @@ contract InkDrop {
   event LogUpdateUser(address indexed userAddress, uint index, bytes32 username);
   event LogDeleteUser(address indexed userAddress, uint index);
   
-  function isUser(address userAddress) public constant returns(bool isIndeed) {
+  function isUser(address userAddress) private view returns(bool isIndeed) {
      // if the list is empty, the requested user is not present
     if(userIndex.length == 0) return false;
     // true = exists
-    return (userIndex[userStructs[msg.sender].index] == msg.sender);
+    return (userIndex[userStructs[userAddress].index] == userAddress);
   }
 
-  function isValidName(bytes32 name) public constant returns(bool isValid) {
+  function isValidName(bytes32 name) private pure returns(bool isValid) {
     return (!(name == 0x0));
   }
 
