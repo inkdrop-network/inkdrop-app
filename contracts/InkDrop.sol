@@ -14,7 +14,22 @@ contract InkDrop {
   }
   
   mapping(address => User) private userStructs;
-  address[] private userIndex;
+  address[] private userList;
+  
+    // The structure of a message
+  struct Message {
+    uint id;
+    uint parent;
+    string content;
+    address writtenBy;
+    uint timestamp;
+    uint likes;
+    uint drops;
+    uint[] comments;
+  }
+  
+  mapping(uint => Message) private messageStructs;
+  uint[] private messageList;
 
   event LogNewUser   (address indexed userAddress, uint index, bytes32 username);
   event LogUpdateUser(address indexed userAddress, uint index, bytes32 username);
@@ -22,9 +37,9 @@ contract InkDrop {
   
   function isUser(address _userAddress) private view returns(bool isIndeed) {
      // if the list is empty, the requested user is not present
-    if(userIndex.length == 0) return false;
+    if(userList.length == 0) return false;
     // true = exists
-    return (userIndex[userStructs[_userAddress].index] == _userAddress);
+    return (userList[userStructs[_userAddress].index] == _userAddress);
   }
 
   function isValidName(bytes32 _username) private pure returns(bool isValid) {
@@ -38,9 +53,9 @@ contract InkDrop {
     userStructs[_userAddress].username = _username;
     userStructs[_userAddress].bio = _bio;
     userStructs[_userAddress].ipfsHash = _ipfsHash;
-    userStructs[_userAddress].index = userIndex.push(msg.sender) - 1;
+    userStructs[_userAddress].index = userList.push(msg.sender) - 1;
     emit LogNewUser(_userAddress, userStructs[msg.sender].index, _username);
-    return userIndex.length - 1;
+    return userList.length - 1;
   }
 
   function deleteUser(address _userAddress) public returns(uint index) {
@@ -48,10 +63,10 @@ contract InkDrop {
     // this would break referential integrity
     // require(userStructs[_userAddress].messageIds.length <= 0);
     uint rowToDelete = userStructs[_userAddress].index;
-    address keyToMove = userIndex[userIndex.length-1];
-    userIndex[rowToDelete] = keyToMove;
+    address keyToMove = userList[userList.length-1];
+    userList[rowToDelete] = keyToMove;
     userStructs[keyToMove].index = rowToDelete; 
-    userIndex.length--;
+    userList.length--;
     emit LogDeleteUser(_userAddress, rowToDelete);
     emit LogUpdateUser(keyToMove, rowToDelete, userStructs[keyToMove].username);
     return rowToDelete;
@@ -76,11 +91,11 @@ contract InkDrop {
 
 
   function getUserCount() public constant returns(uint count) {
-    return userIndex.length;
+    return userList.length;
   }
 
   function getUserAtIndex(uint _index) public constant returns(address userAddress) {
-    return userIndex[_index];
+    return userList[_index];
   }
   
   function followUser(address _user) public returns(uint followers) {
