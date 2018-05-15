@@ -11,6 +11,7 @@ contract InkDrop {
     // uint followers;
     // User has many followers
     address[] followers; 
+    mapping(address => uint) followerPointers;
   }
   
   mapping(address => User) private userStructs;
@@ -128,7 +129,8 @@ contract InkDrop {
     require(isUser(_user));
     require(isUser(msg.sender));
     //TODO: require that a user can not follow a user twice
-    return userStructs[msg.sender].followers.push(_user);
+    userStructs[msg.sender].followerPointers[_user] = userStructs[msg.sender].followers.push(_user) - 1;
+    return userStructs[msg.sender].followers.length;
   }
   
   function unfollowUser(address _user) public returns(uint followers) {

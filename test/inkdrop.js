@@ -381,6 +381,10 @@ contract('InkDrop', function(accounts) {
       .then(function(instance) {
         inkdropInstance = instance
 
+        return inkdropInstance.getUser(accounts[1])
+      })
+      .then(function(user) {
+        assert.equal(user[4].toNumber(), 1, 'The should have 1 followers.')
         return inkdropInstance.unfollowUser(accounts[2], { from: accounts[1] })
       })
       .then(function() {
