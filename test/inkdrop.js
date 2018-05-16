@@ -328,21 +328,21 @@ contract('InkDrop', function(accounts) {
       })
   })
 
-  // it('...follow user twice', function() {
-  //   return InkDrop.deployed()
-  //     .then(function(instance) {
-  //       inkdropInstance = instance
+  it('...follow user twice', function() {
+    return InkDrop.deployed()
+      .then(function(instance) {
+        inkdropInstance = instance
 
-  //       return inkdropInstance.followUser(accounts[2], { from: accounts[1] })
-  //     })
-  //     .then(function() {
-  //       assert.fail('Should throw error.')
-  //     })
-  //     .catch(function(error) {
-  //       const revertFound = error.message.search('revert') >= 0
-  //       assert.equal(revertFound, true, `Expected "revert", got ${error} instead`)
-  //     })
-  // })
+        return inkdropInstance.followUser(accounts[2], { from: accounts[1] })
+      })
+      .then(function() {
+        assert.fail('Should throw error.')
+      })
+      .catch(function(error) {
+        const revertFound = error.message.search('revert') >= 0
+        assert.equal(revertFound, true, `Expected "revert", got ${error} instead`)
+      })
+  })
 
   it('...follow user from not a valid user', function() {
     return InkDrop.deployed()

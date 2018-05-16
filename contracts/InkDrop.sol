@@ -128,7 +128,8 @@ contract InkDrop {
   function followUser(address _user) public returns(uint followers) {
     require(isUser(_user));
     require(isUser(msg.sender));
-    //TODO: require that a user can not follow a user twice
+    // require that a user can not follow a user twice
+    require(userStructs[msg.sender].followers.length == 0 || userStructs[msg.sender].followerPointers[_user] > 0);
     userStructs[msg.sender].followerPointers[_user] = userStructs[msg.sender].followers.push(_user) - 1;
     return userStructs[msg.sender].followers.length;
   }
@@ -136,14 +137,15 @@ contract InkDrop {
   function unfollowUser(address _user) public returns(uint followers) {
     require(isUser(_user));
     require(isUser(msg.sender));
-    //TODO: require that a user can not unfollow a user twice
-    for(uint i = 0; i < userStructs[msg.sender].followers.length; i++) {
-        // delete the unfollowering entry
-        if(userStructs[msg.sender].followers[i] == _user) {
-            delete userStructs[msg.sender].followers[i];
-            return userStructs[msg.sender].followers.length;
-        }
-    }
+    // require that a user can not unfollow a user twice
+    require((userStructs[msg.sender].followers.length > 0 && userStructs[msg.sender].followerPointers[_user] > 0) 
+      || (userStructs[msg.sender].followers.length == 1 && userStructs[msg.sender].followerPointers[_user] == 0));
+    // delete user
+    uint rowToDelete = userStructs[msg.sender].followerPointers[_user];
+    address keyToMove = userStructs[msg.sender].followers[userStructs[msg.sender].followers.length-1];
+    userStructs[msg.sender].followers[rowToDelete] = keyToMove;
+    userStructs[msg.sender].followerPointers[keyToMove] = rowToDelete; 
+    return userList.length--;
   }
 
 }
