@@ -145,7 +145,7 @@ contract InkDrop {
     address keyToMove = userStructs[msg.sender].followers[userStructs[msg.sender].followers.length-1];
     userStructs[msg.sender].followers[rowToDelete] = keyToMove;
     userStructs[msg.sender].followerPointers[keyToMove] = rowToDelete; 
-    return userList.length--;
+    return --userStructs[msg.sender].followers.length;
   }
 
 }

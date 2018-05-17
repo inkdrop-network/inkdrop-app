@@ -1,6 +1,6 @@
-var InkDrop = artifacts.require('./InkDrop.sol')
+var InkDrop = artifacts.require('InkDrop')
 
-contract('InkDrop', function(accounts) {
+contract('InkDrop (basic user CRUD functions)', function(accounts) {
   it('...empty contract instance', function() {
     return InkDrop.deployed()
       .then(function(instance) {
@@ -310,88 +310,6 @@ contract('InkDrop', function(accounts) {
       .catch(function(error) {
         const revertFound = error.message.search('revert') >= 0
         assert.equal(revertFound, true, `Expected "revert", got ${error} instead`)
-      })
-  })
-
-  it('...follow user', function() {
-    return InkDrop.deployed()
-      .then(function(instance) {
-        inkdropInstance = instance
-
-        return inkdropInstance.followUser(accounts[2], { from: accounts[1] })
-      })
-      .then(function() {
-        return inkdropInstance.getUser(accounts[1])
-      })
-      .then(function(user) {
-        assert.equal(user[4].toNumber(), 1, 'The should have 1 followers.')
-      })
-  })
-
-  it('...follow user twice', function() {
-    return InkDrop.deployed()
-      .then(function(instance) {
-        inkdropInstance = instance
-
-        return inkdropInstance.followUser(accounts[2], { from: accounts[1] })
-      })
-      .then(function() {
-        assert.fail('Should throw error.')
-      })
-      .catch(function(error) {
-        const revertFound = error.message.search('revert') >= 0
-        assert.equal(revertFound, true, `Expected "revert", got ${error} instead`)
-      })
-  })
-
-  it('...follow user from not a valid user', function() {
-    return InkDrop.deployed()
-      .then(function(instance) {
-        inkdropInstance = instance
-
-        return inkdropInstance.followUser(accounts[2], { from: accounts[0] })
-      })
-      .then(function() {
-        assert.fail('Should throw error.')
-      })
-      .catch(function(error) {
-        const revertFound = error.message.search('revert') >= 0
-        assert.equal(revertFound, true, `Expected "revert", got ${error} instead`)
-      })
-  })
-
-  it('...follow user that does not exist', function() {
-    return InkDrop.deployed()
-      .then(function(instance) {
-        inkdropInstance = instance
-
-        return inkdropInstance.followUser(accounts[0], { from: accounts[1] })
-      })
-      .then(function() {
-        assert.fail('Should throw error.')
-      })
-      .catch(function(error) {
-        const revertFound = error.message.search('revert') >= 0
-        assert.equal(revertFound, true, `Expected "revert", got ${error} instead`)
-      })
-  })
-
-  it('...unfollow user', function() {
-    return InkDrop.deployed()
-      .then(function(instance) {
-        inkdropInstance = instance
-
-        return inkdropInstance.getUser(accounts[1])
-      })
-      .then(function(user) {
-        assert.equal(user[4].toNumber(), 1, 'The should have 1 followers.')
-        return inkdropInstance.unfollowUser(accounts[2], { from: accounts[1] })
-      })
-      .then(function() {
-        return inkdropInstance.getUser(accounts[1])
-      })
-      .then(function(user) {
-        assert.equal(user[4].toNumber(), 0, 'The should have 0 followers.')
       })
   })
 })
