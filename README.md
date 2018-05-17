@@ -9,6 +9,7 @@
 
 ### TODOs nice to have
 
+*   Use await/async instead of promise chaining with .then()
 *   Comment issue after re-rendering: new BigNumber() not a number:
 *   Map user address to its likes and prohibit double likes etc.
 *   Improved error handling
