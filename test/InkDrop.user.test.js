@@ -31,10 +31,11 @@ contract('InkDrop (basic user CRUD functions)', function(accounts) {
       })
       .then(function(user) {
         assert.equal(web3.toUtf8(user[0]), 'testuser', 'The user should have the defined username.')
-        assert.equal(user[1], 'testbio', 'The should have the defined bio.')
-        assert.equal(user[2].toNumber(), 0, 'The user should have 0 drops.')
-        assert.equal(user[3], 'testhash', 'The should have the defined ipfsHash.')
-        assert.equal(user[4].toNumber(), 0, 'The should have 0 followers.')
+        assert.equal(user[1], 'testbio', 'The user should have the defined bio.')
+        assert.equal(user[2].toNumber(), 0, 'The user user should have 0 drops.')
+        assert.equal(user[3], 'testhash', 'The user should have the defined ipfsHash.')
+        assert.equal(user[4].toNumber(), 0, 'The user should have 0 followers.')
+        assert.equal(user[5].length, 0, 'The user should have 0 messages.')
       })
   })
 
@@ -180,7 +181,7 @@ contract('InkDrop (basic user CRUD functions)', function(accounts) {
           'testuser3',
           'The user should have the defined username.'
         )
-        assert.equal(user[1], 'testbio3', 'The should have the defined bio.')
+        assert.equal(user[1], 'testbio3', 'The user should have the defined bio.')
       })
   })
 
@@ -292,8 +293,8 @@ contract('InkDrop (basic user CRUD functions)', function(accounts) {
           'newusername6',
           'The user should have the defined username.'
         )
-        assert.equal(user[1], 'newbio6', 'The should have the defined bio.')
-        assert.equal(user[3], 'newhash6', 'The should have the defined ipfsHash.')
+        assert.equal(user[1], 'newbio6', 'The user should have the defined bio.')
+        assert.equal(user[3], 'newhash6', 'The user should have the defined ipfsHash.')
       })
   })
 

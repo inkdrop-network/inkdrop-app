@@ -54,6 +54,17 @@ contract('InkDrop (follower functions)', async accounts => {
     }
   })
 
+  it('...follow a user itself', async () => {
+    let inkdropInstance = await InkDrop.deployed()
+    try {
+      await inkdropInstance.followUser(accounts[6], { from: accounts[6] })
+      assert.fail('Should throw error.')
+    } catch (error) {
+      const revertFound = error.message.search('revert') >= 0
+      assert.equal(revertFound, true, `Expected "revert", got ${error} instead`)
+    }
+  })
+
   it('...unfollow user', async () => {
     let inkdropInstance = await InkDrop.deployed()
     let user = await inkdropInstance.getUser(accounts[5])
@@ -83,6 +94,17 @@ contract('InkDrop (follower functions)', async accounts => {
     assert.equal(user[4].toNumber(), 1, 'The should have 1 followers.')
     try {
       await inkdropInstance.followUser(accounts[7], { from: accounts[6] })
+      assert.fail('Should throw error.')
+    } catch (error) {
+      const revertFound = error.message.search('revert') >= 0
+      assert.equal(revertFound, true, `Expected "revert", got ${error} instead`)
+    }
+  })
+
+  it('...unfollow a user itself', async () => {
+    let inkdropInstance = await InkDrop.deployed()
+    try {
+      await inkdropInstance.unfollowUser(accounts[6], { from: accounts[6] })
       assert.fail('Should throw error.')
     } catch (error) {
       const revertFound = error.message.search('revert') >= 0
