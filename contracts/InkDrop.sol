@@ -2,6 +2,11 @@ pragma solidity ^0.4.23;
 
 contract InkDrop {
 
+  struct data {
+    uint value;
+    bool isSet;
+  }
+
   struct User {
     bytes32 username;
     string bio;
@@ -10,7 +15,7 @@ contract InkDrop {
     // uint followers;
     // User has many followers
     address[] followers; 
-    mapping(address => uint) followerPointers;
+    mapping(address => data) followerPointers;
     // messages of a user
     uint[] messages;
     mapping(uint => uint) messagePointers;
@@ -21,7 +26,7 @@ contract InkDrop {
   
   mapping(address => User) private userStructs;
   address[] private userList;
-  
+
     // The structure of a message
   struct Message {
     uint id;
@@ -33,8 +38,12 @@ contract InkDrop {
     // addresses of users' likes
     address[] likes;
     // mapping of message id to position in likes array
-    mapping(address => uint) likePointers;
+    mapping(address => data) likePointers;
+    // addresses of users' drops
+    // TODO: add amount of drops to the mapping/array
     address[] drops;
+    // mapping of message id to position in drops array
+    mapping(address => data) dropPointers;
     uint[] comments;
   }
   
@@ -71,6 +80,11 @@ contract InkDrop {
     return (userStructs[_userAddress].username, userStructs[_userAddress].bio, 
       userStructs[_userAddress].drops.length, userStructs[_userAddress].ipfsHash, 
       userStructs[_userAddress].followers.length, userStructs[_userAddress].messages);
+  } 
+
+  function getUserFollowers(address _userAddress) public constant returns(address[] followers) {
+    require(isUser(_userAddress)); 
+    return userStructs[_userAddress].followers;
   } 
   
   function createUser(address _userAddress, bytes32 _username, string _bio, string _ipfsHash) public returns(uint index) {
@@ -140,8 +154,9 @@ contract InkDrop {
     require(isUser(msg.sender));
     require(!(msg.sender == _user));
     // require that a user can not follow a user twice
-    require(userStructs[msg.sender].followers.length == 0 || userStructs[msg.sender].followerPointers[_user] > 0);
-    userStructs[msg.sender].followerPointers[_user] = userStructs[msg.sender].followers.push(_user) - 1;
+    require(!userStructs[msg.sender].followerPointers[_user].isSet);
+    userStructs[msg.sender].followerPointers[_user].value = userStructs[msg.sender].followers.push(_user) - 1;
+    userStructs[msg.sender].followerPointers[_user].isSet = true;
     return userStructs[msg.sender].followers.length;
   }
   
@@ -149,14 +164,15 @@ contract InkDrop {
     require(isUser(_user));
     require(isUser(msg.sender));
     require(!(msg.sender == _user));
+    require(userStructs[msg.sender].followers.length > 0);
     // require that a user can not unfollow a user twice
-    require((userStructs[msg.sender].followers.length > 0 && userStructs[msg.sender].followerPointers[_user] > 0) 
-      || (userStructs[msg.sender].followers.length == 1 && userStructs[msg.sender].followerPointers[_user] == 0));
+    require(userStructs[msg.sender].followerPointers[_user].isSet);
     // delete user
-    uint rowToDelete = userStructs[msg.sender].followerPointers[_user];
+    uint rowToDelete = userStructs[msg.sender].followerPointers[_user].value;
     address keyToMove = userStructs[msg.sender].followers[userStructs[msg.sender].followers.length-1];
     userStructs[msg.sender].followers[rowToDelete] = keyToMove;
-    userStructs[msg.sender].followerPointers[keyToMove] = rowToDelete; 
+    userStructs[msg.sender].followerPointers[keyToMove].value = rowToDelete; 
+    userStructs[msg.sender].followerPointers[_user].isSet = false;
     return --userStructs[msg.sender].followers.length;
   }
 
@@ -165,10 +181,10 @@ contract InkDrop {
   }
 
   // The stack can only be 7 steps deep - only 7 return values allowed
-  function getMessage(uint _id) public constant returns(string content, address writtenBy, uint timestamp, uint timetolive, uint likes, uint drops, uint[] comments) {
+  function getMessage(uint _id) public constant returns(string content, address writtenBy, uint timestamp, uint timetolive, address[] likes, address[] drops, uint[] comments) {
     require(_id < messageList.length);
     return (messageList[_id].content, messageList[_id].writtenBy, messageList[_id].timestamp, messageList[_id].timetolive, 
-      messageList[_id].likes.length, messageList[_id].drops.length, messageList[_id].comments);
+      messageList[_id].likes, messageList[_id].drops, messageList[_id].comments);
   }
   
 
@@ -193,9 +209,13 @@ contract InkDrop {
   function likeMessage(uint _id) public returns(uint newlikes) {
     require(isUser(msg.sender));
     require(_id < messageList.length);
-    // require that a user can not like a message twice
-    require((messageList[_id].likes.length == 0 && messageList.length == 1) || messageList[_id].likePointers[msg.sender] > 0);
-    messageList[_id].likePointers[msg.sender] = messageList[_id].likes.push(msg.sender)-1;
+    // TODO: require that a user can not like a message twice
+    // TODO: check if key was already set
+    // TODO: user data struct instead
+    require(!messageList[_id].likePointers[msg.sender].isSet);
+    messageList[_id].likePointers[msg.sender].value = messageList[_id].likes.push(msg.sender) - 1;
+    messageList[_id].likePointers[msg.sender].isSet = true;
+    // TODO: prolongue timetolive
     return messageList[_id].likes.length;
   }
 
@@ -203,12 +223,13 @@ contract InkDrop {
     require(isUser(msg.sender));
     require(_id < messageList.length);
     require(messageList[_id].likes.length > 0);
-    // require that a user can not unlike a message twice
-    require((messageList[_id].likes.length == 1 && messageList.length == 1) || messageList[_id].likePointers[msg.sender] > 0);
-    uint rowToDelete = messageList[_id].likePointers[msg.sender];
+    // TODO: require that a user can not unlike a message twice
+    require(messageList[_id].likePointers[msg.sender].isSet);
+    uint rowToDelete = messageList[_id].likePointers[msg.sender].value;
     address keyToMove = messageList[_id].likes[messageList[_id].likes.length-1];
     messageList[_id].likes[rowToDelete] = keyToMove;
-    messageList[_id].likePointers[keyToMove] = rowToDelete; 
+    messageList[_id].likePointers[keyToMove].value = rowToDelete; 
+    messageList[_id].likePointers[msg.sender].isSet = false;
     return --messageList[_id].likes.length;
   }
 
