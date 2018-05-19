@@ -1,8 +1,6 @@
 pragma solidity ^0.4.21;
 
-import './zeppelin/lifecycle/Killable.sol';
-
-contract Authentication is Killable {
+contract Authentication {
   struct User {
     bytes32 name;
     string bio;
