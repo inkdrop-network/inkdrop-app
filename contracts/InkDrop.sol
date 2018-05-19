@@ -2,6 +2,8 @@ pragma solidity ^0.4.23;
 
 contract InkDrop {
 
+  uint MULTIPLIER = 100;
+
   struct data {
     uint value;
     bool isSet;
@@ -19,9 +21,11 @@ contract InkDrop {
     // messages of a user
     uint[] messages;
     mapping(uint => uint) messagePointers;
+    // total drop points
+    uint dropAmount;
     // drops of a user
-    uint[] drops;
-    mapping(uint => uint) dropPointers;
+    // uint[] drops;
+    // mapping(uint => uint) dropPointers;
   }
   
   mapping(address => User) private userStructs;
@@ -39,8 +43,9 @@ contract InkDrop {
     address[] likes;
     // mapping of message id to position in likes array
     mapping(address => data) likePointers;
+    // total drop points
+    uint dropAmount;
     // addresses of users' drops
-    // TODO: add amount of drops to the mapping/array
     address[] drops;
     // mapping of message id to position in drops array
     mapping(address => data) dropPointers;
@@ -78,7 +83,7 @@ contract InkDrop {
   function getUser(address _userAddress) public constant returns(bytes32 username, string bio, uint drops, string ipfsHash, uint followers, uint[] messages) {
     require(isUser(_userAddress)); 
     return (userStructs[_userAddress].username, userStructs[_userAddress].bio, 
-      userStructs[_userAddress].drops.length, userStructs[_userAddress].ipfsHash, 
+      userStructs[_userAddress].dropAmount, userStructs[_userAddress].ipfsHash, 
       userStructs[_userAddress].followers.length, userStructs[_userAddress].messages);
   } 
 
@@ -116,6 +121,7 @@ contract InkDrop {
   function updateUserIpfsHash(address _userAddress, string _ipfsHash) public returns(bool success) {
     require(isUser(_userAddress)); 
     require(bytes(_ipfsHash).length > 0);
+
     userStructs[_userAddress].ipfsHash = _ipfsHash;
     emit LogUpdateUser(_userAddress, userStructs[_userAddress].index, userStructs[_userAddress].username, userStructs[_userAddress].bio, _ipfsHash);
     return true;
@@ -124,6 +130,7 @@ contract InkDrop {
   function updateUserBio(address _userAddress, string _bio) public returns(bool success) {
     require(isUser(_userAddress)); 
     require(bytes(_bio).length > 0);
+
     userStructs[_userAddress].bio = _bio;
     emit LogUpdateUser(_userAddress, userStructs[_userAddress].index, userStructs[_userAddress].username, _bio, userStructs[_userAddress].ipfsHash);
     return true;
@@ -132,6 +139,7 @@ contract InkDrop {
   function updateUsername(address _userAddress, bytes32 _username) public returns(bool success) {
     require(isUser(_userAddress)); 
     require(isValidName(_username));
+
     userStructs[_userAddress].username = _username;
     emit LogUpdateUser(_userAddress, userStructs[_userAddress].index, _username, userStructs[_userAddress].bio, userStructs[_userAddress].ipfsHash);
     return true;
@@ -142,6 +150,7 @@ contract InkDrop {
     require(isValidName(_username));
     require(bytes(_bio).length > 0);
     require(bytes(_ipfsHash).length > 0);
+
     userStructs[_userAddress].username = _username;
     userStructs[_userAddress].bio = _bio;
     userStructs[_userAddress].ipfsHash = _ipfsHash;
@@ -155,6 +164,7 @@ contract InkDrop {
     require(!(msg.sender == _user));
     // require that a user can not follow a user twice
     require(!userStructs[msg.sender].followerPointers[_user].isSet);
+
     userStructs[msg.sender].followerPointers[_user].value = userStructs[msg.sender].followers.push(_user) - 1;
     userStructs[msg.sender].followerPointers[_user].isSet = true;
     return userStructs[msg.sender].followers.length;
@@ -181,16 +191,18 @@ contract InkDrop {
   }
 
   // The stack can only be 7 steps deep - only 7 return values allowed
-  function getMessage(uint _id) public constant returns(string content, address writtenBy, uint timestamp, uint timetolive, address[] likes, address[] drops, uint[] comments) {
+  function getMessage(uint _id) public constant returns(string content, address writtenBy, uint timestamp, uint timetolive, uint likes, uint drops, uint[] comments) {
     require(_id < messageList.length);
     return (messageList[_id].content, messageList[_id].writtenBy, messageList[_id].timestamp, messageList[_id].timetolive, 
-      messageList[_id].likes, messageList[_id].drops, messageList[_id].comments);
+      messageList[_id].likes.length, messageList[_id].dropAmount, messageList[_id].comments);
   }
   
 
-  function createMessage(string _content) public returns(uint index) {
+  function createMessage(string _content, int _dropAmount) public returns(uint index) {
     require(isUser(msg.sender));
     require(bytes(_content).length > 0);
+    require(_dropAmount >= 0);
+
     uint256 msgId = messageList.length;
     Message memory message;
     // = Message(_content, msg.sender, now, 0, 0, msgId, -1, comments);
@@ -200,8 +212,11 @@ contract InkDrop {
     // Compute TTL according to function
     message.timetolive = now;
     message.id = msgId;
+    message.dropAmount = uint(_dropAmount)*MULTIPLIER;
     userStructs[msg.sender].messagePointers[userStructs[msg.sender].messages.push(msgId)-1] = msgId;
     messageList.push(message);
+    messageList[messageList.length-1].dropPointers[msg.sender].value = messageList[messageList.length-1].drops.push(msg.sender) - 1;
+    messageList[messageList.length-1].dropPointers[msg.sender].isSet = true;
     // emit MessageSend(msg.sender, userInfo[msg.sender].name, msgId);
     return messageList.length;
   }
@@ -209,10 +224,9 @@ contract InkDrop {
   function likeMessage(uint _id) public returns(uint newlikes) {
     require(isUser(msg.sender));
     require(_id < messageList.length);
-    // TODO: require that a user can not like a message twice
-    // TODO: check if key was already set
-    // TODO: user data struct instead
+    // require that a user can not like a message twice
     require(!messageList[_id].likePointers[msg.sender].isSet);
+
     messageList[_id].likePointers[msg.sender].value = messageList[_id].likes.push(msg.sender) - 1;
     messageList[_id].likePointers[msg.sender].isSet = true;
     // TODO: prolongue timetolive
@@ -223,8 +237,9 @@ contract InkDrop {
     require(isUser(msg.sender));
     require(_id < messageList.length);
     require(messageList[_id].likes.length > 0);
-    // TODO: require that a user can not unlike a message twice
+    // require that a user can not unlike a message twice
     require(messageList[_id].likePointers[msg.sender].isSet);
+
     uint rowToDelete = messageList[_id].likePointers[msg.sender].value;
     address keyToMove = messageList[_id].likes[messageList[_id].likes.length-1];
     messageList[_id].likes[rowToDelete] = keyToMove;
@@ -233,31 +248,20 @@ contract InkDrop {
     return --messageList[_id].likes.length;
   }
 
-  // function unlikeMessage(uint _id) public returns(uint newlikes) {
-  //   require(isUser(msg.sender));
-  //   require(_id < messageList.length);
-  //     // loop through all the likes
-  //     for(uint i = 0; i < userLikes[msg.sender].length; i++) {
-  //         if(userLikes[msg.sender][i] == _id) {
-  //             // delete the like
-  //             delete userLikes[msg.sender][i];
-  //             // reduce the like count of the message
-  //             uint256 _newLikes = messages[_id].likes - 1;
-  //             messages[_id].likes = _newLikes;
-  //         }
-  //     }
-  // }
+  function dropMessage(uint _id, int _dropAmount) public returns(uint newdrops) {
+    require(isUser(msg.sender));
+    require(_id < messageList.length);
+    require(_dropAmount > 0);
 
-  // function dropMessage(uint _id, uint _drops) public returns(uint newdrops) {
-  //   require(isUser(msg.sender));
-  //   require(_id < messageList.length);
-  //   require(_drops > 0);
-  //   userDrops[msg.sender].push(_id);
-  //   uint256 _newDrops = messages[_id].drops + _drops;
-  //   messages[_id].drops = _newDrops;
-  //   // Increment the drops of the message's author (writtenBy)
-  //   uint256 _newUserDrops = userInfo[messages[_id].writtenBy].drops + _drops;
-  //   userInfo[messages[_id].writtenBy].drops = _newUserDrops;
-  // }
+    messageList[_id].drops.push(msg.sender);
+    messageList[_id].dropPointers[msg.sender].value += (uint(_dropAmount)*MULTIPLIER);
+    messageList[_id].dropPointers[msg.sender].isSet = true;
+    messageList[_id].dropAmount += (uint(_dropAmount)*MULTIPLIER);
+    // payout share to author of the dropped message (50%)
+    userStructs[messageList[_id].writtenBy].dropAmount += (uint(_dropAmount)*50*MULTIPLIER/100);
+    // TODO: payout of drops to InkDrop and incentive pool
+    // TODO: extend the timetolive
+    return messageList[_id].dropAmount;
+  }
 
 }
