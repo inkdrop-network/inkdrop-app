@@ -3,15 +3,9 @@ const InkDrop = artifacts.require('InkDrop')
 contract('InkDrop (follower functions)', async accounts => {
   before('initial setup with user creation', async () => {
     let inkdropInstance = await InkDrop.deployed()
-    await inkdropInstance.createUser(accounts[5], 'testuser5', 'testbio', 'testhash', {
-      from: accounts[5],
-    })
-    await inkdropInstance.createUser(accounts[6], 'testuser6', 'testbio', 'testhash', {
-      from: accounts[6],
-    })
-    await inkdropInstance.createUser(accounts[7], 'testuser7', 'testbio', 'testhash', {
-      from: accounts[7],
-    })
+    await inkdropInstance.createUser('testuser5', 'testbio', 'testhash', { from: accounts[5] })
+    await inkdropInstance.createUser('testuser6', 'testbio', 'testhash', { from: accounts[6] })
+    await inkdropInstance.createUser('testuser7', 'testbio', 'testhash', { from: accounts[7] })
   })
 
   it('...follow user', async () => {

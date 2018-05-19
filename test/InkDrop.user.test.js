@@ -18,9 +18,7 @@ contract('InkDrop (basic user CRUD functions)', function(accounts) {
       .then(function(instance) {
         inkdropInstance = instance
 
-        return inkdropInstance.createUser(accounts[0], 'testuser', 'testbio', 'testhash', {
-          from: accounts[0],
-        })
+        return inkdropInstance.createUser('testuser', 'testbio', 'testhash', { from: accounts[0] })
       })
       .then(function() {
         return inkdropInstance.getUserCount.call()
@@ -44,9 +42,7 @@ contract('InkDrop (basic user CRUD functions)', function(accounts) {
       .then(function(instance) {
         inkdropInstance = instance
 
-        return inkdropInstance.createUser(accounts[0], 'testuser', 'testbio', 'testhash', {
-          from: accounts[0],
-        })
+        return inkdropInstance.createUser('testuser', 'testbio', 'testhash', { from: accounts[0] })
       })
       .then(function() {
         assert.fail('Should throw error.')
@@ -62,9 +58,7 @@ contract('InkDrop (basic user CRUD functions)', function(accounts) {
       .then(function(instance) {
         inkdropInstance = instance
 
-        return inkdropInstance.createUser(accounts[0], '', 'testbio', 'testhash', {
-          from: accounts[0],
-        })
+        return inkdropInstance.createUser('', 'testbio', 'testhash', { from: accounts[1] })
       })
       .then(function() {
         assert.fail('Should throw error.')
@@ -80,7 +74,7 @@ contract('InkDrop (basic user CRUD functions)', function(accounts) {
       .then(function(instance) {
         inkdropInstance = instance
 
-        return inkdropInstance.deleteUser(accounts[0])
+        return inkdropInstance.deleteUser({ from: accounts[0] })
       })
       .then(function() {
         return inkdropInstance.getUserCount.call()
@@ -95,7 +89,7 @@ contract('InkDrop (basic user CRUD functions)', function(accounts) {
       .then(function(instance) {
         inkdropInstance = instance
 
-        return inkdropInstance.deleteUser(accounts[0])
+        return inkdropInstance.deleteUser({ from: accounts[0] })
       })
       .then(function() {
         assert.fail('Should throw error.')
@@ -111,12 +105,12 @@ contract('InkDrop (basic user CRUD functions)', function(accounts) {
       .then(function(instance) {
         inkdropInstance = instance
 
-        return inkdropInstance.createUser(accounts[0], 'testuser1', 'testbio1', 'testhash1', {
+        return inkdropInstance.createUser('testuser1', 'testbio1', 'testhash1', {
           from: accounts[0],
         })
       })
       .then(function() {
-        return inkdropInstance.createUser(accounts[1], 'testuser2', 'testbio2', 'testhash2', {
+        return inkdropInstance.createUser('testuser2', 'testbio2', 'testhash2', {
           from: accounts[1],
         })
       })
@@ -157,7 +151,7 @@ contract('InkDrop (basic user CRUD functions)', function(accounts) {
       .then(function(instance) {
         inkdropInstance = instance
 
-        return inkdropInstance.createUser(accounts[2], 'testuser3', 'testbio3', 'testhash3', {
+        return inkdropInstance.createUser('testuser3', 'testbio3', 'testhash3', {
           from: accounts[2],
         })
       })
@@ -166,7 +160,7 @@ contract('InkDrop (basic user CRUD functions)', function(accounts) {
       })
       .then(function(userCount) {
         assert.equal(userCount.toNumber(), 3, '3 user should have been created.')
-        return inkdropInstance.deleteUser(accounts[0])
+        return inkdropInstance.deleteUser({ from: accounts[0] })
       })
       .then(function() {
         return inkdropInstance.getUserAtIndex(0)
@@ -190,7 +184,7 @@ contract('InkDrop (basic user CRUD functions)', function(accounts) {
       .then(function(instance) {
         inkdropInstance = instance
 
-        return inkdropInstance.updateUsername(accounts[1], 'newtestname')
+        return inkdropInstance.updateUsername('newtestname', { from: accounts[1] })
       })
       .then(function() {
         return inkdropInstance.getUser(accounts[1])
@@ -204,7 +198,7 @@ contract('InkDrop (basic user CRUD functions)', function(accounts) {
     return InkDrop.deployed()
       .then(function(instance) {
         inkdropInstance = instance
-        return inkdropInstance.updateUsername(accounts[1], '')
+        return inkdropInstance.updateUsername('', { from: accounts[1] })
       })
       .then(function() {
         assert.fail('Should throw error.')
@@ -220,7 +214,7 @@ contract('InkDrop (basic user CRUD functions)', function(accounts) {
       .then(function(instance) {
         inkdropInstance = instance
 
-        return inkdropInstance.updateUserIpfsHash(accounts[1], 'newhash')
+        return inkdropInstance.updateUserIpfsHash('newhash', { from: accounts[1] })
       })
       .then(function() {
         return inkdropInstance.getUser(accounts[1])
@@ -235,7 +229,7 @@ contract('InkDrop (basic user CRUD functions)', function(accounts) {
       .then(function(instance) {
         inkdropInstance = instance
 
-        return inkdropInstance.updateUserIpfsHash(accounts[1], '')
+        return inkdropInstance.updateUserIpfsHash('', { from: accounts[1] })
       })
       .then(function() {
         assert.fail('Should throw error.')
@@ -251,7 +245,7 @@ contract('InkDrop (basic user CRUD functions)', function(accounts) {
       .then(function(instance) {
         inkdropInstance = instance
 
-        return inkdropInstance.updateUserBio(accounts[1], 'newbio')
+        return inkdropInstance.updateUserBio('newbio', { from: accounts[1] })
       })
       .then(function() {
         return inkdropInstance.getUser(accounts[1])
@@ -266,7 +260,7 @@ contract('InkDrop (basic user CRUD functions)', function(accounts) {
       .then(function(instance) {
         inkdropInstance = instance
 
-        return inkdropInstance.updateUserBio(accounts[1], '')
+        return inkdropInstance.updateUserBio('', { from: accounts[1] })
       })
       .then(function() {
         assert.fail('Should throw error.')
@@ -282,7 +276,9 @@ contract('InkDrop (basic user CRUD functions)', function(accounts) {
       .then(function(instance) {
         inkdropInstance = instance
 
-        return inkdropInstance.updateUser(accounts[1], 'newusername6', 'newbio6', 'newhash6')
+        return inkdropInstance.updateUser('newusername6', 'newbio6', 'newhash6', {
+          from: accounts[1],
+        })
       })
       .then(function() {
         return inkdropInstance.getUser(accounts[1])
@@ -303,7 +299,7 @@ contract('InkDrop (basic user CRUD functions)', function(accounts) {
       .then(function(instance) {
         inkdropInstance = instance
 
-        return inkdropInstance.updateUser(accounts[1], '', '', '')
+        return inkdropInstance.updateUser('', '', '', { from: accounts[1] })
       })
       .then(function() {
         assert.fail('Should throw error.')

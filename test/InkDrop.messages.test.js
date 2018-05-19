@@ -4,15 +4,9 @@ const MULTIPLIER = 100
 contract('InkDrop (message functions)', async accounts => {
   before('initial setup with user creation', async () => {
     let inkdropInstance = await InkDrop.deployed()
-    await inkdropInstance.createUser(accounts[7], 'testuser7', 'testbio', 'testhash', {
-      from: accounts[7],
-    })
-    await inkdropInstance.createUser(accounts[8], 'testuser8', 'testbio', 'testhash', {
-      from: accounts[8],
-    })
-    await inkdropInstance.createUser(accounts[9], 'testuser9', 'testbio', 'testhash', {
-      from: accounts[9],
-    })
+    await inkdropInstance.createUser('testuser7', 'testbio', 'testhash', { from: accounts[7] })
+    await inkdropInstance.createUser('testuser8', 'testbio', 'testhash', { from: accounts[8] })
+    await inkdropInstance.createUser('testuser9', 'testbio', 'testhash', { from: accounts[9] })
   })
 
   it('...empty initialization', async () => {

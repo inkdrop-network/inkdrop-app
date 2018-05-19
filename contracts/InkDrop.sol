@@ -92,69 +92,69 @@ contract InkDrop {
     return userStructs[_userAddress].followers;
   } 
   
-  function createUser(address _userAddress, bytes32 _username, string _bio, string _ipfsHash) public returns(uint index) {
-    require(!isUser(_userAddress)); 
+  function createUser(bytes32 _username, string _bio, string _ipfsHash) public returns(uint index) {
+    require(!isUser(msg.sender)); 
     require(isValidName(_username));
     
-    userStructs[_userAddress].username = _username;
-    userStructs[_userAddress].bio = _bio;
-    userStructs[_userAddress].ipfsHash = _ipfsHash;
-    userStructs[_userAddress].index = userList.push(_userAddress) - 1;
-    emit LogNewUser(_userAddress, userStructs[_userAddress].index, _username, _bio, _ipfsHash);
+    userStructs[msg.sender].username = _username;
+    userStructs[msg.sender].bio = _bio;
+    userStructs[msg.sender].ipfsHash = _ipfsHash;
+    userStructs[msg.sender].index = userList.push(msg.sender) - 1;
+    emit LogNewUser(msg.sender, userStructs[msg.sender].index, _username, _bio, _ipfsHash);
     return userList.length - 1;
   }
 
-  function deleteUser(address _userAddress) public returns(uint index) {
-    require(isUser(_userAddress)); 
+  function deleteUser() public returns(uint index) {
+    require(isUser(msg.sender)); 
     // this would break referential integrity
-    // require(userStructs[_userAddress].messageIds.length <= 0);
-    uint rowToDelete = userStructs[_userAddress].index;
+    // require(userStructs[msg.sender].messageIds.length <= 0);
+    uint rowToDelete = userStructs[msg.sender].index;
     address keyToMove = userList[userList.length-1];
     userList[rowToDelete] = keyToMove;
     userStructs[keyToMove].index = rowToDelete; 
     userList.length--;
-    emit LogDeleteUser(_userAddress, rowToDelete);
+    emit LogDeleteUser(msg.sender, rowToDelete);
     emit LogUpdateUser(keyToMove, rowToDelete, userStructs[keyToMove].username, userStructs[keyToMove].bio, userStructs[keyToMove].ipfsHash);
     return rowToDelete;
   }
   
-  function updateUserIpfsHash(address _userAddress, string _ipfsHash) public returns(bool success) {
-    require(isUser(_userAddress)); 
+  function updateUserIpfsHash(string _ipfsHash) public returns(bool success) {
+    require(isUser(msg.sender)); 
     require(bytes(_ipfsHash).length > 0);
 
-    userStructs[_userAddress].ipfsHash = _ipfsHash;
-    emit LogUpdateUser(_userAddress, userStructs[_userAddress].index, userStructs[_userAddress].username, userStructs[_userAddress].bio, _ipfsHash);
+    userStructs[msg.sender].ipfsHash = _ipfsHash;
+    emit LogUpdateUser(msg.sender, userStructs[msg.sender].index, userStructs[msg.sender].username, userStructs[msg.sender].bio, _ipfsHash);
     return true;
   }
 
-  function updateUserBio(address _userAddress, string _bio) public returns(bool success) {
-    require(isUser(_userAddress)); 
+  function updateUserBio(string _bio) public returns(bool success) {
+    require(isUser(msg.sender)); 
     require(bytes(_bio).length > 0);
 
-    userStructs[_userAddress].bio = _bio;
-    emit LogUpdateUser(_userAddress, userStructs[_userAddress].index, userStructs[_userAddress].username, _bio, userStructs[_userAddress].ipfsHash);
+    userStructs[msg.sender].bio = _bio;
+    emit LogUpdateUser(msg.sender, userStructs[msg.sender].index, userStructs[msg.sender].username, _bio, userStructs[msg.sender].ipfsHash);
     return true;
   }
 
-  function updateUsername(address _userAddress, bytes32 _username) public returns(bool success) {
-    require(isUser(_userAddress)); 
+  function updateUsername(bytes32 _username) public returns(bool success) {
+    require(isUser(msg.sender)); 
     require(isValidName(_username));
 
-    userStructs[_userAddress].username = _username;
-    emit LogUpdateUser(_userAddress, userStructs[_userAddress].index, _username, userStructs[_userAddress].bio, userStructs[_userAddress].ipfsHash);
+    userStructs[msg.sender].username = _username;
+    emit LogUpdateUser(msg.sender, userStructs[msg.sender].index, _username, userStructs[msg.sender].bio, userStructs[msg.sender].ipfsHash);
     return true;
   }
 
-  function updateUser(address _userAddress, bytes32 _username, string _bio, string _ipfsHash) public returns(bool success) {
-    require(isUser(_userAddress)); 
+  function updateUser(bytes32 _username, string _bio, string _ipfsHash) public returns(bool success) {
+    require(isUser(msg.sender)); 
     require(isValidName(_username));
     require(bytes(_bio).length > 0);
     require(bytes(_ipfsHash).length > 0);
 
-    userStructs[_userAddress].username = _username;
-    userStructs[_userAddress].bio = _bio;
-    userStructs[_userAddress].ipfsHash = _ipfsHash;
-    emit LogUpdateUser(_userAddress, userStructs[_userAddress].index, _username, _bio, _ipfsHash);
+    userStructs[msg.sender].username = _username;
+    userStructs[msg.sender].bio = _bio;
+    userStructs[msg.sender].ipfsHash = _ipfsHash;
+    emit LogUpdateUser(msg.sender, userStructs[msg.sender].index, _username, _bio, _ipfsHash);
     return true;
   }
   
