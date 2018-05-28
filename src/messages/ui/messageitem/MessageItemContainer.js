@@ -1,12 +1,9 @@
 import { connect } from 'react-redux'
 import MessageItem from './MessageItem'
-import { likeMessage, dropMessage, commentMessage, getComments } from './MessageItemActions'
+import { likeMessage, dropMessage } from './MessageItemActions'
 
 const mapStateToProps = (state, ownProps) => {
-  return {
-    username: state.user.data.name,
-    imgUrl: state.user.data.imgUrl,
-  }
+  return {}
 }
 
 const mapDispatchToProps = dispatch => {
@@ -16,12 +13,6 @@ const mapDispatchToProps = dispatch => {
     },
     dropMessage: (id, dropsAdd, dropsTotal) => {
       dispatch(dropMessage(id, dropsAdd, dropsTotal))
-    },
-    commentMessage: (parent, username, imgUrl, message) => {
-      dispatch(commentMessage(parent, username, imgUrl, message))
-    },
-    getComments: (parent, comments) => {
-      dispatch(getComments(parent, comments))
     },
   }
 }

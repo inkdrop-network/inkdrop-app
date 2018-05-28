@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router'
-import { Card, CardBody, CardFooter, Form, FormGroup, Button, Input } from 'reactstrap'
+import { Card, CardBody, CardFooter } from 'reactstrap'
 import Moment from 'react-moment'
+import CommentListContainer from '../commentlist/CommentListContainer'
 
 // Images
 import inkdropDark from '../../../../public/icons/icon-inkdrop-dark.svg'
@@ -13,24 +14,11 @@ class MessageItem extends Component {
     super(props)
 
     this.state = {
-      username: this.props.username,
-      newcomment: '',
       comments: this.props.message.comments || [],
       showComments: false,
     }
 
-    this.handleComment = this.handleComment.bind(this)
-    this.commentMessage = this.commentMessage.bind(this)
     this.toggleComments = this.toggleComments.bind(this)
-    this.renderComments = this.renderComments.bind(this)
-    this.renderComment = this.renderComment.bind(this)
-  }
-
-  componentDidMount() {
-    // Fetch comments only for messages that are already on the blockchain and not virutal local messages
-    if (this.props.message.fromBlockchain) {
-      this.props.getComments(this.props.message.id, this.props.message.comments)
-    }
   }
 
   dropMessage(id, dropsTotal) {
@@ -39,21 +27,6 @@ class MessageItem extends Component {
 
   likeMessage(id, likes) {
     this.props.likeMessage(id, likes)
-  }
-
-  handleComment(event) {
-    this.setState({ newcomment: event.target.value })
-  }
-
-  commentMessage(event) {
-    event.preventDefault()
-    console.log('Comment message: ' + this.props.message.id + ' - ' + this.state.newcomment)
-    this.props.commentMessage(
-      this.props.message.id,
-      this.props.username,
-      this.props.imgUrl,
-      this.state.newcomment
-    )
   }
 
   getClass() {
@@ -70,38 +43,6 @@ class MessageItem extends Component {
     this.setState(prevState => {
       return { showComments: !prevState.showComments }
     })
-  }
-
-  renderComment(comment) {
-    // render only comments that are fully fetched from the blockchain and not only initial comments' ids
-    if (comment.id) {
-      return (
-        <CardBody key={`com-${comment.id}`} className="comment-card mb-2">
-          <div className="d-flex flex-row">
-            <img
-              className="mr-2 profile-img"
-              src={comment.userUrl || 'http://via.placeholder.com/50/85bd3e/85bd3e'}
-              alt="profile"
-            />
-            <div>
-              <Link to={`/user/${comment.userAdr}`} className="">
-                <strong className="align-top d-block card-username">c/{comment.username}</strong>
-              </Link>
-              <span className="card-message-time">
-                <Moment fromNow>{comment.timestamp}</Moment>
-              </span>
-            </div>
-          </div>
-          <div className="pt-2">{comment.content}</div>
-        </CardBody>
-      )
-    }
-  }
-
-  renderComments() {
-    if (this.props.message.comments.length > 0) {
-      return this.props.message.comments.map(this.renderComment)
-    }
   }
 
   render() {
@@ -157,20 +98,7 @@ class MessageItem extends Component {
           </div>
         </CardBody>
         <CardFooter className={`comments-card ${commentsClass}`}>
-          {this.renderComments()}
-          <Form onSubmit={this.commentMessage}>
-            <FormGroup>
-              <Input
-                value={this.state.newcomment}
-                onChange={this.handleComment}
-                type="textarea"
-                name="comment"
-                rows="2"
-                placeholder="Your comment"
-              />
-            </FormGroup>
-            <Button color="green">Comment</Button>
-          </Form>
+          <CommentListContainer message={msg} />
         </CardFooter>
       </Card>
     )

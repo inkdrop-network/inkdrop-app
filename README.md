@@ -9,7 +9,6 @@
 # TODOs Front-end
 
 *   Show profile --> get user info via userInfo.call(adr)
-*   Refactor comments (commentlist, commentitem, commentform)
 *   Trigger messagelist re-render if message gets drops (ranking should be changed according to the messages' drops)
 *   Use await/async instead of promise chaining with .then()
 *   Improved error handling
