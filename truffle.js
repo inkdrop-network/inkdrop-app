@@ -9,9 +9,6 @@ module.exports = {
 		development: {
 			host: '127.0.0.1',
 			port: 8545,
-			// provider: function() {
-			// 	return new HDWalletProvider(MNEMONIC, 'http://127.0.0.1:8545/')
-			// },
 			network_id: '*', // Match any network id
 		},
 		ropsten: {
