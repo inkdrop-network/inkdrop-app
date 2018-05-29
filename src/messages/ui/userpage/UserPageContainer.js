@@ -1,4 +1,4 @@
-import { connect } from 'react-redux'
+import { drizzleConnect } from 'drizzle-react'
 import UserPage from './UserPage'
 import { getUserMessages, resetUserMessages, getUserInfo } from './UserPageActions'
 
@@ -23,6 +23,6 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-const UserPageContainer = connect(mapStateToProps, mapDispatchToProps)(UserPage)
+const UserPageContainer = drizzleConnect(UserPage, mapStateToProps, mapDispatchToProps)
 
 export default UserPageContainer

@@ -92,7 +92,7 @@ contract InkDrop {
     return userStructs[_userAddress].followers;
   } 
   
-  function createUser(bytes32 _username, string _bio, string _ipfsHash) public returns(uint index) {
+  function createUser(bytes32 _username, string _bio, string _ipfsHash) public payable returns(uint index) {
     require(!isUser(msg.sender)); 
     require(isValidName(_username));
     
@@ -104,7 +104,7 @@ contract InkDrop {
     return userList.length - 1;
   }
 
-  function deleteUser() public returns(uint index) {
+  function deleteUser() public payable returns(uint index) {
     require(isUser(msg.sender)); 
     // this would break referential integrity
     // require(userStructs[msg.sender].messageIds.length <= 0);
@@ -118,7 +118,7 @@ contract InkDrop {
     return rowToDelete;
   }
   
-  function updateUserIpfsHash(string _ipfsHash) public returns(bool success) {
+  function updateUserIpfsHash(string _ipfsHash) public payable returns(bool success) {
     require(isUser(msg.sender)); 
     require(bytes(_ipfsHash).length > 0);
 
@@ -127,7 +127,7 @@ contract InkDrop {
     return true;
   }
 
-  function updateUserBio(string _bio) public returns(bool success) {
+  function updateUserBio(string _bio) public payable returns(bool success) {
     require(isUser(msg.sender)); 
     require(bytes(_bio).length > 0);
 
@@ -136,7 +136,7 @@ contract InkDrop {
     return true;
   }
 
-  function updateUsername(bytes32 _username) public returns(bool success) {
+  function updateUsername(bytes32 _username) public payable returns(bool success) {
     require(isUser(msg.sender)); 
     require(isValidName(_username));
 
@@ -145,7 +145,7 @@ contract InkDrop {
     return true;
   }
 
-  function updateUser(bytes32 _username, string _bio, string _ipfsHash) public returns(bool success) {
+  function updateUser(bytes32 _username, string _bio, string _ipfsHash) public payable returns(bool success) {
     require(isUser(msg.sender)); 
     require(isValidName(_username));
     require(bytes(_bio).length > 0);
@@ -158,7 +158,7 @@ contract InkDrop {
     return true;
   }
   
-  function followUser(address _user) public returns(uint followers) {
+  function followUser(address _user) public payable returns(uint followers) {
     require(isUser(_user));
     require(isUser(msg.sender));
     require(!(msg.sender == _user));
@@ -170,7 +170,7 @@ contract InkDrop {
     return userStructs[msg.sender].followers.length;
   }
   
-  function unfollowUser(address _user) public returns(uint followers) {
+  function unfollowUser(address _user) public payable returns(uint followers) {
     require(isUser(_user));
     require(isUser(msg.sender));
     require(!(msg.sender == _user));
@@ -198,7 +198,7 @@ contract InkDrop {
   }
   
 
-  function createMessage(string _content, int _dropAmount) public returns(uint index) {
+  function createMessage(string _content, int _dropAmount) public payable returns(uint index) {
     require(isUser(msg.sender));
     require(bytes(_content).length > 0);
     require(_dropAmount >= 0);
@@ -221,7 +221,7 @@ contract InkDrop {
     return messageList.length;
   }
 
-  function likeMessage(uint _id) public returns(uint newlikes) {
+  function likeMessage(uint _id) public payable returns(uint newlikes) {
     require(isUser(msg.sender));
     require(_id < messageList.length);
     // require that a user can not like a message twice
@@ -233,7 +233,7 @@ contract InkDrop {
     return messageList[_id].likes.length;
   }
 
-  function unlikeMessage(uint _id) public returns(uint newlikes) {
+  function unlikeMessage(uint _id) public payable returns(uint newlikes) {
     require(isUser(msg.sender));
     require(_id < messageList.length);
     require(messageList[_id].likes.length > 0);
@@ -248,7 +248,7 @@ contract InkDrop {
     return --messageList[_id].likes.length;
   }
 
-  function dropMessage(uint _id, int _dropAmount) public returns(uint newdrops) {
+  function dropMessage(uint _id, int _dropAmount) public payable returns(uint newdrops) {
     require(isUser(msg.sender));
     require(_id < messageList.length);
     require(_dropAmount > 0);

@@ -1,4 +1,4 @@
-import { connect } from 'react-redux'
+import { drizzleConnect } from 'drizzle-react'
 import MessageItem from './MessageItem'
 import { likeMessage, dropMessage } from './MessageItemActions'
 
@@ -17,6 +17,6 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-const MessageItemContainer = connect(mapStateToProps, mapDispatchToProps)(MessageItem)
+const MessageItemContainer = drizzleConnect(MessageItem, mapStateToProps, mapDispatchToProps)
 
 export default MessageItemContainer

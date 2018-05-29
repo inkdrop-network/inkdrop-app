@@ -1,4 +1,4 @@
-import { connect } from 'react-redux'
+import { drizzleConnect } from 'drizzle-react'
 import ProfileHeader from './ProfileHeader'
 
 const mapStateToProps = (state, ownProps) => {
@@ -15,6 +15,6 @@ const mapDispatchToProps = dispatch => {
   return {}
 }
 
-const ProfileHeaderContainer = connect(mapStateToProps, mapDispatchToProps)(ProfileHeader)
+const ProfileHeaderContainer = drizzleConnect(ProfileHeader, mapStateToProps, mapDispatchToProps)
 
 export default ProfileHeaderContainer

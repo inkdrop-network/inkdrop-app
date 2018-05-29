@@ -1,4 +1,4 @@
-import { connect } from 'react-redux'
+import { drizzleConnect } from 'drizzle-react'
 import CommentList from './CommentList'
 import { getComments } from './CommentListActions'
 
@@ -14,6 +14,6 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-const CommentListContainer = connect(mapStateToProps, mapDispatchToProps)(CommentList)
+const CommentListContainer = drizzleConnect(CommentList, mapStateToProps, mapDispatchToProps)
 
 export default CommentListContainer

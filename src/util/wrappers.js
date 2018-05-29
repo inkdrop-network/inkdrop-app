@@ -13,7 +13,7 @@ export const UserIsAuthenticated = UserAuthWrapper({
 export const UserIsNotAuthenticated = UserAuthWrapper({
   authSelector: state => state.user,
   redirectAction: routerActions.replace,
-  failureRedirectPath: (state, ownProps) => ownProps.location.query.redirect || '/newsfeed',
+  failureRedirectPath: (state, ownProps) => ownProps.location.query.redirect || '/dashboard',
   wrapperDisplayName: 'UserIsNotAuthenticated',
   predicate: user => user.data === null,
   allowRedirectBack: false,

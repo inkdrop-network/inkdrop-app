@@ -1,4 +1,4 @@
-import { connect } from 'react-redux'
+import { drizzleConnect } from 'drizzle-react'
 import MessageList from './MessageList'
 import { getMessages } from './MessageListActions'
 
@@ -16,6 +16,6 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-const MessageListContainer = connect(mapStateToProps, mapDispatchToProps)(MessageList)
+const MessageListContainer = drizzleConnect(MessageList, mapStateToProps, mapDispatchToProps)
 
 export default MessageListContainer

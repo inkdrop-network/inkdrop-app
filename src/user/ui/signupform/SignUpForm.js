@@ -1,16 +1,23 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import { browserHistory } from 'react-router'
 import { Button, Form, FormGroup, FormText, Input } from 'reactstrap'
+import ipfs from '../../../ipfs'
 
 class SignUpForm extends Component {
-  constructor(props) {
+  constructor(props, context) {
     super(props)
+    this.contracts = context.drizzle.contracts
 
     this.state = {
       name: '',
       bio: '',
       userUrl: '',
       buffer: '',
+      ipfsHash: '',
     }
+
+    // TODO: Chech https://github.com/NFhbar/Token-Deployer/blob/master/src/layouts/home/Home.js
   }
 
   onNameChange(event) {
@@ -21,14 +28,42 @@ class SignUpForm extends Component {
     this.setState({ bio: event.target.value })
   }
 
-  handleSubmit(event) {
+  async handleSubmit(event) {
     event.preventDefault()
 
     if (this.state.name.length < 2) {
       return alert('Please fill in your name.')
     }
 
-    this.props.onSignUpFormSubmit(this.state.name, this.state.bio, this.state.buffer)
+    // this.props.onSignUpFormSubmit(this.state.name, this.state.bio, this.state.buffer)
+    if (this.state.ipfsHash === '') {
+      let ipfsHash = await ipfs.add(this.state.buffer)
+      this.setState({ ipfsHash: ipfsHash[0].hash })
+    }
+
+    try {
+      // this.contracts.Authentication.methods.signup
+      let receipt = await this.contracts.InkDrop.methods
+        .createUser(
+          this.context.drizzle.web3.utils.fromAscii(this.state.name),
+          this.state.bio,
+          this.state.ipfsHash
+        )
+        .send()
+      console.log(receipt)
+
+      // Used a manual redirect here as opposed to a wrapper.
+      // This way, once logged in a user can still access the home page.
+      var currentLocation = browserHistory.getCurrentLocation()
+
+      if ('redirect' in currentLocation.query) {
+        return browserHistory.push(decodeURIComponent(currentLocation.query.redirect))
+      }
+
+      return browserHistory.push('/newsfeed')
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   captureFile(event) {
@@ -48,8 +83,11 @@ class SignUpForm extends Component {
   async convertToBuffer(reader) {
     //file is converted to a buffer to prepare for uploading to IPFS
     const buffer = await Buffer.from(reader.result)
-    //set this buffer -using es6 syntax
+    //set this buffer
     this.setState({ buffer: buffer })
+    let ipfsHash = await ipfs.add(buffer)
+    this.setState({ ipfsHash: ipfsHash[0].hash })
+    console.log(ipfsHash[0].hash)
   }
 
   render() {
@@ -98,6 +136,10 @@ class SignUpForm extends Component {
       </Form>
     )
   }
+}
+
+SignUpForm.contextTypes = {
+  drizzle: PropTypes.object,
 }
 
 export default SignUpForm

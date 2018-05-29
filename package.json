@@ -1,7 +1,6 @@
 {
-  "name": "inkdrop-platform",
-  "version": "0.1.0",
-  "private": true,
+  "name": "drizzle-box",
+  "version": "1.0.0",
   "devDependencies": {
     "autoprefixer": "6.5.1",
     "babel-core": "6.17.0",
@@ -16,6 +15,9 @@
     "css-loader": "0.26.0",
     "detect-port": "1.0.1",
     "dotenv": "2.0.0",
+    "drizzle": "^1.1.5",
+    "drizzle-react": "^1.1.1",
+    "drizzle-react-components": "^1.1.0",
     "eslint": "3.8.1",
     "eslint-config-react-app": "^0.5.0",
     "eslint-loader": "1.6.0",
@@ -30,7 +32,7 @@
     "gzip-size": "3.0.0",
     "html-webpack-plugin": "2.24.0",
     "http-proxy-middleware": "0.17.2",
-    "jest": "18.1.0",
+    "jest": "17.0.2",
     "json-loader": "0.5.4",
     "object-assign": "4.1.0",
     "openzeppelin-solidity": "^1.9.0",
@@ -41,6 +43,7 @@
     "recursive-readdir": "2.1.0",
     "strip-ansi": "3.0.1",
     "style-loader": "0.13.1",
+    "truffle": "^4.1.8",
     "truffle-contract": "^1.1.8",
     "truffle-hdwallet-provider": "0.0.5",
     "url-loader": "0.5.7",
@@ -51,6 +54,7 @@
   },
   "dependencies": {
     "bootstrap": "^4.0.0",
+    "eth-block-tracker-es5": "^2.3.2",
     "ipfs-api": "^20.2.0",
     "moment": "^2.22.1",
     "prettier": "^1.12.1",
@@ -58,42 +62,50 @@
     "react-dom": "^15.4.2",
     "react-moment": "^0.7.0",
     "react-redux": "^5.0.2",
-    "react-router": "^3.0.2",
+    "react-router": "^3.2.1",
     "react-router-redux": "^4.0.7",
-    "reactstrap": "^5.0.0-beta.3",
+    "reactstrap": "^6.0.1",
     "redux": "^3.6.0",
     "redux-auth-wrapper": "^1.0.0",
-    "redux-thunk": "^2.2.0",
-    "truffle": "^4.1.8"
+    "redux-saga": "^0.15.3",
+    "redux-thunk": "^2.3.0",
+    "web3": "1.0.0-beta.34"
   },
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom",
-    "format": "prettier --write \"src/**/*.{js,jsx,json,css}\""
+    "format": "prettier --write \"src/**/*.{js,jsx,json,css}\"",
+    "chain": "geth --datadir=\"/tmp/eth/60/01\" --nodiscover --maxpeers 0 --port 30301 --rpc --rpcapi \"db,eth,net,web3\" --rpcport 8101 --verbosity 6 console"
   },
   "jest": {
-    "collectCoverageFrom": ["src/**/*.{js,jsx}"],
-    "setupFiles": ["<rootDir>/config/polyfills.js"],
-    "testMatch": [
-      "<rootDir>/src/**/__tests__/**/*.js?(x)",
-      "<rootDir>/src/**/?(*.)(spec|test).js?(x)"
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx}"
+    ],
+    "setupFiles": [
+      "<rootDir>\\config\\polyfills.js"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>[/\\\\](build|docs|node_modules)[/\\\\]"
     ],
     "testEnvironment": "node",
     "testURL": "http://localhost",
     "transform": {
       "^.+\\.(js|jsx)$": "<rootDir>/node_modules/babel-jest",
-      "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
-      "^(?!.*\\.(js|jsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
+      "^.+\\.css$": "<rootDir>\\config\\jest\\cssTransform.js",
+      "^(?!.*\\.(js|jsx|css|json)$)": "<rootDir>\\config\\jest\\fileTransform.js"
     },
-    "transformIgnorePatterns": ["[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"],
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"
+    ],
     "moduleNameMapper": {
       "^react-native$": "react-native-web"
-    },
-    "moduleFileExtensions": ["web.js", "js", "json", "web.jsx", "jsx"]
+    }
   },
   "babel": {
-    "presets": ["react-app"]
+    "presets": [
+      "react-app"
+    ]
   },
   "eslintConfig": {
     "extends": "react-app"

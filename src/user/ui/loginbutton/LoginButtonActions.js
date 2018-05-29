@@ -12,6 +12,29 @@ function userLoggedIn(user) {
   }
 }
 
+export function loggedInUser(user) {
+  return function(dispatch) {
+    // dispatch(
+    // userLoggedIn({
+    //   name: userName,
+    //   bio: userBio,
+    //   drops: userDrops,
+    //   imgUrl: userImgUrl,
+    //   followers: userFollowers,
+    // })
+    dispatch(userLoggedIn(user))
+    // Used a manual redirect here as opposed to a wrapper.
+    // This way, once logged in a user can still access the home page.
+    var currentLocation = browserHistory.getCurrentLocation()
+
+    if ('redirect' in currentLocation.query) {
+      return browserHistory.push(decodeURIComponent(currentLocation.query.redirect))
+    }
+
+    return browserHistory.push('/signup')
+  }
+}
+
 export function loginUser() {
   let web3 = store.getState().web3.web3Instance
 
