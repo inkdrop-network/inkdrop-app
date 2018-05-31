@@ -1,6 +1,5 @@
 import { drizzleConnect } from 'drizzle-react'
 import SignUpForm from './SignUpForm'
-// import { signedUpUser, signUpUser } from './SignUpFormActions'
 
 const mapStateToProps = (state, ownProps) => {
 	return {
@@ -9,17 +8,14 @@ const mapStateToProps = (state, ownProps) => {
 	}
 }
 
-// const mapDispatchToProps = dispatch => {
-// 	return {
-// 		onSignUpFormSubmit: (name, bio, buffer) => {
-// 			dispatch(signUpUser(name, bio, buffer))
-// 		},
-// 		signedUpUser: () => {
-// 			dispatch(signedUpUser())
-// 		},
-// 	}
-// }
+const mapDispatchToProps = dispatch => {
+	return {
+		onSignupUser: user => {
+			dispatch({ type: 'SIGNUP_REQUESTED', payload: user })
+		},
+	}
+}
 
-const SignUpFormContainer = drizzleConnect(SignUpForm, mapStateToProps)
+const SignUpFormContainer = drizzleConnect(SignUpForm, mapStateToProps, mapDispatchToProps)
 
 export default SignUpFormContainer

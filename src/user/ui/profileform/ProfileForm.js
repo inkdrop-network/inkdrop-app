@@ -1,14 +1,19 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import { Button, Form, FormGroup, Input } from 'reactstrap'
+import ipfs from '../../../ipfs'
 
 class ProfileForm extends Component {
-  constructor(props) {
+  constructor(props, context) {
     super(props)
+    super(props)
+    this.contracts = context.drizzle.contracts
 
     this.state = {
-      name: this.props.name,
-      bio: this.props.bio,
-      userUrl: this.props.imgUrl,
+      name: this.props.user.name,
+      bio: this.props.user.bio,
+      imgUrl: this.props.user.imgUrl,
+      ipfsHash: this.props.user.ipfsHash,
       buffer: '',
     }
   }
@@ -21,14 +26,40 @@ class ProfileForm extends Component {
     this.setState({ bio: event.target.value })
   }
 
-  handleSubmit(event) {
+  async handleSubmit(event) {
     event.preventDefault()
 
     if (this.state.name.length < 2) {
       return alert('Please fill in your name.')
     }
 
-    this.props.onProfileFormSubmit(this.state.name, this.state.bio, this.state.buffer)
+    // TODO: Chech if double upload is needed
+    let ipfsHash = await ipfs.add(this.state.buffer)
+    this.setState({ ipfsHash: ipfsHash[0].hash })
+    this.setState({ imgUrl: `https://gateway.ipfs.io/ipfs/${ipfsHash[0].hash}` })
+
+    try {
+      // this.contracts.Authentication.methods.signup
+      await this.contracts.InkDrop.methods
+        .updateUser(
+          this.context.drizzle.web3.utils.fromAscii(this.state.name),
+          this.state.bio,
+          this.state.ipfsHash
+        )
+        .send()
+
+      // dispatch login saga
+      this.props.onUpdateUser({
+        name: this.state.name,
+        bio: this.state.bio,
+        drops: this.props.user.drops,
+        imgUrl: this.state.imgUrl,
+        ipfsHash: this.state.ipfsHash,
+        followers: this.props.user.followers,
+      })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   captureFile(event) {
@@ -42,7 +73,7 @@ class ProfileForm extends Component {
     const file2 = event.target.files[0]
     let reader2 = new window.FileReader()
     reader2.readAsDataURL(file2)
-    reader2.onloadend = () => this.setState({ userUrl: reader2.result })
+    reader2.onloadend = () => this.setState({ imgUrl: reader2.result })
   }
 
   async convertToBuffer(reader) {
@@ -50,6 +81,9 @@ class ProfileForm extends Component {
     const buffer = await Buffer.from(reader.result)
     //set this buffer -using es6 syntax
     this.setState({ buffer: buffer })
+    let ipfsHash = await ipfs.add(buffer)
+    this.setState({ ipfsHash: ipfsHash[0].hash })
+    this.setState({ imgUrl: `https://gateway.ipfs.io/ipfs/${ipfsHash[0].hash}` })
   }
 
   render() {
@@ -59,7 +93,7 @@ class ProfileForm extends Component {
           <img
             id="update-profile-picture"
             className="profile-img mb-2"
-            src={this.state.userUrl}
+            src={this.state.imgUrl}
             alt="profile"
           />
           <Input
@@ -92,6 +126,10 @@ class ProfileForm extends Component {
       </Form>
     )
   }
+}
+
+ProfileForm.contextTypes = {
+  drizzle: PropTypes.object,
 }
 
 export default ProfileForm

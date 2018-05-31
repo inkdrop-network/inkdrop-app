@@ -15,13 +15,14 @@ const routingMiddleware = routerMiddleware(browserHistory)
 const sagaMiddleware = createSagaMiddleware()
 
 const initialState = {
-  contracts: generateContractsInitialState(drizzleOptions),
+	contracts: generateContractsInitialState(drizzleOptions),
 }
 
 const store = createStore(
-  reducer,
-  initialState,
-  composeEnhancers(applyMiddleware(thunkMiddleware, routingMiddleware, sagaMiddleware))
+	reducer,
+	initialState,
+	composeEnhancers(applyMiddleware(thunkMiddleware, routingMiddleware, sagaMiddleware))
+	// composeEnhancers(applyMiddleware(sagaMiddleware, routingMiddleware))
 )
 
 sagaMiddleware.run(rootSaga)

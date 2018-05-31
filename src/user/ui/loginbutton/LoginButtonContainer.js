@@ -1,6 +1,5 @@
 import { drizzleConnect } from 'drizzle-react'
 import LoginButton from './LoginButton'
-import { loginUser, loggedInUser } from './LoginButtonActions'
 
 const mapStateToProps = (state, ownProps) => {
 	return {
@@ -11,13 +10,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
 	return {
-		onLoginUserClick: event => {
-			event.preventDefault()
-
-			dispatch(loginUser())
-		},
-		loggedInUser: user => {
-			dispatch(loggedInUser(user))
+		onLoginUser: user => {
+			dispatch({ type: 'LOGIN_REQUESTED', payload: user })
 		},
 	}
 }

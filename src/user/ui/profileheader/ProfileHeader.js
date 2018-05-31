@@ -16,6 +16,9 @@ import iconMessage from '../../../../public/icons/icon-message.svg'
 import inkdropWhite from '../../../../public/icons/icon-inkdrop-white.svg'
 
 class ProfileHeader extends Component {
+  shouldComponentUpdate(nextProps, nextState) {
+    return false
+  }
   render() {
     return (
       <Nav navbar>
@@ -24,13 +27,13 @@ class ProfileHeader extends Component {
             <img
               id="profile-picture"
               className="mr-1 profile-img"
-              src={this.props.imgUrl}
+              src={this.props.user.imgUrl}
               alt="profile"
             />
           </DropdownToggle>
           <DropdownMenu right>
-            <DropdownItem disabled>{this.props.name}</DropdownItem>
-            <DropdownItem header>{this.props.bio}</DropdownItem>
+            <DropdownItem disabled>{this.props.user.name}</DropdownItem>
+            <DropdownItem header>{this.props.user.bio}</DropdownItem>
             <DropdownItem>
               <Link to="/profile" className="">
                 Update profile
@@ -71,7 +74,7 @@ class ProfileHeader extends Component {
             alt="drops"
           />
           <span id="profile-drop-number" className="nav-icon-nr font-white align-bottom ml-1">
-            {this.props.drops}
+            {this.props.user.drops}
           </span>
         </NavItem>
       </Nav>

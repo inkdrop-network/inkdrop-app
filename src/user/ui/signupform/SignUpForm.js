@@ -17,7 +17,7 @@ class SignUpForm extends Component {
       ipfsHash: '',
     }
 
-    // TODO: Chech https://github.com/NFhbar/Token-Deployer/blob/master/src/layouts/home/Home.js
+    // TODO: Check https://github.com/NFhbar/Token-Deployer/blob/master/src/layouts/home/Home.js
   }
 
   onNameChange(event) {
@@ -43,27 +43,36 @@ class SignUpForm extends Component {
 
     try {
       // this.contracts.Authentication.methods.signup
-      let receipt = await this.contracts.InkDrop.methods
+      await this.contracts.InkDrop.methods
         .createUser(
           this.context.drizzle.web3.utils.fromAscii(this.state.name),
           this.state.bio,
           this.state.ipfsHash
         )
         .send()
-      console.log(receipt)
 
-      // Used a manual redirect here as opposed to a wrapper.
-      // This way, once logged in a user can still access the home page.
-      var currentLocation = browserHistory.getCurrentLocation()
-
-      if ('redirect' in currentLocation.query) {
-        return browserHistory.push(decodeURIComponent(currentLocation.query.redirect))
-      }
-
-      return browserHistory.push('/newsfeed')
+      // dispatch login saga
+      this.props.onSignupUser({
+        name: this.context.drizzle.web3.utils.fromAscii(this.state.name),
+        bio: this.state.bio,
+        drops: 0,
+        ipfsHash: this.state.ipfsHash,
+        imgUrl: `https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}`,
+        followers: 0,
+      })
     } catch (error) {
       console.log(error)
     }
+
+    // Used a manual redirect here as opposed to a wrapper.
+    // This way, once logged in a user can still access the home page.
+    var currentLocation = browserHistory.getCurrentLocation()
+
+    if ('redirect' in currentLocation.query) {
+      return browserHistory.push(decodeURIComponent(currentLocation.query.redirect))
+    }
+
+    browserHistory.push('/newsfeed')
   }
 
   captureFile(event) {
@@ -87,7 +96,6 @@ class SignUpForm extends Component {
     this.setState({ buffer: buffer })
     let ipfsHash = await ipfs.add(buffer)
     this.setState({ ipfsHash: ipfsHash[0].hash })
-    console.log(ipfsHash[0].hash)
   }
 
   render() {

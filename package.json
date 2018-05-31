@@ -1,6 +1,6 @@
 {
-  "name": "drizzle-box",
-  "version": "1.0.0",
+  "name": "InkDrop",
+  "version": "0.0.1",
   "devDependencies": {
     "autoprefixer": "6.5.1",
     "babel-core": "6.17.0",
@@ -57,7 +57,7 @@
     "eth-block-tracker-es5": "^2.3.2",
     "ipfs-api": "^20.2.0",
     "moment": "^2.22.1",
-    "prettier": "^1.12.1",
+    "prettier": "^1.13.3",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "react-moment": "^0.7.0",

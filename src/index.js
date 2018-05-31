@@ -36,14 +36,15 @@ const history = syncHistoryWithStore(browserHistory, store)
 //</Route>
 
 ReactDOM.render(
-  <DrizzleProvider options={drizzleOptions}>
+  <DrizzleProvider options={drizzleOptions} store={store}>
     <Provider store={store}>
       <LoadingContainer>
         <Router history={history}>
           <Route path="/" component={App}>
             <IndexRoute component={Home} />
-            <Route path="signup" component={UserIsNotAuthenticated(SignUp)} />
             <Route path="newsfeed" component={UserIsAuthenticated(Newsfeed)} />
+            <Route path="signup" component={UserIsNotAuthenticated(SignUp)} />
+            <Route path="profile" component={UserIsAuthenticated(Profile)} />
           </Route>
         </Router>
       </LoadingContainer>
