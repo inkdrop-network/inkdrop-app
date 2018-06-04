@@ -12,7 +12,7 @@
 - Show errors for blockchain transaction
 - Trigger messagelist re-render if message gets drops (ranking should be changed according to the messages' drops)
 - Use await/async instead of promise chaining with .then()
-- Improved error handling
+- Improved error handling (see https://github.com/NFhbar/Token-Deployer/blob/master/src/layouts/home/Home.js)
 - Comments dropdown caret inline
 - Comment issue after re-rendering: new BigNumber() not a number:
 - Image resizing on ipfs upload

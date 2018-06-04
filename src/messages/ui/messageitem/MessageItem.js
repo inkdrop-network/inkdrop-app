@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import { Link } from 'react-router'
 import { Card, CardBody, CardFooter } from 'reactstrap'
 import Moment from 'react-moment'
@@ -10,23 +11,92 @@ import iconLike from '../../../../public/icons/icon-like.svg'
 import iconComment from '../../../../public/icons/icon-comments.svg'
 
 class MessageItem extends Component {
-  constructor(props) {
+  constructor(props, context) {
     super(props)
+    this.contracts = context.drizzle.contracts
 
     this.state = {
-      comments: this.props.message.comments || [],
+      comments: [],
       showComments: false,
+      message: {
+        content: '',
+        username: '',
+        timestamp: Date.now(),
+        timetolive: Date.now(),
+        likes: '',
+        drops: '',
+        userUrl: '', //`https://gateway.ipfs.io/ipfs/${''}`,
+        userAdr: '',
+        id: '',
+        comments: [],
+        fromBlockchain: false,
+      },
+      user: {
+        name: '',
+        bio: '',
+        drops: '',
+        ipfsHash: '',
+        imgUrl: '',
+        followers: '',
+      },
     }
 
+    this.contracts.InkDrop.methods
+      .getMessage(this.props.msgId)
+      .call()
+      .then(tmpMsg => {
+        this.userDataKey = this.contracts.InkDrop.methods.getUser.cacheCall(tmpMsg.writtenBy)
+        let msg = {
+          content: tmpMsg.content,
+          username: '',
+          timestamp: new Date(tmpMsg.timestamp * 1000),
+          timetolive: new Date(tmpMsg.timetolive * 1000),
+          likes: parseInt(tmpMsg.likes, 10),
+          drops: parseInt(tmpMsg.drops, 10) / 100,
+          userUrl: '',
+          userAdr: tmpMsg.writtenBy,
+          id: this.props.msgId,
+          comments: tmpMsg.comments.map(function(e) {
+            return parseInt(e, 10)
+          }),
+          fromBlockchain: true,
+        }
+        this.setState({ message: msg })
+      })
+
     this.toggleComments = this.toggleComments.bind(this)
+    this.likeMessage = this.likeMessage.bind(this)
+    this.dropMessage = this.dropMessage.bind(this)
   }
 
-  dropMessage(id, dropsTotal) {
-    this.props.dropMessage(id, 1, dropsTotal)
+  async dropMessage() {
+    // TODO: add slider for amount of drops to be submitted
+    let newDrops = 1
+    try {
+      await this.contracts.InkDrop.methods.dropMessage(this.props.msgId, newDrops).send()
+      this.setState({
+        message: {
+          ...this.state.message,
+          drops: this.state.message.drops + newDrops,
+        },
+      })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
-  likeMessage(id, likes) {
-    this.props.likeMessage(id, likes)
+  async likeMessage() {
+    try {
+      await this.contracts.InkDrop.methods.likeMessage(this.props.msgId).send()
+      this.setState({
+        message: {
+          ...this.state.message,
+          likes: this.state.message.likes + 1,
+        },
+      })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   getClass() {
@@ -48,7 +118,23 @@ class MessageItem extends Component {
   render() {
     let commentsClass = this.getClass()
     let commentsNrClass = this.getNrClass()
-    let msg = this.props.message
+    let user = this.state.user
+    if (this.userDataKey in this.props.InkDrop.getUser) {
+      let tmpUser = this.props.InkDrop.getUser[this.userDataKey].value
+      user = {
+        name: this.context.drizzle.web3.utils.toUtf8(tmpUser.username),
+        bio: tmpUser.bio,
+        drops: parseInt(tmpUser.drops, 10) / 100,
+        ipfsHash: tmpUser.ipfsHash,
+        imgUrl: `https://gateway.ipfs.io/ipfs/${tmpUser.ipfsHash}`,
+        followers: parseInt(tmpUser.followers, 10),
+      }
+    }
+
+    let msg = this.state.message
+    msg.username = user.name
+    msg.imgUrl = user.imgUrl
+
     return (
       <Card className="message-card mb-4">
         <CardBody className="d-flex flex-row pb-2">
@@ -70,17 +156,13 @@ class MessageItem extends Component {
         <CardBody className="pt-2">
           <div className="row">
             <div className="col">
-              <div
-                className="drop-message-button float-left"
-                onClick={() => this.dropMessage(msg.id, msg.drops)}>
+              <div className="drop-message-button float-left" onClick={this.dropMessage}>
                 <img src={inkdropDark} width="20" height="20" className="drops" alt="" />
                 <span className="drop-number icon-number ml-1">{msg.drops}</span>
               </div>
             </div>
             <div className="col text-center">
-              <div
-                className="like-message-button mx-auto"
-                onClick={() => this.likeMessage(msg.id, msg.likes)}>
+              <div className="like-message-button mx-auto" onClick={this.likeMessage}>
                 <img src={iconLike} width="20" height="20" className="" alt="likes" />
                 <span className="like-number icon-number ml-1">{msg.likes}</span>
               </div>
@@ -97,12 +179,16 @@ class MessageItem extends Component {
             </div>
           </div>
         </CardBody>
-        <CardFooter className={`comments-card ${commentsClass}`}>
-          <CommentListContainer message={msg} />
-        </CardFooter>
+        <CardFooter className={`comments-card ${commentsClass}`} />
       </Card>
     )
   }
+
+  //<CommentListContainer message={msg} />
+}
+
+MessageItem.contextTypes = {
+  drizzle: PropTypes.object,
 }
 
 export default MessageItem

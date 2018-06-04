@@ -1,14 +1,15 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import { Button, Form, FormGroup, Input, Card, CardBody } from 'reactstrap'
 
 class MessageForm extends Component {
-  constructor(props) {
+  constructor(props, context) {
     super(props)
+    this.contracts = context.drizzle.contracts
 
     this.state = {
-      content: this.props.content,
-      username: this.props.username,
-      imgUrl: this.props.imgUrl || 'http://via.placeholder.com/50/85bd3e/85bd3e',
+      content: '',
+      drops: 1, // TODO: add drop slider
       focus: false,
     }
   }
@@ -30,14 +31,40 @@ class MessageForm extends Component {
     this.setState({ content: event.target.value })
   }
 
-  handleSubmit(event) {
+  async handleSubmit(event) {
     event.preventDefault()
     if (this.state.content === '' && this.state.content.length < 2) {
       return alert('Please share something valuable.')
     }
 
-    this.props.onMessageSubmit(this.state.content, this.state.username, this.state.imgUrl)
-    this.setState({ content: '' })
+    if (this.state.drops <= 0) {
+      return alert('Please add some drops to your post.')
+    }
+
+    try {
+      const stackId = await this.contracts.InkDrop.methods.createMessage.cacheSend(
+        this.state.content,
+        this.state.drops
+      )
+
+      let newMsg = {
+        content: this.state.content,
+        username: this.props.user.name,
+        timestamp: Date.now(),
+        likes: 0,
+        drops: this.state.drops,
+        userUrl: this.props.user.imgUrl,
+        userAdr: this.props.accounts[0],
+        id: stackId,
+        comments: [],
+        fromBlockchain: false,
+      }
+      // trigger saga
+      this.props.onCreateMessage(newMsg)
+      this.setState({ content: '' })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   render() {
@@ -49,12 +76,12 @@ class MessageForm extends Component {
             <img
               id="post-message-profile-picture"
               className="mr-2 profile-img"
-              src={this.state.imgUrl}
+              src={this.props.user.imgUrl}
               alt="profile"
             />
             <div>
               <strong id="post-message-username" className="align-top d-block card-username">
-                c/{this.state.username}
+                c/{this.props.user.name}
               </strong>
               <span className="card-message-time">now</span>
             </div>
@@ -120,6 +147,10 @@ class MessageForm extends Component {
       </div>
     )
   }
+}
+
+MessageForm.contextTypes = {
+  drizzle: PropTypes.object,
 }
 
 export default MessageForm

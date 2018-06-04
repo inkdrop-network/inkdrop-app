@@ -1,6 +1,6 @@
 const initialState = {
-  data: null,
-  userdata: null,
+  data: [],
+  userdata: [],
 }
 
 const messagesReducer = (state = initialState, action) => {

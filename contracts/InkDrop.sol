@@ -60,7 +60,7 @@ contract InkDrop {
   event LogUpdateUser(address indexed userAddress, uint index, bytes32 username, string bio, string ipfsHash);
   event LogDeleteUser(address indexed userAddress, uint index);
   
-  function isUser(address _userAddress) private view returns(bool isIndeed) {
+  function isUser(address _userAddress) public view returns(bool isIndeed) {
      // if the list is empty, the requested user is not present
     if(userList.length == 0) return false;
     // true = exists

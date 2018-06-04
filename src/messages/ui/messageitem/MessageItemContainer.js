@@ -1,22 +1,12 @@
 import { drizzleConnect } from 'drizzle-react'
 import MessageItem from './MessageItem'
-import { likeMessage, dropMessage } from './MessageItemActions'
 
 const mapStateToProps = (state, ownProps) => {
-  return {}
+	return {
+		InkDrop: state.contracts.InkDrop,
+	}
 }
 
-const mapDispatchToProps = dispatch => {
-  return {
-    likeMessage: (id, likes) => {
-      dispatch(likeMessage(id, likes))
-    },
-    dropMessage: (id, dropsAdd, dropsTotal) => {
-      dispatch(dropMessage(id, dropsAdd, dropsTotal))
-    },
-  }
-}
-
-const MessageItemContainer = drizzleConnect(MessageItem, mapStateToProps, mapDispatchToProps)
+const MessageItemContainer = drizzleConnect(MessageItem, mapStateToProps)
 
 export default MessageItemContainer

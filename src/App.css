@@ -178,7 +178,7 @@ footer .list-inline {
 .card .like-message-button,
 .card .drop-message-button,
 .card .comment-message-button {
-  width: 40px;
+  width: 3rem;
 }
 
 .card .comment-message-button .comment-number::after {

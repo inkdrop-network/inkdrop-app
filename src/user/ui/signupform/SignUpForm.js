@@ -53,7 +53,7 @@ class SignUpForm extends Component {
 
       // dispatch login saga
       this.props.onSignupUser({
-        name: this.context.drizzle.web3.utils.fromAscii(this.state.name),
+        name: this.state.name,
         bio: this.state.bio,
         drops: 0,
         ipfsHash: this.state.ipfsHash,

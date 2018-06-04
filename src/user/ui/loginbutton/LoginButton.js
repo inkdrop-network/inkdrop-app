@@ -7,22 +7,24 @@ class LoginButton extends Component {
 		super(props)
 		this.contracts = context.drizzle.contracts
 
-		this.userDataKey = this.contracts.InkDrop.methods.getUser.cacheCall(this.props.accounts[0])
+		// this.userDataKey = this.contracts.InkDrop.methods.getUser.cacheCall(this.props.accounts[0])
 	}
 
-	handleLogin(event) {
+	async handleLogin(event) {
 		event.preventDefault()
 
-		if (this.userDataKey in this.props.InkDrop.getUser) {
+		let isUser = await this.contracts.InkDrop.methods.isUser(this.props.accounts[0]).call()
+
+		if (isUser) {
 			// // If the data is here, get it and display it
-			let user = this.props.InkDrop.getUser[this.userDataKey].value
+			let user = await this.contracts.InkDrop.methods.getUser(this.props.accounts[0]).call()
 			let newUser = {
-				name: this.context.drizzle.web3.utils.toUtf8(user[0]),
-				bio: user[1],
-				drops: parseInt(user[2], 10),
-				ipfsHash: user[3],
-				imgUrl: `https://gateway.ipfs.io/ipfs/${user[3]}`,
-				followers: parseInt(user[4], 10),
+				name: this.context.drizzle.web3.utils.toUtf8(user.username),
+				bio: user.bio,
+				drops: parseInt(user.drops, 10) / 100,
+				ipfsHash: user.ipfsHash,
+				imgUrl: `https://gateway.ipfs.io/ipfs/${user.ipfsHash}`,
+				followers: parseInt(user.followers, 10),
 			}
 			// trigger saga
 			this.props.onLoginUser(newUser)

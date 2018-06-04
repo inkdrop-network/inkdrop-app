@@ -1,20 +1,21 @@
 import { drizzleConnect } from 'drizzle-react'
 import MessageForm from './MessageForm'
-import { postMessage } from './MessageFormActions'
 
 const mapStateToProps = (state, ownProps) => {
-  return {
-    username: state.user.data.name,
-    imgUrl: state.user.data.imgUrl,
-  }
+	return {
+		user: state.user.data,
+		accounts: state.accounts,
+		transactionStack: state.transactionStack,
+		transactions: state.transactions,
+	}
 }
 
 const mapDispatchToProps = dispatch => {
-  return {
-    onMessageSubmit: (content, username, imgUrl) => {
-      dispatch(postMessage(content, username, imgUrl))
-    },
-  }
+	return {
+		onCreateMessage: message => {
+			dispatch({ type: 'MESSAGE_REQUESTED', payload: message })
+		},
+	}
 }
 
 const MessageFormContainer = drizzleConnect(MessageForm, mapStateToProps, mapDispatchToProps)
