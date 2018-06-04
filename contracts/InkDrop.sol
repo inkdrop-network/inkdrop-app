@@ -54,7 +54,7 @@ contract InkDrop {
   
   // mapping(uint => Message) private messageStructs;
   Message[] private messageList;
-    // Each address is linked to its liked messages
+  Message[] private commentList;
 
   event LogNewUser   (address indexed userAddress, uint index, bytes32 username, string bio, string ipfsHash);
   event LogUpdateUser(address indexed userAddress, uint index, bytes32 username, string bio, string ipfsHash);
@@ -69,6 +69,13 @@ contract InkDrop {
 
   function isValidName(bytes32 _username) private pure returns(bool isValid) {
     return (!(_username == 0x0));
+  }
+
+  function isMessage(uint _parent) public view returns(bool isIndeed) {
+     // if the list is empty, the requested message is not present
+    if(messageList.length == 0) return false;
+    // true = exists
+    return (messageList.length > _parent);
   }
 
   function getUserCount() public constant returns(uint count) {
@@ -262,6 +269,32 @@ contract InkDrop {
     // TODO: payout of drops to InkDrop and incentive pool
     // TODO: extend the timetolive
     return messageList[_id].dropAmount;
+  }
+
+    // Write a comment
+  function createComment(uint256 _parent, string _content) public payable returns(uint index) {
+    require(isUser(msg.sender));
+    require(bytes(_content).length > 0);
+    require(isMessage(_parent));
+
+    uint256 commentId = commentList.length;
+    Message memory comment;
+    // = Message(_content, msg.sender, now, 0, 0, msgId, -1, comments);
+    comment.content = _content;
+    comment.writtenBy = msg.sender;
+    comment.timestamp = now;
+    comment.id = commentId;
+    comment.parent = _parent;
+    comment.dropAmount = 0;
+    commentList.push(comment);
+    messageList[_parent].comments.push(commentId);
+    return commentId;
+  }
+
+  function getComment(uint _commentId) public constant returns(uint parent, string content, address writtenBy, uint timestamp, uint timetolive, uint likes, uint drops) {
+    require(_commentId < commentList.length);
+    return (commentList[_commentId].parent, commentList[_commentId].content, commentList[_commentId].writtenBy, commentList[_commentId].timestamp, 
+      commentList[_commentId].timetolive, commentList[_commentId].likes.length, commentList[_commentId].dropAmount);
   }
 
 }

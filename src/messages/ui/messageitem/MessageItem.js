@@ -183,9 +183,8 @@ class MessageItem extends Component {
       </Card>
     )
   }
-
-  //<CommentListContainer message={msg} />
 }
+// <CommentListContainer message={msg} />
 
 MessageItem.contextTypes = {
   drizzle: PropTypes.object,

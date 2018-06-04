@@ -5,9 +5,9 @@ import CommentFormContainer from '../commentform/CommentFormContainer'
 class CommentList extends Component {
   componentDidMount() {
     // Fetch comments only for messages that are already on the blockchain and not virutal local messages
-    if (this.props.message.fromBlockchain) {
-      this.props.getComments(this.props.message.id, this.props.message.comments)
-    }
+    // if (this.props.message.fromBlockchain) {
+    //   this.props.getComments(this.props.message.id, this.props.message.comments)
+    // }
   }
 
   render() {
