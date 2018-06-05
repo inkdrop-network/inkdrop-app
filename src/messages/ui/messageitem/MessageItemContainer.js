@@ -7,6 +7,14 @@ const mapStateToProps = (state, ownProps) => {
 	}
 }
 
-const MessageItemContainer = drizzleConnect(MessageItem, mapStateToProps)
+const mapDispatchToProps = dispatch => {
+	return {
+		onMessageGot: message => {
+			dispatch({ type: 'MESSAGE_FETCH_REQUESTED', payload: message })
+		},
+	}
+}
+
+const MessageItemContainer = drizzleConnect(MessageItem, mapStateToProps, mapDispatchToProps)
 
 export default MessageItemContainer

@@ -1,6 +1,6 @@
-import { put } from 'redux-saga/effects'
+import { put, takeLatest } from 'redux-saga/effects'
 
-export const USER_LOGGED_IN = 'USER_LOGGED_IN'
+const USER_LOGGED_IN = 'USER_LOGGED_IN'
 function userLoggedIn(user) {
 	return {
 		type: USER_LOGGED_IN,
@@ -8,15 +8,15 @@ function userLoggedIn(user) {
 	}
 }
 
-export function* logUserIn(action) {
+function* logUserIn(action) {
 	yield put(userLoggedIn(action.payload))
 }
 
-export function* signUserUp(action) {
+function* signUserUp(action) {
 	yield put(userLoggedIn(action.payload))
 }
 
-export const USER_LOGGED_OUT = 'USER_LOGGED_OUT'
+const USER_LOGGED_OUT = 'USER_LOGGED_OUT'
 function userLoggedOut(user) {
 	return {
 		type: USER_LOGGED_OUT,
@@ -24,11 +24,11 @@ function userLoggedOut(user) {
 	}
 }
 
-export function* logUserOut(action) {
+function* logUserOut(action) {
 	yield put(userLoggedOut(action.payload))
 }
 
-export const USER_UPDATED = 'USER_UPDATED'
+const USER_UPDATED = 'USER_UPDATED'
 function userUpdated(user) {
 	return {
 		type: USER_UPDATED,
@@ -36,6 +36,15 @@ function userUpdated(user) {
 	}
 }
 
-export function* updateUser(action) {
+function* updateUser(action) {
 	yield put(userUpdated(action.payload))
 }
+
+function* userSagas() {
+	yield takeLatest('LOGIN_REQUESTED', logUserIn)
+	yield takeLatest('LOGOUT_REQUESTED', logUserOut)
+	yield takeLatest('SIGNUP_REQUESTED', signUserUp)
+	yield takeLatest('USERUPDATE_REQUESTED', updateUser)
+}
+
+export default userSagas

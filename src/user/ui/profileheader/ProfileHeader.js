@@ -16,9 +16,6 @@ import iconMessage from '../../../../public/icons/icon-message.svg'
 import inkdropWhite from '../../../../public/icons/icon-inkdrop-white.svg'
 
 class ProfileHeader extends Component {
-  shouldComponentUpdate(nextProps, nextState) {
-    return false
-  }
   render() {
     return (
       <Nav navbar>

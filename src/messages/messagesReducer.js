@@ -1,12 +1,29 @@
 const initialState = {
   data: [],
   userdata: [],
+  count: 0,
+  initialized: false,
 }
 
 const messagesReducer = (state = initialState, action) => {
   if (action.type === 'MESSAGES_GOT') {
     return Object.assign({}, state, {
       data: action.payload,
+    })
+  }
+
+  if (action.type === 'MESSAGE_GOT') {
+    let newData = state.data.concat(action.payload)
+    return Object.assign({}, state, {
+      data: newData,
+      // eslint-disable-next-line
+      initialized: newData.length == state.count,
+    })
+  }
+
+  if (action.type === 'MESSAGE_COUNT_GOT') {
+    return Object.assign({}, state, {
+      count: action.payload,
     })
   }
 

@@ -11,6 +11,18 @@ class MessageForm extends Component {
       content: '',
       drops: 1, // TODO: add drop slider
       focus: false,
+      stackId: '',
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.props.transactionStack[this.state.stackId]) {
+      const txHash = this.props.transactionStack[this.state.stackId]
+      if (txHash in prevProps.transactions && prevProps.transactions[txHash].status === 'pending') {
+        console.log('TxHash: ' + txHash)
+        console.log('Tx Status: ' + this.props.transactions[txHash].status)
+        console.log(prevProps)
+      }
     }
   }
 
@@ -46,6 +58,14 @@ class MessageForm extends Component {
         this.state.content,
         this.state.drops
       )
+      this.setState({ stackId: stackId })
+      console.log('Stack Id: ' + stackId)
+      // Use the dataKey to display the transaction status.
+      if (this.props.transactionStack[stackId]) {
+        const txHash = this.props.transactionStack[stackId]
+
+        console.log('Tx Status: ' + this.props.transactions[txHash].status)
+      }
 
       let newMsg = {
         content: this.state.content,
@@ -76,7 +96,7 @@ class MessageForm extends Component {
             <img
               id="post-message-profile-picture"
               className="mr-2 profile-img"
-              src={this.props.user.imgUrl}
+              src={this.props.user.imgUrl || 'http://via.placeholder.com/50/85bd3e/85bd3e'}
               alt="profile"
             />
             <div>
