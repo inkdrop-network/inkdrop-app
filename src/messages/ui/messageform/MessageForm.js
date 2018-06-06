@@ -6,6 +6,7 @@ class MessageForm extends Component {
   constructor(props, context) {
     super(props)
     this.contracts = context.drizzle.contracts
+    this.web3 = context.drizzle.web3
 
     this.state = {
       content: '',
@@ -18,10 +19,15 @@ class MessageForm extends Component {
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.props.transactionStack[this.state.stackId]) {
       const txHash = this.props.transactionStack[this.state.stackId]
-      if (txHash in prevProps.transactions && prevProps.transactions[txHash].status === 'pending') {
+      if (
+        txHash in prevProps.transactions &&
+        prevProps.transactions[txHash].status === 'pending' &&
+        this.props.transactions[txHash].status === 'success'
+      ) {
         console.log('TxHash: ' + txHash)
         console.log('Tx Status: ' + this.props.transactions[txHash].status)
         console.log(prevProps)
+        // TODO: remove message from store
       }
     }
   }
@@ -59,13 +65,6 @@ class MessageForm extends Component {
         this.state.drops
       )
       this.setState({ stackId: stackId })
-      console.log('Stack Id: ' + stackId)
-      // Use the dataKey to display the transaction status.
-      if (this.props.transactionStack[stackId]) {
-        const txHash = this.props.transactionStack[stackId]
-
-        console.log('Tx Status: ' + this.props.transactions[txHash].status)
-      }
 
       let newMsg = {
         content: this.state.content,

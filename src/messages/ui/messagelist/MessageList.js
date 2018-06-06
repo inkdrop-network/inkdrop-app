@@ -12,8 +12,14 @@ class MessageList extends Component {
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (
-      this.dataKey in this.props.InkDrop.getMessageCount &&
-      !(this.dataKey in prevProps.InkDrop.getMessageCount)
+      // check if there was no getMessageCount previously
+      (this.dataKey in this.props.InkDrop.getMessageCount &&
+        !(this.dataKey in prevProps.InkDrop.getMessageCount)) ||
+      // or if the previous getMessageCount is smaller than the current getMessageCount
+      (this.dataKey in this.props.InkDrop.getMessageCount &&
+        this.dataKey in prevProps.InkDrop.getMessageCount &&
+        this.props.InkDrop.getMessageCount[this.dataKey].value >
+          prevProps.InkDrop.getMessageCount[this.dataKey].value)
     ) {
       this.props.onMessageCountGot(this.props.InkDrop.getMessageCount[this.dataKey].value)
     }
