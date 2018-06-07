@@ -1,6 +1,7 @@
 const initialState = {
   data: [],
   userdata: [],
+  commentsdata: [],
   count: 0,
   initialized: false,
 }
@@ -75,22 +76,34 @@ const messagesReducer = (state = initialState, action) => {
     })
   }
 
-  if (action.type === 'COMMENT_MESSAGE') {
-    let newState = Object.assign({}, state, {
-      data: state.data.map((item, index) => {
-        if (item.id === action.parent) {
-          let newItem = {
-            ...item,
-            comments: [...item.comments, action.payload],
-          }
-          return newItem
-        }
-
-        return item
-      }),
+  if (action.type === 'COMMENT_POSTED') {
+    return Object.assign({}, state, {
+      commentsdata: state.commentsdata.concat(action.payload),
     })
-    return newState
   }
+
+  if (action.type === 'COMMENT_TX_SUCCESS') {
+    return Object.assign({}, state, {
+      commentsdata: state.commentsdata.filter(msg => msg.id !== action.payload.id),
+    })
+  }
+
+  // if (action.type === 'COMMENT_MESSAGE') {
+  //   let newState = Object.assign({}, state, {
+  //     data: state.data.map((item, index) => {
+  //       if (item.id === action.parent) {
+  //         let newItem = {
+  //           ...item,
+  //           comments: [...item.comments, action.payload],
+  //         }
+  //         return newItem
+  //       }
+
+  //       return item
+  //     }),
+  //   })
+  //   return newState
+  // }
 
   if (action.type === 'COMMENTS_GOT') {
     let newState = Object.assign({}, state, {

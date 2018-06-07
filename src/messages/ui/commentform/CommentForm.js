@@ -38,12 +38,12 @@ class CommentForm extends Component {
         userUrl: this.props.user.imgUrl,
         userAdr: this.props.accounts[0],
         id: stackId,
-        comments: [],
+        parent: this.props.message.id,
         fromBlockchain: false,
         initialized: false,
       }
       // trigger saga
-      // this.props.onCreateMessage(newMsg)
+      this.props.onCommentMessage(newComm)
       this.setState({ comment: '', stackId: '' })
     } catch (error) {
       console.log(error)

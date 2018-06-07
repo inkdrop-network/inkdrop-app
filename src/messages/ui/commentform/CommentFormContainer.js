@@ -1,6 +1,5 @@
 import { drizzleConnect } from 'drizzle-react'
 import CommentForm from './CommentForm'
-import { commentMessage } from './CommentFormActions'
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -14,12 +13,12 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    commentMessage: (parent, username, imgUrl, message) => {
-      dispatch(commentMessage(parent, username, imgUrl, message))
+    onCommentMessage: comment => {
+      dispatch({ type: 'COMMENT_REQUESTED', payload: comment })
     },
   }
 }
 
-const CommentFormContainer = drizzleConnect(CommentForm, mapStateToProps)
+const CommentFormContainer = drizzleConnect(CommentForm, mapStateToProps, mapDispatchToProps)
 
 export default CommentFormContainer
