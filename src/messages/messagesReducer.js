@@ -21,6 +21,12 @@ const messagesReducer = (state = initialState, action) => {
     })
   }
 
+  if (action.type === 'MESSAGE_TX_SUCCESS') {
+    return Object.assign({}, state, {
+      data: state.data.filter(msg => msg.id !== action.payload.id),
+    })
+  }
+
   if (action.type === 'MESSAGE_COUNT_GOT') {
     return Object.assign({}, state, {
       count: action.payload,

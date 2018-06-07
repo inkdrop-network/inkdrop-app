@@ -15,33 +15,46 @@ class MessageItem extends Component {
     super(props)
     this.contracts = context.drizzle.contracts
 
-    this.state = {
-      comments: [],
-      showComments: false,
-      message: {
-        content: '',
-        username: '',
-        timestamp: Date.now(),
-        timetolive: Date.now(),
-        likes: '',
-        drops: '',
-        userUrl: '', //`https://gateway.ipfs.io/ipfs/${''}`,
-        userAdr: '',
-        id: '',
+    if (!this.props.cached) {
+      this.state = {
         comments: [],
-        fromBlockchain: false,
-      },
-      user: {
-        name: '',
-        bio: '',
-        drops: '',
-        ipfsHash: '',
-        imgUrl: '',
-        followers: '',
-      },
+        showComments: false,
+        message: {
+          content: '',
+          username: '',
+          timestamp: Date.now(),
+          timetolive: Date.now(),
+          likes: '',
+          drops: '',
+          userUrl: '', //`https://gateway.ipfs.io/ipfs/${''}`,
+          userAdr: '',
+          id: '',
+          comments: [],
+          fromBlockchain: false,
+          initialized: false,
+        },
+      }
+      this.dataKey = this.contracts.InkDrop.methods.getMessage.cacheCall(this.props.msgId)
+    } else {
+      this.state = {
+        comments: [],
+        showComments: false,
+        message: {
+          content: this.props.cachedMsg.content,
+          username: this.props.cachedMsg.username,
+          timestamp: this.props.cachedMsg.timestamp,
+          timetolive: this.props.cachedMsg.timetolive,
+          likes: this.props.cachedMsg.likes,
+          drops: this.props.cachedMsg.drops,
+          userUrl: this.props.cachedMsg.userUrl, //`https://gateway.ipfs.io/ipfs/${''}`,
+          userAdr: this.props.cachedMsg.userAdr,
+          id: this.props.cachedMsg.id,
+          comments: [],
+          fromBlockchain: false,
+          initialized: false,
+        },
+      }
     }
-
-    this.dataKey = this.contracts.InkDrop.methods.getMessage.cacheCall(this.props.msgId)
 
     // this.contracts.InkDrop.methods
     //   .getMessage(this.props.msgId)
@@ -74,100 +87,104 @@ class MessageItem extends Component {
 
   // TODO: check feasibilty of updates. Don update too often!
   // shouldComponentUpdate(nextProps, nextState) {
-  //   if (this.state.message.content === '' || this.state.user.name === '') {
-  //     return true
-  //   } else {
-  //     return false
-  //   }
+  // if (this.state.message.fromBlockchain  && this.state.message.initialized) {
+  //   return false
+  // } else {
+  //   return true
+  // }
   // }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (
-      this.dataKey in this.props.InkDrop.getMessage &&
-      !(this.dataKey in prevProps.InkDrop.getMessage)
-    ) {
-      let tmpMsg = this.props.InkDrop.getMessage[this.dataKey].value
-      this.userDataKey = this.contracts.InkDrop.methods.getUser.cacheCall(tmpMsg.writtenBy)
-      let msg = {
-        content: tmpMsg.content,
-        username: '',
-        timestamp: new Date(tmpMsg.timestamp * 1000),
-        timetolive: new Date(tmpMsg.timetolive * 1000),
-        likes: parseInt(tmpMsg.likes, 10),
-        drops: parseInt(tmpMsg.drops, 10) / 100,
-        userUrl: '',
-        userAdr: tmpMsg.writtenBy,
-        id: this.props.msgId,
-        comments: tmpMsg.comments.map(function(e) {
-          return parseInt(e, 10)
-        }),
-        fromBlockchain: true,
+    if (!this.props.cached) {
+      if (
+        this.dataKey in this.props.InkDrop.getMessage &&
+        !(this.dataKey in prevProps.InkDrop.getMessage)
+      ) {
+        this.updateMessage()
       }
-      this.setState({ message: msg })
-    }
 
-    if (this.userDataKey in this.props.InkDrop.getUser && this.state.message.username === '') {
-      let tmpMsg = this.props.InkDrop.getMessage[this.dataKey].value
-      let tmpUser = this.props.InkDrop.getUser[this.userDataKey].value
-      let user = {
-        name: this.context.drizzle.web3.utils.toUtf8(tmpUser.username),
-        bio: tmpUser.bio,
-        drops: parseInt(tmpUser.drops, 10) / 100,
-        ipfsHash: tmpUser.ipfsHash,
-        imgUrl: `https://gateway.ipfs.io/ipfs/${tmpUser.ipfsHash}`,
-        followers: parseInt(tmpUser.followers, 10),
+      if (this.userDataKey in this.props.InkDrop.getUser && !this.state.message.initialized) {
+        this.updateUser()
       }
-      let msg = {
-        id: this.props.msgId,
-        content: tmpMsg.content,
-        username: this.context.drizzle.web3.utils.toUtf8(tmpUser.username),
-        timestamp: new Date(tmpMsg.timestamp * 1000),
-        timetolive: new Date(tmpMsg.timetolive * 1000),
-        likes: parseInt(tmpMsg.likes, 10),
-        drops: parseInt(tmpMsg.drops, 10) / 100,
-        userUrl: `https://gateway.ipfs.io/ipfs/${tmpUser.ipfsHash}`,
-        userAdr: tmpMsg.writtenBy,
-        comments: tmpMsg.comments.map(function(e) {
-          return parseInt(e, 10)
-        }),
-        fromBlockchain: true,
-      }
-      // console.log(this.props.msgId)
-      this.props.onMessageGot(msg)
-      this.setState({
-        user: user,
-        message: msg,
-      })
     }
   }
 
+  updateMessage() {
+    let tmpMsg = this.props.InkDrop.getMessage[this.dataKey].value
+    this.userDataKey = this.contracts.InkDrop.methods.getUser.cacheCall(tmpMsg.writtenBy)
+    let msg = {
+      content: tmpMsg.content,
+      username: '',
+      timestamp: new Date(tmpMsg.timestamp * 1000),
+      timetolive: new Date(tmpMsg.timetolive * 1000),
+      likes: parseInt(tmpMsg.likes, 10),
+      drops: parseInt(tmpMsg.drops, 10) / 100,
+      userUrl: '',
+      userAdr: tmpMsg.writtenBy,
+      id: this.props.msgId,
+      comments: tmpMsg.comments.map(function(e) {
+        return parseInt(e, 10)
+      }),
+      fromBlockchain: true,
+    }
+    this.setState({ message: msg })
+  }
+
+  updateUser() {
+    let tmpMsg = this.props.InkDrop.getMessage[this.dataKey].value
+    let tmpUser = this.props.InkDrop.getUser[this.userDataKey].value
+    let msg = {
+      id: this.props.msgId,
+      content: tmpMsg.content,
+      username: this.context.drizzle.web3.utils.toUtf8(tmpUser.username),
+      timestamp: new Date(tmpMsg.timestamp * 1000),
+      timetolive: new Date(tmpMsg.timetolive * 1000),
+      likes: parseInt(tmpMsg.likes, 10),
+      drops: parseInt(tmpMsg.drops, 10) / 100,
+      userUrl: `https://gateway.ipfs.io/ipfs/${tmpUser.ipfsHash}`,
+      userAdr: tmpMsg.writtenBy,
+      comments: tmpMsg.comments.map(function(e) {
+        return parseInt(e, 10)
+      }),
+      fromBlockchain: true,
+      initialized: true,
+    }
+    // console.log(this.props.msgId)
+    // this.props.onMessageGot(msg)
+    this.setState({ message: msg })
+  }
+
   async dropMessage() {
-    // TODO: add slider for amount of drops to be submitted
-    let newDrops = 1
-    try {
-      await this.contracts.InkDrop.methods.dropMessage(this.props.msgId, newDrops).send()
-      this.setState({
-        message: {
-          ...this.state.message,
-          drops: this.state.message.drops + newDrops,
-        },
-      })
-    } catch (error) {
-      console.log(error)
+    if (!this.props.cached) {
+      // TODO: add slider for amount of drops to be submitted
+      let newDrops = 1
+      try {
+        await this.contracts.InkDrop.methods.dropMessage(this.props.msgId, newDrops).send()
+        this.setState({
+          message: {
+            ...this.state.message,
+            drops: this.state.message.drops + newDrops,
+          },
+        })
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 
   async likeMessage() {
-    try {
-      await this.contracts.InkDrop.methods.likeMessage(this.props.msgId).send()
-      this.setState({
-        message: {
-          ...this.state.message,
-          likes: this.state.message.likes + 1,
-        },
-      })
-    } catch (error) {
-      console.log(error)
+    if (!this.props.cached) {
+      try {
+        await this.contracts.InkDrop.methods.likeMessage(this.props.msgId).send()
+        this.setState({
+          message: {
+            ...this.state.message,
+            likes: this.state.message.likes + 1,
+          },
+        })
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 
@@ -191,7 +208,6 @@ class MessageItem extends Component {
     let commentsClass = this.getClass()
     let commentsNrClass = this.getNrClass()
     let msg = this.state.message
-    let user = this.state.user
 
     // if (this.userDataKey in this.props.InkDrop.getUser) {
     //   let tmpUser = this.props.InkDrop.getUser[this.userDataKey].value
@@ -205,15 +221,12 @@ class MessageItem extends Component {
     //   }
     // }
 
-    // msg.username = user.name
-    // msg.userUrl = user.imgUrl
-
     return (
-      <Card className="message-card mb-4">
+      <Card className={`message-card mb-4 ${msg.fromBlockchain ? '' : 'muted'}`}>
         <CardBody className="d-flex flex-row pb-2">
           <img
             className="mr-2 profile-img"
-            src={user.imgUrl || 'http://via.placeholder.com/50/85bd3e/85bd3e'}
+            src={msg.userUrl || 'http://via.placeholder.com/50/85bd3e/85bd3e'}
             alt="profile"
           />
           <div>

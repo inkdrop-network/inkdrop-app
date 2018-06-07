@@ -23,17 +23,43 @@ class MessageList extends Component {
     ) {
       this.props.onMessageCountGot(this.props.InkDrop.getMessageCount[this.dataKey].value)
     }
+
+    for (let i = 0; i < this.props.messages.length; i++) {
+      this.updateMessageTx(prevProps, this.props.messages[i])
+    }
+  }
+
+  updateMessageTx(prevProps, message) {
+    let stackId = message.id
+    if (this.props.transactionStack[stackId]) {
+      const txHash = this.props.transactionStack[stackId]
+      if (
+        txHash in prevProps.transactions &&
+        prevProps.transactions[txHash].status === 'pending' &&
+        this.props.transactions[txHash].status === 'success'
+      ) {
+        console.log('TxHash: ' + txHash)
+        console.log('Tx Status: ' + this.props.transactions[txHash].status)
+        // TODO: remove message from store
+        this.props.onMessageTxSuccess(message)
+      }
+    }
   }
 
   render() {
     let msgs = []
-    for (let i = 0; i < this.props.count; i++) {
+    for (let i = this.props.count - 1; i >= 0; --i) {
       msgs.push(i)
     }
 
     return (
       <div id="messages" className="">
-        {msgs.map(msgId => <MessageItemContainer msgId={msgId} key={msgId} />)}
+        {this.props.messages.map(msg => (
+          <MessageItemContainer msgId={msg.id} cached={true} cachedMsg={msg} key={msg.id} />
+        ))}
+        {msgs.map(msgId => (
+          <MessageItemContainer msgId={msgId} cached={false} cachedMsg={false} key={msgId} />
+        ))}
       </div>
     )
   }

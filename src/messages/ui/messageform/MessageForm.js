@@ -10,27 +10,27 @@ class MessageForm extends Component {
 
     this.state = {
       content: '',
-      drops: 1, // TODO: add drop slider
+      drops: 0, // TODO: add drop slider
       focus: false,
       stackId: '',
     }
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.props.transactionStack[this.state.stackId]) {
-      const txHash = this.props.transactionStack[this.state.stackId]
-      if (
-        txHash in prevProps.transactions &&
-        prevProps.transactions[txHash].status === 'pending' &&
-        this.props.transactions[txHash].status === 'success'
-      ) {
-        console.log('TxHash: ' + txHash)
-        console.log('Tx Status: ' + this.props.transactions[txHash].status)
-        console.log(prevProps)
-        // TODO: remove message from store
-      }
-    }
-  }
+  // componentDidUpdate(prevProps, prevState, snapshot) {
+  //   if (this.props.transactionStack[this.state.stackId]) {
+  //     const txHash = this.props.transactionStack[this.state.stackId]
+  //     if (
+  //       txHash in prevProps.transactions &&
+  //       prevProps.transactions[txHash].status === 'pending' &&
+  //       this.props.transactions[txHash].status === 'success'
+  //     ) {
+  //       console.log('TxHash: ' + txHash)
+  //       console.log('Tx Status: ' + this.props.transactions[txHash].status)
+  //       console.log(prevProps)
+  //       // TODO: remove message from store
+  //     }
+  //   }
+  // }
 
   onFocus() {
     this.setState({ focus: true })
@@ -55,7 +55,7 @@ class MessageForm extends Component {
       return alert('Please share something valuable.')
     }
 
-    if (this.state.drops <= 0) {
+    if (this.state.drops < 0) {
       return alert('Please add some drops to your post.')
     }
 
@@ -77,10 +77,11 @@ class MessageForm extends Component {
         id: stackId,
         comments: [],
         fromBlockchain: false,
+        initialized: false,
       }
       // trigger saga
       this.props.onCreateMessage(newMsg)
-      this.setState({ content: '' })
+      this.setState({ content: '', stackId: '' })
     } catch (error) {
       console.log(error)
     }
