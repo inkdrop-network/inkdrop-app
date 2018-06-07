@@ -1,4 +1,4 @@
-import { put, takeLatest, takeEvery } from 'redux-saga/effects'
+import { put, takeLatest } from 'redux-saga/effects'
 
 const MESSAGE_POSTED = 'MESSAGE_POSTED'
 function messagePosted(content) {

@@ -1,12 +1,17 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import { Form, FormGroup, Input, Button } from 'reactstrap'
 
-class CommentItem extends Component {
-  constructor(props) {
+class CommentForm extends Component {
+  constructor(props, context) {
     super(props)
+    this.contracts = context.drizzle.contracts
+
     this.state = {
       comment: '',
+      stackId: '',
     }
+
     this.handleComment = this.handleComment.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
   }
@@ -15,16 +20,34 @@ class CommentItem extends Component {
     this.setState({ comment: event.target.value })
   }
 
-  handleSubmit(event) {
+  async handleSubmit(event) {
     event.preventDefault()
-    console.log('Comment message: ' + this.props.message.id + ' - ' + this.state.comment)
-    this.props.commentMessage(
-      this.props.message.id,
-      this.props.username,
-      this.props.imgUrl,
-      this.state.comment
-    )
-    this.setState({ comment: '' })
+    try {
+      const stackId = await this.contracts.InkDrop.methods.createComment.cacheSend(
+        this.props.message.id,
+        this.state.comment
+      )
+      this.setState({ stackId: stackId })
+
+      let newComm = {
+        content: this.state.content,
+        username: this.props.user.name,
+        timestamp: Date.now(),
+        likes: 0,
+        drops: 0,
+        userUrl: this.props.user.imgUrl,
+        userAdr: this.props.accounts[0],
+        id: stackId,
+        comments: [],
+        fromBlockchain: false,
+        initialized: false,
+      }
+      // trigger saga
+      // this.props.onCreateMessage(newMsg)
+      this.setState({ comment: '', stackId: '' })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   render() {
@@ -47,4 +70,8 @@ class CommentItem extends Component {
   }
 }
 
-export default CommentItem
+CommentForm.contextTypes = {
+  drizzle: PropTypes.object,
+}
+
+export default CommentForm

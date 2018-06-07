@@ -9,6 +9,7 @@ import CommentListContainer from '../commentlist/CommentListContainer'
 import inkdropDark from '../../../../public/icons/icon-inkdrop-dark.svg'
 import iconLike from '../../../../public/icons/icon-like.svg'
 import iconComment from '../../../../public/icons/icon-comments.svg'
+import loadingSpinner from '../../../../public/icons/loading-spinner.svg'
 
 class MessageItem extends Component {
   constructor(props, context) {
@@ -204,6 +205,27 @@ class MessageItem extends Component {
     })
   }
 
+  renderTxStatus() {
+    if (this.props.cached) {
+      return (
+        <CardFooter className="tx-card py-0">
+          <div className="row">
+            <div className="col">
+              <img
+                className="mr-2 my-1"
+                src={loadingSpinner}
+                alt="profile"
+                width="20"
+                height="20"
+              />
+              <small className="text-muted">Submitting to blockchain</small>
+            </div>
+          </div>
+        </CardFooter>
+      )
+    }
+  }
+
   render() {
     let commentsClass = this.getClass()
     let commentsNrClass = this.getNrClass()
@@ -222,7 +244,7 @@ class MessageItem extends Component {
     // }
 
     return (
-      <Card className={`message-card mb-4 ${msg.fromBlockchain ? '' : 'muted'}`}>
+      <Card className={`message-card mb-4 ${!this.props.cached ? '' : 'muted'}`}>
         <CardBody className="d-flex flex-row pb-2">
           <img
             className="mr-2 profile-img"
@@ -265,12 +287,15 @@ class MessageItem extends Component {
             </div>
           </div>
         </CardBody>
-        <CardFooter className={`comments-card ${commentsClass}`} />
+        {this.renderTxStatus()}
+        <CardFooter className={`comments-card ${commentsClass}`}>
+          {!this.props.cached &&
+            this.state.message.initialized && <CommentListContainer message={msg} />}
+        </CardFooter>
       </Card>
     )
   }
 }
-// <CommentListContainer message={msg} />
 
 MessageItem.contextTypes = {
   drizzle: PropTypes.object,

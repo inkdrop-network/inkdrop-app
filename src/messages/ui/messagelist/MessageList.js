@@ -24,6 +24,7 @@ class MessageList extends Component {
       this.props.onMessageCountGot(this.props.InkDrop.getMessageCount[this.dataKey].value)
     }
 
+    // check for all chached messages if they were submitted to the blockchain
     for (let i = 0; i < this.props.messages.length; i++) {
       this.updateMessageTx(prevProps, this.props.messages[i])
     }
@@ -38,9 +39,8 @@ class MessageList extends Component {
         prevProps.transactions[txHash].status === 'pending' &&
         this.props.transactions[txHash].status === 'success'
       ) {
-        console.log('TxHash: ' + txHash)
-        console.log('Tx Status: ' + this.props.transactions[txHash].status)
-        // TODO: remove message from store
+        // console.log('TxHash: ' + txHash)
+        // console.log('Tx Status: ' + this.props.transactions[txHash].status)
         this.props.onMessageTxSuccess(message)
       }
     }

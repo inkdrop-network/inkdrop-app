@@ -4,8 +4,11 @@ import { commentMessage } from './CommentFormActions'
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    username: state.user.data.name,
-    imgUrl: state.user.data.imgUrl,
+    user: state.user.data,
+    accounts: state.accounts,
+    InkDrop: state.contracts.InkDrop,
+    transactionStack: state.transactionStack,
+    transactions: state.transactions,
   }
 }
 
@@ -17,6 +20,6 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-const CommentFormContainer = drizzleConnect(CommentForm, mapStateToProps, mapDispatchToProps)
+const CommentFormContainer = drizzleConnect(CommentForm, mapStateToProps)
 
 export default CommentFormContainer

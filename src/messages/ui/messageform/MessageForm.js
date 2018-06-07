@@ -6,7 +6,6 @@ class MessageForm extends Component {
   constructor(props, context) {
     super(props)
     this.contracts = context.drizzle.contracts
-    this.web3 = context.drizzle.web3
 
     this.state = {
       content: '',
