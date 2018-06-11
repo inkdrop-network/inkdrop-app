@@ -48,6 +48,18 @@ function* successMessageTx(action) {
   yield put(messageSuccess(action.payload))
 }
 
+const COMMENT_TX_SUCCESS = 'COMMENT_TX_SUCCESS'
+function commentSuccess(comment) {
+  return {
+    type: COMMENT_TX_SUCCESS,
+    payload: comment,
+  }
+}
+
+function* successCommentTx(action) {
+  yield put(commentSuccess(action.payload))
+}
+
 const COMMENT_POSTED = 'COMMENT_POSTED'
 function commentPosted(comment) {
   return {
@@ -65,6 +77,7 @@ function* messagesSaga() {
   yield takeLatest('MESSAGE_COUNT_REQUESTED', gotMessageCount)
   yield takeLatest('MESSAGE_FETCH_REQUESTED', gotMessage)
   yield takeLatest('MESSAGE_TX_REQUESTED', successMessageTx)
+  yield takeLatest('COMMENT_TX_REQUESTED', successCommentTx)
   yield takeLatest('COMMENT_REQUESTED', createComment)
 }
 

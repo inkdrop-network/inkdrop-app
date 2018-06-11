@@ -30,7 +30,7 @@ class CommentForm extends Component {
       this.setState({ stackId: stackId })
 
       let newComm = {
-        content: this.state.content,
+        content: this.state.comment,
         username: this.props.user.name,
         timestamp: Date.now(),
         likes: 0,

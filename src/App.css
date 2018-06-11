@@ -134,7 +134,8 @@ footer .list-inline {
   background-color: var(--white);
 }
 
-.card.message-card.muted {
+.card.message-card.muted,
+.card.comment-card.muted {
   opacity: 0.5;
 }
 

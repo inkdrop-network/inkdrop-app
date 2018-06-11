@@ -107,6 +107,14 @@ class MessageItem extends Component {
       if (this.userDataKey in this.props.InkDrop.getUser && !this.state.message.initialized) {
         this.updateUser()
       }
+      if (
+        this.dataKey in this.props.InkDrop.getMessage &&
+        this.dataKey in prevProps.InkDrop.getMessage &&
+        this.props.InkDrop.getMessage[this.dataKey].value.comments !==
+          prevProps.InkDrop.getMessage[this.dataKey].value.comments
+      ) {
+        this.updateUser()
+      }
     }
   }
 

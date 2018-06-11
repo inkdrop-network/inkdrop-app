@@ -84,7 +84,7 @@ const messagesReducer = (state = initialState, action) => {
 
   if (action.type === 'COMMENT_TX_SUCCESS') {
     return Object.assign({}, state, {
-      commentsdata: state.commentsdata.filter(msg => msg.id !== action.payload.id),
+      commentsdata: state.commentsdata.filter(comment => comment.id !== action.payload.id),
     })
   }
 
