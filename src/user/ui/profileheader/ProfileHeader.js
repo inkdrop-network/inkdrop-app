@@ -11,8 +11,8 @@ import {
 import LogoutButtonContainer from '../logoutbutton/LogoutButtonContainer'
 
 // Images
-import iconAlarm from '../../../../public/icons/icon-alarm.svg'
-import iconMessage from '../../../../public/icons/icon-message.svg'
+// import iconAlarm from '../../../../public/icons/icon-alarm.svg'
+// import iconMessage from '../../../../public/icons/icon-message.svg'
 import inkdropWhite from '../../../../public/icons/icon-inkdrop-white.svg'
 
 class ProfileHeader extends Component {
@@ -42,26 +42,7 @@ class ProfileHeader extends Component {
             </DropdownItem>
           </DropdownMenu>
         </UncontrolledDropdown>
-        <NavItem className="mr-4">
-          <img
-            src={iconAlarm}
-            className="align-middle nav-icons"
-            width="20"
-            height="20"
-            alt="notifications"
-          />
-          <span id="profile-alarm-number" className=" nav-icon-nr font-white align-bottom ml-1" />
-        </NavItem>
-        <NavItem className="mr-4">
-          <img
-            src={iconMessage}
-            className="align-middle nav-icons"
-            width="20"
-            height="20"
-            alt="messages"
-          />
-          <span id="profile-message-number" className="nav-icon-nr font-white align-bottom ml-1" />
-        </NavItem>
+
         <NavItem className="mr-4">
           <img
             src={inkdropWhite}

@@ -57,30 +57,6 @@ class MessageItem extends Component {
       }
     }
 
-    // this.contracts.InkDrop.methods
-    //   .getMessage(this.props.msgId)
-    //   .call()
-    //   .then(tmpMsg => {
-    //     console.log('call first here')
-    //     this.userDataKey = this.contracts.InkDrop.methods.getUser.cacheCall(tmpMsg.writtenBy)
-    //     let msg = {
-    //       content: tmpMsg.content,
-    //       username: '',
-    //       timestamp: new Date(tmpMsg.timestamp * 1000),
-    //       timetolive: new Date(tmpMsg.timetolive * 1000),
-    //       likes: parseInt(tmpMsg.likes, 10),
-    //       drops: parseInt(tmpMsg.drops, 10) / 100,
-    //       userUrl: '',
-    //       userAdr: tmpMsg.writtenBy,
-    //       id: this.props.msgId,
-    //       comments: tmpMsg.comments.map(function(e) {
-    //         return parseInt(e, 10)
-    //       }),
-    //       fromBlockchain: true,
-    //     }
-    //     this.setState({ message: msg })
-    //   })
-
     this.toggleComments = this.toggleComments.bind(this)
     this.likeMessage = this.likeMessage.bind(this)
     this.dropMessage = this.dropMessage.bind(this)
@@ -234,22 +210,21 @@ class MessageItem extends Component {
     }
   }
 
+  renderDonations(msg) {
+    return (
+      <div className="col text-center">
+        <div className="like-message-button mx-auto" onClick={this.likeMessage}>
+          <img src={iconLike} width="20" height="20" className="" alt="likes" />
+          <span className="like-number icon-number ml-1">{msg.likes}</span>
+        </div>
+      </div>
+    )
+  }
+
   render() {
     let commentsClass = this.getClass()
     let commentsNrClass = this.getNrClass()
     let msg = this.state.message
-
-    // if (this.userDataKey in this.props.InkDrop.getUser) {
-    //   let tmpUser = this.props.InkDrop.getUser[this.userDataKey].value
-    //   user = {
-    //     name: this.context.drizzle.web3.utils.toUtf8(tmpUser.username),
-    //     bio: tmpUser.bio,
-    //     drops: parseInt(tmpUser.drops, 10) / 100,
-    //     ipfsHash: tmpUser.ipfsHash,
-    //     imgUrl: `https://gateway.ipfs.io/ipfs/${tmpUser.ipfsHash}`,
-    //     followers: parseInt(tmpUser.followers, 10),
-    //   }
-    // }
 
     return (
       <Card className={`message-card mb-4 ${!this.props.cached ? '' : 'muted'}`}>
@@ -277,12 +252,7 @@ class MessageItem extends Component {
                 <span className="drop-number icon-number ml-1">{msg.drops}</span>
               </div>
             </div>
-            <div className="col text-center">
-              <div className="like-message-button mx-auto" onClick={this.likeMessage}>
-                <img src={iconLike} width="20" height="20" className="" alt="likes" />
-                <span className="like-number icon-number ml-1">{msg.likes}</span>
-              </div>
-            </div>
+
             <div className="col">
               <div
                 className="comment-message-button float-right"

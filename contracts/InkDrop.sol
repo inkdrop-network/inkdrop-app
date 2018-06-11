@@ -106,6 +106,8 @@ contract InkDrop {
     userStructs[msg.sender].username = _username;
     userStructs[msg.sender].bio = _bio;
     userStructs[msg.sender].ipfsHash = _ipfsHash;
+    // each new user gets 10 drops initially
+    userStructs[msg.sender].dropAmount = 10*MULTIPLIER;
     userStructs[msg.sender].index = userList.push(msg.sender) - 1;
     emit LogNewUser(msg.sender, userStructs[msg.sender].index, _username, _bio, _ipfsHash);
     return userList.length - 1;
@@ -209,6 +211,7 @@ contract InkDrop {
     require(isUser(msg.sender));
     require(bytes(_content).length > 0);
     require(_dropAmount >= 0);
+    require(userStructs[msg.sender].dropAmount >= uint(_dropAmount)*MULTIPLIER);
 
     uint256 msgId = messageList.length;
     Message memory message;
@@ -224,6 +227,8 @@ contract InkDrop {
     messageList.push(message);
     messageList[messageList.length-1].dropPointers[msg.sender].value = messageList[messageList.length-1].drops.push(msg.sender) - 1;
     messageList[messageList.length-1].dropPointers[msg.sender].isSet = true;
+    // reduce the sender's dropAmount
+    userStructs[msg.sender].dropAmount -= (uint(_dropAmount)*MULTIPLIER);
     // emit MessageSend(msg.sender, userInfo[msg.sender].name, msgId);
     return messageList.length;
   }
@@ -259,6 +264,7 @@ contract InkDrop {
     require(isUser(msg.sender));
     require(_id < messageList.length);
     require(_dropAmount > 0);
+    require(userStructs[msg.sender].dropAmount >= uint(_dropAmount)*MULTIPLIER);
 
     messageList[_id].drops.push(msg.sender);
     messageList[_id].dropPointers[msg.sender].value += (uint(_dropAmount)*MULTIPLIER);
@@ -266,6 +272,8 @@ contract InkDrop {
     messageList[_id].dropAmount += (uint(_dropAmount)*MULTIPLIER);
     // payout share to author of the dropped message (50%)
     userStructs[messageList[_id].writtenBy].dropAmount += (uint(_dropAmount)*50*MULTIPLIER/100);
+    // reduce the sender's dropAmount
+    userStructs[msg.sender].dropAmount -= (uint(_dropAmount)*MULTIPLIER);
     // TODO: payout of drops to InkDrop and incentive pool
     // TODO: extend the timetolive
     return messageList[_id].dropAmount;

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router'
 import { HiddenOnlyAuth, VisibleOnlyAuth } from './util/wrappers.js'
-import { Navbar, Nav, NavItem, Form, Input } from 'reactstrap'
+import { Navbar, Nav, NavItem } from 'reactstrap'
 
 // UI Components
 import LoginButtonContainer from './user/ui/loginbutton/LoginButtonContainer'
@@ -28,15 +28,7 @@ class App extends Component {
             alt="InkDrop Logo"
           />InkDrop<span className="font-green">.</span>
         </Link>
-        <Form inline>
-          <Input
-            id="navbar-search"
-            className="form-control mr-sm-2"
-            type="search"
-            placeholder="Search"
-            aria-label="Search"
-          />
-        </Form>
+
         <ProfileHeaderContainer />
       </div>
     ))

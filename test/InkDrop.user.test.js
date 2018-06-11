@@ -1,4 +1,5 @@
 var InkDrop = artifacts.require('InkDrop')
+const MULTIPLIER = 100
 
 contract('InkDrop (basic user CRUD functions)', function(accounts) {
   it('...empty contract instance', function() {
@@ -30,7 +31,7 @@ contract('InkDrop (basic user CRUD functions)', function(accounts) {
       .then(function(user) {
         assert.equal(web3.toUtf8(user[0]), 'testuser', 'The user should have the defined username.')
         assert.equal(user[1], 'testbio', 'The user should have the defined bio.')
-        assert.equal(user[2].toNumber(), 0, 'The user user should have 0 drops.')
+        assert.equal(user[2].toNumber() / MULTIPLIER, 10, 'The user user should have 10 drops.')
         assert.equal(user[3], 'testhash', 'The user should have the defined ipfsHash.')
         assert.equal(user[4].toNumber(), 0, 'The user should have 0 followers.')
         assert.equal(user[5].length, 0, 'The user should have 0 messages.')
