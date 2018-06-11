@@ -40,11 +40,24 @@ function* updateUser(action) {
   yield put(userUpdated(action.payload))
 }
 
+const USER_DROPPED = 'USER_DROPPED'
+function userDropped(drops) {
+  return {
+    type: USER_DROPPED,
+    payload: drops,
+  }
+}
+
+function* dropFromUser(action) {
+  yield put(userDropped(action.payload))
+}
+
 function* userSagas() {
   yield takeLatest('LOGIN_REQUESTED', logUserIn)
   yield takeLatest('LOGOUT_REQUESTED', logUserOut)
   yield takeLatest('SIGNUP_REQUESTED', signUserUp)
   yield takeLatest('USERUPDATE_REQUESTED', updateUser)
+  yield takeLatest('MESSAGE_DROP_REQUESTED', dropFromUser)
 }
 
 export default userSagas

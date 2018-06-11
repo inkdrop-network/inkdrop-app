@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { browserHistory } from 'react-router'
-import { Button, Form, FormGroup, FormText, Input } from 'reactstrap'
+import { Button, Form, FormGroup, FormText, Input, Card, CardBody, CardFooter } from 'reactstrap'
 import ipfs from '../../../ipfs'
+
+import loadingSpinner from '../../../../public/icons/loading-spinner.svg'
 
 class SignUpForm extends Component {
   constructor(props, context) {
@@ -15,7 +17,10 @@ class SignUpForm extends Component {
       userUrl: '',
       buffer: '',
       ipfsHash: '',
+      submitting: false,
     }
+
+    this.renderTxStatus = this.renderTxStatus.bind(this)
 
     // TODO: Check https://github.com/NFhbar/Token-Deployer/blob/master/src/layouts/home/Home.js
   }
@@ -28,12 +33,18 @@ class SignUpForm extends Component {
     this.setState({ bio: event.target.value })
   }
 
+  componentWillUnmount() {
+    this.setState({ submitting: false })
+  }
+
   async handleSubmit(event) {
     event.preventDefault()
 
     if (this.state.name.length < 2) {
       return alert('Please fill in your name.')
     }
+
+    this.setState({ submitting: true })
 
     // this.props.onSignUpFormSubmit(this.state.name, this.state.bio, this.state.buffer)
     if (this.state.ipfsHash === '') {
@@ -55,7 +66,8 @@ class SignUpForm extends Component {
       this.props.onSignupUser({
         name: this.state.name,
         bio: this.state.bio,
-        drops: 0,
+        // the initial 10 drops
+        drops: 10,
         ipfsHash: this.state.ipfsHash,
         imgUrl: `https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}`,
         followers: 0,
@@ -95,53 +107,80 @@ class SignUpForm extends Component {
     //set this buffer
     this.setState({ buffer: buffer })
     let ipfsHash = await ipfs.add(buffer)
+    console.log(ipfsHash)
     this.setState({ ipfsHash: ipfsHash[0].hash })
+  }
+
+  renderTxStatus() {
+    if (this.state.submitting) {
+      return (
+        <CardFooter className="tx-card py-0">
+          <div className="row">
+            <div className="col text-right">
+              <img
+                className="mr-2 my-1"
+                src={loadingSpinner}
+                alt="profile"
+                width="20"
+                height="20"
+              />
+              <small className="text-muted">Submitting to blockchain. Please wait...</small>
+            </div>
+          </div>
+        </CardFooter>
+      )
+    }
   }
 
   render() {
     return (
-      <Form onSubmit={this.handleSubmit.bind(this)}>
-        <FormGroup>
-          <img
-            id="signup-profile-picture"
-            className="profile-img mb-2"
-            src={this.state.userUrl || 'http://via.placeholder.com/150/85bd3e/85bd3e'}
-            alt="profile"
-          />
-          <Input
-            type="file"
-            name="file"
-            id="signup-user-img"
-            onChange={this.captureFile.bind(this)}
-            accept="image/gif, image/jpeg, image/png"
-            required
-          />
-          <FormText color="muted">
-            Upload an image with square format and a minimum resolution of 150x150px. Only .jpeg,
-            .png and .gif files are allowed.
-          </FormText>
-        </FormGroup>
-        <FormGroup>
-          <Input
-            id="name"
-            type="text"
-            value={this.state.name}
-            onChange={this.onNameChange.bind(this)}
-            placeholder="Your name"
-            required
-          />
-        </FormGroup>
-        <FormGroup>
-          <Input
-            id="bio"
-            type="text"
-            value={this.state.bio}
-            onChange={this.onBioChange.bind(this)}
-            placeholder="Tell us something about yourself"
-          />
-        </FormGroup>
-        <Button color="green">Sign Up</Button>
-      </Form>
+      <Card className="profile-card">
+        <CardBody>
+          <Form onSubmit={this.handleSubmit.bind(this)}>
+            <FormGroup>
+              <img
+                id="signup-profile-picture"
+                className="profile-img mb-2"
+                src={this.state.userUrl || 'http://via.placeholder.com/150/85bd3e/85bd3e'}
+                alt="profile"
+              />
+              <Input
+                type="file"
+                name="file"
+                id="signup-user-img"
+                onChange={this.captureFile.bind(this)}
+                accept="image/gif, image/jpeg, image/png"
+                required
+              />
+              <FormText color="muted">
+                Upload an image with square format and a minimum resolution of 150x150px. Only
+                .jpeg, .png and .gif files are allowed.
+              </FormText>
+            </FormGroup>
+            <FormGroup>
+              <Input
+                id="name"
+                type="text"
+                value={this.state.name}
+                onChange={this.onNameChange.bind(this)}
+                placeholder="Your name"
+                required
+              />
+            </FormGroup>
+            <FormGroup>
+              <Input
+                id="bio"
+                type="text"
+                value={this.state.bio}
+                onChange={this.onBioChange.bind(this)}
+                placeholder="Tell us something about yourself"
+              />
+            </FormGroup>
+            <Button color="green">Sign Up</Button>
+          </Form>
+        </CardBody>
+        {this.renderTxStatus()}
+      </Card>
     )
   }
 }

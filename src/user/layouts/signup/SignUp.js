@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { Card, CardBody } from 'reactstrap'
 import SignUpFormContainer from '../../ui/signupform/SignUpFormContainer'
 
 class SignUp extends Component {
@@ -13,11 +12,7 @@ class SignUp extends Component {
               We've got your wallet information, simply input your name and your account is made!
             </p>
             <div id="signup-form">
-              <Card className="profile-card">
-                <CardBody>
-                  <SignUpFormContainer />
-                </CardBody>
-              </Card>
+              <SignUpFormContainer />
             </div>
           </div>
         </div>

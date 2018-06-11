@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Button, Form, FormGroup, Input } from 'reactstrap'
+import { Button, Form, FormGroup, Input, Card, CardBody, CardFooter } from 'reactstrap'
 import ipfs from '../../../ipfs'
+
+import loadingSpinner from '../../../../public/icons/loading-spinner.svg'
 
 class ProfileForm extends Component {
   constructor(props, context) {
@@ -15,7 +17,14 @@ class ProfileForm extends Component {
       imgUrl: this.props.user.imgUrl,
       ipfsHash: this.props.user.ipfsHash,
       buffer: '',
+      submitting: false,
     }
+
+    this.renderTxStatus = this.renderTxStatus.bind(this)
+  }
+
+  componentWillUnmount() {
+    this.setState({ submitting: false })
   }
 
   onNameChange(event) {
@@ -32,6 +41,8 @@ class ProfileForm extends Component {
     if (this.state.name.length < 2) {
       return alert('Please fill in your name.')
     }
+
+    this.setState({ submitting: true })
 
     // TODO: Chech if double upload is needed
     let ipfsHash = await ipfs.add(this.state.buffer)
@@ -57,6 +68,7 @@ class ProfileForm extends Component {
         ipfsHash: this.state.ipfsHash,
         followers: this.props.user.followers,
       })
+      this.setState({ submitting: false })
     } catch (error) {
       console.log(error)
     }
@@ -86,44 +98,70 @@ class ProfileForm extends Component {
     this.setState({ imgUrl: `https://gateway.ipfs.io/ipfs/${ipfsHash[0].hash}` })
   }
 
+  renderTxStatus() {
+    if (this.state.submitting) {
+      return (
+        <CardFooter className="tx-card py-0">
+          <div className="row">
+            <div className="col text-right">
+              <img
+                className="mr-2 my-1"
+                src={loadingSpinner}
+                alt="profile"
+                width="20"
+                height="20"
+              />
+              <small className="text-muted">Submitting to blockchain. Please wait...</small>
+            </div>
+          </div>
+        </CardFooter>
+      )
+    }
+  }
+
   render() {
     return (
-      <Form onSubmit={this.handleSubmit.bind(this)}>
-        <FormGroup>
-          <img
-            id="update-profile-picture"
-            className="profile-img mb-2"
-            src={this.state.imgUrl}
-            alt="profile"
-          />
-          <Input
-            type="file"
-            name="file"
-            id="update-user-img"
-            onChange={this.captureFile.bind(this)}
-            accept="image/gif, image/jpeg, image/png"
-          />
-        </FormGroup>
-        <FormGroup>
-          <Input
-            id="name"
-            type="text"
-            value={this.state.name}
-            onChange={this.onNameChange.bind(this)}
-            placeholder="Your name"
-          />
-        </FormGroup>
-        <FormGroup>
-          <Input
-            id="bio"
-            type="text"
-            value={this.state.bio}
-            onChange={this.onBioChange.bind(this)}
-            placeholder="Tell us something about yourself"
-          />
-        </FormGroup>
-        <Button color="green">Update Profile</Button>
-      </Form>
+      <Card className="profile-card">
+        <CardBody>
+          <Form onSubmit={this.handleSubmit.bind(this)}>
+            <FormGroup>
+              <img
+                id="update-profile-picture"
+                className="profile-img mb-2"
+                src={this.state.imgUrl}
+                alt="profile"
+              />
+              <Input
+                type="file"
+                name="file"
+                id="update-user-img"
+                onChange={this.captureFile.bind(this)}
+                accept="image/gif, image/jpeg, image/png"
+              />
+            </FormGroup>
+            <FormGroup>
+              <Input
+                id="name"
+                type="text"
+                value={this.state.name}
+                onChange={this.onNameChange.bind(this)}
+                placeholder="Your name"
+              />
+            </FormGroup>
+            <FormGroup>
+              <Input
+                id="bio"
+                type="text"
+                value={this.state.bio}
+                onChange={this.onBioChange.bind(this)}
+                placeholder="Tell us something about yourself"
+              />
+            </FormGroup>
+            <Button color="green">Update Profile</Button>
+          </Form>
+        </CardBody>
+        {this.renderTxStatus()}
+      </Card>
     )
   }
 }

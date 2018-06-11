@@ -16,6 +16,12 @@ import LogoutButtonContainer from '../logoutbutton/LogoutButtonContainer'
 import inkdropWhite from '../../../../public/icons/icon-inkdrop-white.svg'
 
 class ProfileHeader extends Component {
+  // constructor(props) {
+  //   super(props)
+  //TODO: Check why ProfileHeady in initiated after every account snyc
+  // console.log('Profile header created')
+  // }
+
   render() {
     return (
       <Nav navbar>
@@ -31,6 +37,12 @@ class ProfileHeader extends Component {
           <DropdownMenu right>
             <DropdownItem disabled>{this.props.user.name}</DropdownItem>
             <DropdownItem header>{this.props.user.bio}</DropdownItem>
+            <DropdownItem divider />
+            <DropdownItem>
+              <Link to="/newsfeed" className="">
+                Newsfeed
+              </Link>
+            </DropdownItem>
             <DropdownItem>
               <Link to="/profile" className="">
                 Update profile

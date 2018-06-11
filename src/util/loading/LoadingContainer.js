@@ -15,8 +15,8 @@ class LoadingContainer extends Component {
 
       return (
         <main className="container loading-screen">
-          <div className="pure-g">
-            <div className="pure-u-1-1">
+          <div className="row">
+            <div className="col m-4">
               <h1>⚠️</h1>
               <p>
                 This browser has no connection to the Ethereum network. Please use the
@@ -31,8 +31,8 @@ class LoadingContainer extends Component {
     if (this.props.web3.status === 'initialized' && Object.keys(this.props.accounts).length === 0) {
       return (
         <main className="container loading-screen">
-          <div className="pure-g">
-            <div className="pure-u-1-1">
+          <div className="row">
+            <div className="col m-4">
               <h1>🦊</h1>
               <p>
                 <strong>We can't find any Ethereum accounts!</strong> Please check and make sure
@@ -52,8 +52,8 @@ class LoadingContainer extends Component {
     }
     return (
       <main className="container loading-screen">
-        <div className="pure-g">
-          <div className="pure-u-1-1">
+        <div className="row">
+          <div className="col m-4">
             <h1>⚙️</h1>
             <p>Loading dapp...</p>
           </div>

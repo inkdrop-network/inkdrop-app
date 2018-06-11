@@ -36,6 +36,35 @@ class MessageItem extends Component {
         },
       }
       this.dataKey = this.contracts.InkDrop.methods.getMessage.cacheCall(this.props.msgId)
+
+      // Get message info after page changes with props & cacheCalls already in place
+      if (this.dataKey in this.props.InkDrop.getMessage) {
+        let tmpMsg = this.props.InkDrop.getMessage[this.dataKey].value
+        this.userDataKey = this.contracts.InkDrop.methods.getUser.cacheCall(tmpMsg.writtenBy)
+        if (this.userDataKey in this.props.InkDrop.getUser) {
+          let tmpUser = this.props.InkDrop.getUser[this.userDataKey].value
+          this.state = {
+            ...this.state,
+            message: {
+              id: this.props.msgId,
+              content: tmpMsg.content,
+              // TODO: call this.context.drizzle.web3.utils.toUtf8 to format username
+              username: tmpUser.username,
+              timestamp: new Date(tmpMsg.timestamp * 1000),
+              timetolive: new Date(tmpMsg.timetolive * 1000),
+              likes: parseInt(tmpMsg.likes, 10),
+              drops: parseInt(tmpMsg.drops, 10) / 100,
+              userUrl: `https://gateway.ipfs.io/ipfs/${tmpUser.ipfsHash}`,
+              userAdr: tmpMsg.writtenBy,
+              comments: tmpMsg.comments.map(function(e) {
+                return parseInt(e, 10)
+              }),
+              fromBlockchain: true,
+              initialized: true,
+            },
+          }
+        }
+      }
     } else {
       this.state = {
         comments: [],
@@ -111,6 +140,7 @@ class MessageItem extends Component {
         return parseInt(e, 10)
       }),
       fromBlockchain: true,
+      initialized: false,
     }
     this.setState({ message: msg })
   }
@@ -143,16 +173,21 @@ class MessageItem extends Component {
     if (!this.props.cached) {
       // TODO: add slider for amount of drops to be submitted
       let newDrops = 1
-      try {
-        await this.contracts.InkDrop.methods.dropMessage(this.props.msgId, newDrops).send()
-        this.setState({
-          message: {
-            ...this.state.message,
-            drops: this.state.message.drops + newDrops,
-          },
-        })
-      } catch (error) {
-        console.log(error)
+      if (this.props.user.drops - newDrops < 0) {
+        alert('You have not enough funds this transaction.')
+      } else {
+        try {
+          await this.contracts.InkDrop.methods.dropMessage(this.props.msgId, newDrops).send()
+          this.setState({
+            message: {
+              ...this.state.message,
+              drops: this.state.message.drops + newDrops,
+            },
+          })
+          this.props.onMessageDrop(newDrops)
+        } catch (error) {
+          console.log(error)
+        }
       }
     }
   }
@@ -225,6 +260,11 @@ class MessageItem extends Component {
     let commentsClass = this.getClass()
     let commentsNrClass = this.getNrClass()
     let msg = this.state.message
+    // Quick workaround
+    msg.username =
+      msg.username.substr(0, 2) === '0x'
+        ? this.context.drizzle.web3.utils.toUtf8(msg.username)
+        : msg.username
 
     return (
       <Card className={`message-card mb-4 ${!this.props.cached ? '' : 'muted'}`}>

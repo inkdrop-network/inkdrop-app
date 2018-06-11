@@ -15,6 +15,15 @@ const userReducer = (state = initialState, action) => {
     })
   }
 
+  if (action.type === 'USER_DROPPED') {
+    return Object.assign({}, state, {
+      data: {
+        ...state.data,
+        drops: state.data.drops - action.payload,
+      },
+    })
+  }
+
   return state
 }
 

@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { Card, CardBody } from 'reactstrap'
 import ProfileFormContainer from '../../ui/profileform/ProfileFormContainer'
 
 class Profile extends Component {
@@ -11,11 +10,7 @@ class Profile extends Component {
             <h1>Profile</h1>
             <p>Edit your account details here.</p>
             <div id="profile-update">
-              <Card className="profile-card">
-                <CardBody>
-                  <ProfileFormContainer />
-                </CardBody>
-              </Card>
+              <ProfileFormContainer />
             </div>
           </div>
         </div>
