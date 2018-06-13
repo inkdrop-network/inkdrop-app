@@ -4,11 +4,11 @@ import { HiddenOnlyAuth, VisibleOnlyAuth } from './util/wrappers.js'
 import { Navbar, Nav, NavItem } from 'reactstrap'
 
 // UI Components
-import LoginButtonContainer from './user/ui/loginbutton/LoginButtonContainer'
-import ProfileHeaderContainer from './user/ui/profileheader/ProfileHeaderContainer'
+import LoginButtonContainer from './user/components/loginbutton/LoginButtonContainer'
+import ProfileHeaderContainer from './user/components/profileheader/ProfileHeaderContainer'
 
 // Styles
-import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap/dist/css/bootstrap.min.css'
 import './css/Overpass.css'
 import './App.css'
 

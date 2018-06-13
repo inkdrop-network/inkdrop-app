@@ -1,57 +1,48 @@
 import { put, takeLatest } from 'redux-saga/effects'
 
+// actions
 const USER_LOGGED_IN = 'USER_LOGGED_IN'
-function userLoggedIn(user) {
-  return {
-    type: USER_LOGGED_IN,
-    payload: user,
-  }
-}
+const USER_LOGGED_OUT = 'USER_LOGGED_OUT'
+const USER_UPDATED = 'USER_UPDATED'
+const USER_DROPPED = 'USER_DROPPED'
 
+//sagas
 function* logUserIn(action) {
-  yield put(userLoggedIn(action.payload))
+  yield put({
+    type: USER_LOGGED_IN,
+    payload: action.payload,
+  })
 }
 
 function* signUserUp(action) {
-  yield put(userLoggedIn(action.payload))
-}
-
-const USER_LOGGED_OUT = 'USER_LOGGED_OUT'
-function userLoggedOut(user) {
-  return {
-    type: USER_LOGGED_OUT,
-    payload: user,
-  }
+  yield put({
+    type: USER_LOGGED_IN,
+    payload: action.payload,
+  })
 }
 
 function* logUserOut(action) {
-  yield put(userLoggedOut(action.payload))
-}
-
-const USER_UPDATED = 'USER_UPDATED'
-function userUpdated(user) {
-  return {
-    type: USER_UPDATED,
-    payload: user,
-  }
+  yield put({
+    type: USER_LOGGED_OUT,
+    payload: action.payload,
+  })
 }
 
 function* updateUser(action) {
-  yield put(userUpdated(action.payload))
-}
-
-const USER_DROPPED = 'USER_DROPPED'
-function userDropped(drops) {
-  return {
-    type: USER_DROPPED,
-    payload: drops,
-  }
+  yield put({
+    type: USER_UPDATED,
+    payload: action.payload,
+  })
 }
 
 function* dropFromUser(action) {
-  yield put(userDropped(action.payload))
+  yield put({
+    type: USER_DROPPED,
+    payload: action.payload,
+  })
 }
 
+// register sagas
 function* userSagas() {
   yield takeLatest('LOGIN_REQUESTED', logUserIn)
   yield takeLatest('LOGOUT_REQUESTED', logUserOut)

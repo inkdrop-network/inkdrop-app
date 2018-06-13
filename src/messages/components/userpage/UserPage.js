@@ -8,11 +8,11 @@ class UserPage extends Component {
 
   componentDidMount() {
     console.log(this.props.params.id)
-    this.props.getUserMessages(this.props.params.id)
+    // this.props.getUserMessages(this.props.params.id)
   }
 
   componentWillUnmount() {
-    this.props.resetUserMessages()
+    // this.props.resetUserMessages()
   }
 
   render() {

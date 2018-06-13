@@ -1,77 +1,57 @@
 import { put, takeLatest } from 'redux-saga/effects'
 
+// actions
 const MESSAGE_POSTED = 'MESSAGE_POSTED'
-function messagePosted(content) {
-  return {
-    type: MESSAGE_POSTED,
-    payload: content,
-  }
-}
-
-function* createMessage(action) {
-  yield put(messagePosted(action.payload))
-}
-
 const MESSAGE_COUNT_GOT = 'MESSAGE_COUNT_GOT'
-function messageCountGot(count) {
-  return {
-    type: MESSAGE_COUNT_GOT,
-    payload: count,
-  }
+const MESSAGE_GOT = 'MESSAGE_GOT'
+const MESSAGE_TX_SUCCESS = 'MESSAGE_TX_SUCCESS'
+const COMMENT_TX_SUCCESS = 'COMMENT_TX_SUCCESS'
+const COMMENT_POSTED = 'COMMENT_POSTED'
+
+// sagas
+function* createMessage(action) {
+  yield put({
+    type: MESSAGE_POSTED,
+    payload: action.payload,
+  })
 }
 
 function* gotMessageCount(action) {
-  yield put(messageCountGot(action.payload))
-}
-
-const MESSAGE_GOT = 'MESSAGE_GOT'
-function messageGot(message) {
-  return {
-    type: MESSAGE_GOT,
-    payload: message,
-  }
+  yield put({
+    type: MESSAGE_COUNT_GOT,
+    payload: action.payload,
+  })
 }
 
 function* gotMessage(action) {
-  yield put(messageGot(action.payload))
-}
-
-const MESSAGE_TX_SUCCESS = 'MESSAGE_TX_SUCCESS'
-function messageSuccess(message) {
-  return {
-    type: MESSAGE_TX_SUCCESS,
-    payload: message,
-  }
+  yield put({
+    type: MESSAGE_GOT,
+    payload: action.payload,
+  })
 }
 
 function* successMessageTx(action) {
-  yield put(messageSuccess(action.payload))
-}
-
-const COMMENT_TX_SUCCESS = 'COMMENT_TX_SUCCESS'
-function commentSuccess(comment) {
-  return {
-    type: COMMENT_TX_SUCCESS,
-    payload: comment,
-  }
+  yield put({
+    type: MESSAGE_TX_SUCCESS,
+    payload: action.payload,
+  })
 }
 
 function* successCommentTx(action) {
-  yield put(commentSuccess(action.payload))
-}
-
-const COMMENT_POSTED = 'COMMENT_POSTED'
-function commentPosted(comment) {
-  return {
-    type: COMMENT_POSTED,
-    payload: comment,
-  }
+  yield put({
+    type: COMMENT_TX_SUCCESS,
+    payload: action.payload,
+  })
 }
 
 function* createComment(action) {
-  yield put(commentPosted(action.payload))
+  yield put({
+    type: COMMENT_POSTED,
+    payload: action.payload,
+  })
 }
 
+// register sagas
 function* messagesSaga() {
   yield takeLatest('MESSAGE_REQUESTED', createMessage)
   yield takeLatest('MESSAGE_COUNT_REQUESTED', gotMessageCount)

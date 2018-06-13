@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import MessageFormContainer from '../../messages/ui/messageform/MessageFormContainer'
-import MessageListContainer from '../../messages/ui/messagelist/MessageListContainer'
+import MessageFormContainer from '../components/messageform/MessageFormContainer'
+import MessageListContainer from '../components/messagelist/MessageListContainer'
 
 class Newsfeed extends Component {
   constructor(props, { authData }) {

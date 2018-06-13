@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import ProfileFormContainer from '../../ui/profileform/ProfileFormContainer'
+import ProfileFormContainer from '../components/profileform/ProfileFormContainer'
 
 class Profile extends Component {
   render() {
