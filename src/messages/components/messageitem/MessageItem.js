@@ -5,7 +5,7 @@ import { Card, CardBody, CardFooter } from 'reactstrap'
 import Moment from 'react-moment'
 import CommentListContainer from '../commentlist/CommentListContainer'
 
-// Images
+// icons
 import inkdropDark from '../../../../public/icons/icon-inkdrop-dark.svg'
 import iconLike from '../../../../public/icons/icon-like.svg'
 import iconComment from '../../../../public/icons/icon-comments.svg'

@@ -14,7 +14,7 @@ import Home from './layouts/home/Home'
 import Newsfeed from './messages/layouts/Newsfeed'
 import UserSignup from './user/layouts/UserSignup'
 import UserUpdate from './user/layouts/UserUpdate'
-import UserPageContainer from './messages/components/userpage/UserPageContainer'
+import UserPageContainer from './user/components/userpage/UserPageContainer'
 import LoadingContainer from './util/loading/LoadingContainer'
 
 // Configs

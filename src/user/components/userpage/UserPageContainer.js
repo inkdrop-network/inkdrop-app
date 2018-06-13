@@ -4,8 +4,8 @@ import { getUserMessages, resetUserMessages, getUserInfo } from './UserPageActio
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    id: ownProps.params.id,
-    usermessages: state.messages.userdata || [],
+    address: ownProps.params.id,
+    usermessages: state.messages.userdata,
   }
 }
 
@@ -23,6 +23,6 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-const UserPageContainer = drizzleConnect(UserPage, mapStateToProps, mapDispatchToProps)
+const UserPageContainer = drizzleConnect(UserPage, mapStateToProps)
 
 export default UserPageContainer
