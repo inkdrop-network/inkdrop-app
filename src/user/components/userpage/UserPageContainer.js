@@ -5,6 +5,7 @@ import { getUserMessages, resetUserMessages, getUserInfo } from './UserPageActio
 const mapStateToProps = (state, ownProps) => {
   return {
     address: ownProps.params.id,
+    InkDrop: state.contracts.InkDrop,
     usermessages: state.messages.userdata,
   }
 }

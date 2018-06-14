@@ -174,7 +174,7 @@ class MessageItem extends Component {
       // TODO: add slider for amount of drops to be submitted
       let newDrops = 1
       if (this.props.user.drops - newDrops < 0) {
-        alert('You have not enough funds this transaction.')
+        alert('You have not enough funds for this transaction.')
       } else {
         try {
           await this.contracts.InkDrop.methods.dropMessage(this.props.msgId, newDrops).send()
