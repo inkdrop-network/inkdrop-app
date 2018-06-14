@@ -1,7 +1,18 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { browserHistory } from 'react-router'
-import { Button, Form, FormGroup, FormText, Input, Card, CardBody, CardFooter } from 'reactstrap'
+import {
+  Button,
+  Form,
+  FormGroup,
+  FormText,
+  Input,
+  InputGroup,
+  InputGroupAddon,
+  Card,
+  CardBody,
+  CardFooter,
+} from 'reactstrap'
 import ipfs from '../../../ipfs'
 
 import loadingSpinner from '../../../../public/icons/loading-spinner.svg'
@@ -158,14 +169,17 @@ class SignUpForm extends Component {
               </FormText>
             </FormGroup>
             <FormGroup>
-              <Input
-                id="name"
-                type="text"
-                value={this.state.name}
-                onChange={this.onNameChange.bind(this)}
-                placeholder="Your name"
-                required
-              />
+              <InputGroup>
+                <InputGroupAddon addonType="prepend">@</InputGroupAddon>
+                <Input
+                  id="name"
+                  type="text"
+                  value={this.state.name}
+                  onChange={this.onNameChange.bind(this)}
+                  placeholder="Your name"
+                  required
+                />
+              </InputGroup>
             </FormGroup>
             <FormGroup>
               <Input

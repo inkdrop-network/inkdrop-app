@@ -100,7 +100,7 @@ class MessageForm extends Component {
             />
             <div>
               <strong id="post-message-username" className="align-top d-block card-username">
-                c/{this.props.user.name}
+                @{this.props.user.name}
               </strong>
               <span className="card-message-time">now</span>
             </div>

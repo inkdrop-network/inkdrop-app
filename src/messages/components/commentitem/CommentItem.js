@@ -137,7 +137,7 @@ class CommentItem extends Component {
             <div>
               <Link to={`/user/${this.state.comment.userAdr}`} className="">
                 <strong className="align-top d-block card-username">
-                  c/{this.state.comment.username}
+                  @{this.state.comment.username}
                 </strong>
               </Link>
               <span className="card-message-time">

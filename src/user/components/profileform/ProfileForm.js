@@ -1,6 +1,16 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Button, Form, FormGroup, Input, Card, CardBody, CardFooter } from 'reactstrap'
+import {
+  Button,
+  Form,
+  FormGroup,
+  Input,
+  InputGroup,
+  InputGroupAddon,
+  Card,
+  CardBody,
+  CardFooter,
+} from 'reactstrap'
 import ipfs from '../../../ipfs'
 
 import loadingSpinner from '../../../../public/icons/loading-spinner.svg'
@@ -140,13 +150,17 @@ class ProfileForm extends Component {
               />
             </FormGroup>
             <FormGroup>
-              <Input
-                id="name"
-                type="text"
-                value={this.state.name}
-                onChange={this.onNameChange.bind(this)}
-                placeholder="Your name"
-              />
+              <InputGroup>
+                <InputGroupAddon addonType="prepend">@</InputGroupAddon>
+                <Input
+                  id="name"
+                  type="text"
+                  value={this.state.name}
+                  onChange={this.onNameChange.bind(this)}
+                  placeholder="Your name"
+                  required
+                />
+              </InputGroup>
             </FormGroup>
             <FormGroup>
               <Input

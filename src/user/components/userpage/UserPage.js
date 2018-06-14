@@ -51,7 +51,7 @@ class UserPage extends Component {
                 alt=""
               />
               <h3 id="profile-page-username" className="mt-4 mb-1">
-                c/{user.username}
+                @{user.username}
               </h3>
               <div id="profile-page-occupation">{user.bio}</div>
               <div id="follow-buttons">

@@ -276,7 +276,7 @@ class MessageItem extends Component {
           />
           <div>
             <Link to={`/user/${msg.userAdr}`} className="">
-              <strong className="align-top d-block card-username">c/{msg.username}</strong>
+              <strong className="align-top d-block card-username">@{msg.username}</strong>
             </Link>
             <span className="card-message-time">
               <Moment fromNow>{msg.timestamp}</Moment>

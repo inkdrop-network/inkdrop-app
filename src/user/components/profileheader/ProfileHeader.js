@@ -35,7 +35,7 @@ class ProfileHeader extends Component {
             />
           </DropdownToggle>
           <DropdownMenu right>
-            <DropdownItem disabled>{this.props.user.name}</DropdownItem>
+            <DropdownItem disabled>@{this.props.user.name}</DropdownItem>
             <DropdownItem header>{this.props.user.bio}</DropdownItem>
             <DropdownItem divider />
             <DropdownItem>
