@@ -7,6 +7,22 @@ import PropTypes from 'prop-types'
  */
 
 class LoadingContainer extends Component {
+  getNetworkName(networkId) {
+    switch (networkId) {
+      case 1:
+        return 'Main'
+      case 2:
+        return 'Morden'
+      case 3:
+        return 'Ropsten'
+      case 4:
+        return 'Rinkeby'
+      case 42:
+        return 'Kovan'
+      default:
+        return 'Unknown'
+    }
+  }
   render() {
     if (this.props.web3.status === 'failed') {
       if (this.props.errorComp) {
@@ -29,6 +45,9 @@ class LoadingContainer extends Component {
     }
 
     if (this.props.web3.status === 'initialized' && Object.keys(this.props.accounts).length === 0) {
+      // TODO: check for rinkeby network
+      console.log(this.getNetworkName(this.props.web3.networkId))
+
       return (
         <main className="container loading-screen">
           <div className="row">

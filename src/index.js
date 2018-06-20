@@ -3,10 +3,11 @@ import ReactDOM from 'react-dom'
 import { Router, Route, IndexRoute, browserHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
 import { Provider } from 'react-redux'
-import { DrizzleProvider } from 'drizzle-react'
+// import { DrizzleProvider } from 'drizzle-react'
 
-// Utils
-import { UserIsAuthenticated, UserIsNotAuthenticated } from './util/wrappers.js'
+// utils
+import { UserIsAuthenticated, UserIsNotAuthenticated } from './utils/wrappers.js'
+import CustomDrizzleProvider from './utils/drizzle/CustomDrizzleProvider'
 
 // Layouts
 import App from './App'
@@ -15,10 +16,10 @@ import Newsfeed from './messages/layouts/Newsfeed'
 import UserSignup from './user/layouts/UserSignup'
 import UserUpdate from './user/layouts/UserUpdate'
 import UserPageContainer from './user/components/userpage/UserPageContainer'
-import LoadingContainer from './util/loading/LoadingContainer'
+import LoadingContainer from './utils/loading/LoadingContainer'
 
 // Configs
-import store from './store'
+import { store, drizzle } from './store'
 import drizzleOptions from './drizzleOptions'
 
 // Initialize react-router-redux.
@@ -34,7 +35,7 @@ const history = syncHistoryWithStore(browserHistory, store)
 //</Route>
 
 ReactDOM.render(
-  <DrizzleProvider options={drizzleOptions} store={store}>
+  <CustomDrizzleProvider drizzle={drizzle} options={drizzleOptions} store={store}>
     <Provider store={store}>
       <LoadingContainer>
         <Router history={history}>
@@ -48,6 +49,6 @@ ReactDOM.render(
         </Router>
       </LoadingContainer>
     </Provider>
-  </DrizzleProvider>,
+  </CustomDrizzleProvider>,
   document.getElementById('root')
 )

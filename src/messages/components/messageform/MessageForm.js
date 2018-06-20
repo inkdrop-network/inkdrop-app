@@ -58,32 +58,49 @@ class MessageForm extends Component {
       return alert('Please add some drops to your post.')
     }
 
-    try {
-      const stackId = await this.contracts.InkDrop.methods.createMessage.cacheSend(
-        this.state.content,
-        this.state.drops
-      )
-      this.setState({ stackId: stackId })
+    // try {
+    //   const stackId = await this.contracts.InkDrop.methods.createMessage.cacheSend(
+    //     this.state.content,
+    //     this.state.drops
+    //   )
+    //   this.setState({ stackId: stackId })
 
-      let newMsg = {
-        content: this.state.content,
-        username: this.props.user.name,
-        timestamp: Date.now(),
-        likes: 0,
-        drops: this.state.drops,
-        userUrl: this.props.user.imgUrl,
-        userAdr: this.props.accounts[0],
-        id: stackId,
-        comments: [],
-        fromBlockchain: false,
-        initialized: false,
-      }
-      // trigger saga
-      this.props.onCreateMessage(newMsg)
-      this.setState({ content: '', stackId: '' })
-    } catch (error) {
-      console.log(error)
+    //   let newMsg = {
+    //     content: this.state.content,
+    //     username: this.props.user.name,
+    //     timestamp: Date.now(),
+    //     likes: 0,
+    //     drops: this.state.drops,
+    //     userUrl: this.props.user.imgUrl,
+    //     userAdr: this.props.accounts[0],
+    //     id: stackId,
+    //     comments: [],
+    //     fromBlockchain: false,
+    //     initialized: false,
+    //   }
+    //   // trigger saga
+    //   this.props.onCreateMessage(newMsg)
+
+    //   this.setState({ content: '', stackId: '' })
+    // } catch (error) {
+    //   console.log(error)
+    // }
+
+    let newMsg = {
+      content: this.state.content,
+      username: this.props.user.name,
+      timestamp: Date.now(),
+      likes: 0,
+      drops: this.state.drops,
+      userUrl: this.props.user.imgUrl,
+      userAdr: this.props.accounts[0],
+      id: this.props.messages.length,
+      comments: [],
+      fromBlockchain: false,
+      initialized: false,
     }
+
+    this.props.onMessageSaga(this.contracts.InkDrop.methods, newMsg)
   }
 
   render() {

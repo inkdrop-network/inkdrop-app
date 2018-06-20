@@ -52,6 +52,18 @@ const messagesReducer = (state = initialState, action) => {
     })
   }
 
+  if (action.type === 'UPDATE_MESSAGE') {
+    return Object.assign({}, state, {
+      data: state.data.map(item => {
+        if (!item.fromBlockchain && item.id === action.id) {
+          return { ...item, ...action.payload }
+        }
+
+        return item
+      }),
+    })
+  }
+
   if (action.type === 'LIKE_MESSAGE') {
     return Object.assign({}, state, {
       data: state.data.map(item => {

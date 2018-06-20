@@ -5,7 +5,7 @@ import { routerMiddleware } from 'react-router-redux'
 import reducer from './reducer'
 import rootSaga from './rootSaga'
 import createSagaMiddleware from 'redux-saga'
-import { generateContractsInitialState } from 'drizzle'
+import { Drizzle, generateContractsInitialState } from 'drizzle'
 import drizzleOptions from './drizzleOptions'
 
 // Redux DevTools
@@ -15,16 +15,23 @@ const routingMiddleware = routerMiddleware(browserHistory)
 const sagaMiddleware = createSagaMiddleware()
 
 const initialState = {
-  contracts: generateContractsInitialState(drizzleOptions),
+	contracts: generateContractsInitialState(drizzleOptions),
 }
 
 const store = createStore(
-  reducer,
-  initialState,
-  composeEnhancers(applyMiddleware(thunkMiddleware, routingMiddleware, sagaMiddleware))
-  // composeEnhancers(applyMiddleware(sagaMiddleware, routingMiddleware))
+	reducer,
+	initialState,
+	composeEnhancers(applyMiddleware(thunkMiddleware, routingMiddleware, sagaMiddleware))
+	// composeEnhancers(applyMiddleware(sagaMiddleware, routingMiddleware))
 )
 
-sagaMiddleware.run(rootSaga)
+// NEW line here
+const drizzle = new Drizzle(drizzleOptions, store)
 
-export default store
+sagaMiddleware.run(rootSaga)
+// NEW line here
+sagaMiddleware.setContext({
+	drizzle,
+})
+
+export { store, drizzle }

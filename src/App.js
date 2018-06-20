@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router'
-import { HiddenOnlyAuth, VisibleOnlyAuth } from './util/wrappers.js'
+import { HiddenOnlyAuth, VisibleOnlyAuth } from './utils/wrappers.js'
 import { Navbar, Nav, NavItem } from 'reactstrap'
 
 // UI Components
