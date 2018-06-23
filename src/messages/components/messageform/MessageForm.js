@@ -3,33 +3,15 @@ import PropTypes from 'prop-types'
 import { Button, Form, FormGroup, Input, Card, CardBody } from 'reactstrap'
 
 class MessageForm extends Component {
-  constructor(props, context) {
+  constructor(props) {
     super(props)
-    this.contracts = context.drizzle.contracts
 
     this.state = {
       content: '',
       drops: 0, // TODO: add drop slider
       focus: false,
-      stackId: '',
     }
   }
-
-  // componentDidUpdate(prevProps, prevState, snapshot) {
-  //   if (this.props.transactionStack[this.state.stackId]) {
-  //     const txHash = this.props.transactionStack[this.state.stackId]
-  //     if (
-  //       txHash in prevProps.transactions &&
-  //       prevProps.transactions[txHash].status === 'pending' &&
-  //       this.props.transactions[txHash].status === 'success'
-  //     ) {
-  //       console.log('TxHash: ' + txHash)
-  //       console.log('Tx Status: ' + this.props.transactions[txHash].status)
-  //       console.log(prevProps)
-  //       // TODO: remove message from store
-  //     }
-  //   }
-  // }
 
   onFocus() {
     this.setState({ focus: true })
@@ -58,34 +40,6 @@ class MessageForm extends Component {
       return alert('Please add some drops to your post.')
     }
 
-    // try {
-    //   const stackId = await this.contracts.InkDrop.methods.createMessage.cacheSend(
-    //     this.state.content,
-    //     this.state.drops
-    //   )
-    //   this.setState({ stackId: stackId })
-
-    //   let newMsg = {
-    //     content: this.state.content,
-    //     username: this.props.user.name,
-    //     timestamp: Date.now(),
-    //     likes: 0,
-    //     drops: this.state.drops,
-    //     userUrl: this.props.user.imgUrl,
-    //     userAdr: this.props.accounts[0],
-    //     id: stackId,
-    //     comments: [],
-    //     fromBlockchain: false,
-    //     initialized: false,
-    //   }
-    //   // trigger saga
-    //   this.props.onCreateMessage(newMsg)
-
-    //   this.setState({ content: '', stackId: '' })
-    // } catch (error) {
-    //   console.log(error)
-    // }
-
     let newMsg = {
       content: this.state.content,
       username: this.props.user.name,
@@ -95,12 +49,15 @@ class MessageForm extends Component {
       userUrl: this.props.user.imgUrl,
       userAdr: this.props.accounts[0],
       id: this.props.messages.length,
+      commentIds: [],
       comments: [],
       fromBlockchain: false,
       initialized: false,
     }
 
-    this.props.onMessageSaga(this.contracts.InkDrop.methods, newMsg)
+    this.props.onCreateMessage(newMsg)
+    // TODO: delete content after TX_BROADCAST
+    this.setState({ content: '' })
   }
 
   render() {
@@ -185,8 +142,10 @@ class MessageForm extends Component {
   }
 }
 
-MessageForm.contextTypes = {
-  drizzle: PropTypes.object,
+MessageForm.propTypes = {
+  accounts: PropTypes.object,
+  user: PropTypes.object,
+  messages: PropTypes.array,
 }
 
 export default MessageForm

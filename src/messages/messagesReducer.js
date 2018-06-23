@@ -14,11 +14,8 @@ const messagesReducer = (state = initialState, action) => {
   }
 
   if (action.type === 'MESSAGE_GOT') {
-    let newData = state.data.concat(action.payload)
     return Object.assign({}, state, {
-      data: newData,
-      // eslint-disable-next-line
-      initialized: newData.length == state.count,
+      data: state.data.concat(action.payload),
     })
   }
 
@@ -52,13 +49,26 @@ const messagesReducer = (state = initialState, action) => {
     })
   }
 
+  if (action.type === 'UPDATE_MESSAGE_COMMENTS') {
+    return Object.assign({}, state, {
+      data: state.data.map(item => {
+        if (item.id === action.id) {
+          return {
+            ...item,
+            comments: item.comments.concat(action.payload),
+          }
+        }
+        return item
+      }),
+    })
+  }
+
   if (action.type === 'UPDATE_MESSAGE') {
     return Object.assign({}, state, {
       data: state.data.map(item => {
-        if (!item.fromBlockchain && item.id === action.id) {
+        if (item.id === action.id) {
           return { ...item, ...action.payload }
         }
-
         return item
       }),
     })

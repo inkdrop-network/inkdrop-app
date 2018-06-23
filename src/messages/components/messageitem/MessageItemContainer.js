@@ -3,7 +3,6 @@ import MessageItem from './MessageItem'
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    InkDrop: state.contracts.InkDrop,
     user: state.user.data,
   }
 }

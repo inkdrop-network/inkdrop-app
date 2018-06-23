@@ -5,9 +5,6 @@ const mapStateToProps = (state, ownProps) => {
   return {
     user: state.user.data,
     accounts: state.accounts,
-    InkDrop: state.contracts.InkDrop,
-    transactionStack: state.transactionStack,
-    transactions: state.transactions,
   }
 }
 
