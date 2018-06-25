@@ -9,18 +9,28 @@ import loadingSpinner from '../../../../public/icons/loading-spinner.svg'
 class CommentItem extends Component {
   renderTxStatus() {
     if (!this.props.comment.fromBlockchain) {
+      let message = ''
+      let cls = 'text-muted'
+      if (this.props.comment.error) {
+        message = this.props.comment.error
+        cls = 'text-danger'
+      } else if (this.props.comment.sendingMessage) {
+        message = this.props.comment.sendingMessage
+      }
       return (
         <CardFooter className="tx-card py-0">
           <div className="row">
             <div className="col">
-              <img
-                className="mr-2 my-1"
-                src={loadingSpinner}
-                alt="profile"
-                width="20"
-                height="20"
-              />
-              <small className="text-muted">Submitting to blockchain</small>
+              {!this.props.comment.error && (
+                <img
+                  className="mr-2 my-1"
+                  src={loadingSpinner}
+                  alt="profile"
+                  width="20"
+                  height="20"
+                />
+              )}
+              <small className={cls}>{message}</small>
             </div>
           </div>
         </CardFooter>

@@ -11,66 +11,36 @@ import {
 } from 'redux-saga/effects'
 
 // actions
-const MESSAGE_POSTED = 'MESSAGE_POSTED'
-const MESSAGE_COUNT_GOT = 'MESSAGE_COUNT_GOT'
+const MESSAGES_GOT = 'MESSAGES_GOT'
 const MESSAGE_GOT = 'MESSAGE_GOT'
-const MESSAGE_TX_SUCCESS = 'MESSAGE_TX_SUCCESS'
-const COMMENT_TX_SUCCESS = 'COMMENT_TX_SUCCESS'
+const MESSAGE_POSTED = 'MESSAGE_POSTED'
 const COMMENT_POSTED = 'COMMENT_POSTED'
+
+const UPDATE_MESSAGE = 'UPDATE_MESSAGE'
+const UPDATE_COMMENT = 'UPDATE_COMMENT'
+const UPDATE_MESSAGE_COMMENTS = 'UPDATE_MESSAGE_COMMENTS'
+
+const DELETE_MESSAGE = 'DELETE_MESSAGE'
+const DELETE_COMMENT = 'DELETE_COMMENT'
+
+// drizzle's transactions events
+const TX_CONFIRMAITON = 'TX_CONFIRMAITON'
+const TX_BROADCASTED = 'TX_BROADCASTED'
+const TX_SUCCESSFUL = 'TX_SUCCESSFUL'
+const TX_ERROR = 'TX_ERROR'
 
 // selectors
 const getState = state => state
-const getTxStack = state => state.transactionStack
-const getTxs = state => state.transactions
-const getMsgs = state => state.contracts.InkDrop.getMessage
-
-// sagas
-function* createMessage(action) {
-  yield put({
-    type: MESSAGE_POSTED,
-    payload: action.payload,
-  })
-}
-
-function* gotMessageCount(action) {
-  yield put({
-    type: MESSAGE_COUNT_GOT,
-    payload: action.payload,
-  })
-}
-
-function* gotMessage(action) {
-  yield put({
-    type: MESSAGE_GOT,
-    payload: action.payload,
-  })
-}
-
-function* successMessageTx(action) {
-  yield put({
-    type: MESSAGE_TX_SUCCESS,
-    payload: action.payload,
-  })
-}
-
-function* successCommentTx(action) {
-  yield put({
-    type: COMMENT_TX_SUCCESS,
-    payload: action.payload,
-  })
-}
-
-function* createComment(action) {
-  yield put({
-    type: COMMENT_POSTED,
-    payload: action.payload,
-  })
-}
+// const getTxStack = state => state.transactionStack
+// const getTxs = state => state.transactions
+// const getMsgs = state => state.contracts.InkDrop.getMessage
 
 // TODO: cleanup code here
-function* handleTransaction({ msg }) {
+function* handleMsgTransaction({ msg }) {
   const drizzle = yield getContext('drizzle')
   console.log('SAGA Here')
+  msg.sendingMessage = 'Transaction Pending - Confirm through Metamask'
+  yield put({ type: MESSAGE_POSTED, payload: msg })
   let txId = yield call(
     drizzle.contracts.InkDrop.methods.createMessage.cacheSend,
     msg.content,
@@ -81,22 +51,20 @@ function* handleTransaction({ msg }) {
   while (!txComplete) {
     // wait until something happens
     const { confirmation, broadcasted, success, error } = yield race({
-      confirmation: take('TX_CONFIRMAITON'),
-      broadcasted: take('TX_BROADCASTED'),
-      success: take('TX_SUCCESSFUL'),
-      error: take('TX_ERROR'),
+      confirmation: take(TX_CONFIRMAITON),
+      broadcasted: take(TX_BROADCASTED),
+      success: take(TX_SUCCESSFUL),
+      error: take(TX_ERROR),
     })
 
     if (broadcasted) {
       console.log('1 - BROADCASTED')
-      // TODO: add message to store
-      yield put({ type: 'MESSAGE_POSTED', payload: msg })
+      msg.sendingMessage = 'Submitting transaction to blockchain'
+      yield put({ type: UPDATE_MESSAGE, payload: msg })
       txComplete = false
     } else if (confirmation) {
       console.log('2 - CONFIRMATION')
-      // console.lof(confirmation)
       // TODO: show the confirmation number in the frontend
-      // yield put({ type: 'UPDATE_MESSAGE', id: msg.id, payload: msg })
       txComplete = false
     } else if (success) {
       console.log('3 - SUCCESS')
@@ -107,10 +75,179 @@ function* handleTransaction({ msg }) {
       let oldMsgId = msg.id
       // msg.id = argsHash
       msg.fromBlockchain = true
-      yield put({ type: 'UPDATE_MESSAGE', id: oldMsgId, payload: msg })
+      msg.sendingMessage = ''
+      yield put({ type: UPDATE_MESSAGE, payload: msg })
       txComplete = txHash && state.transactions[txHash].status === 'success'
     } else if (error) {
       console.log('ERROR')
+      // yield put({ type: DELETE_MESSAGE, payload: msg })
+      msg.error = 'Transaction failed'
+      msg.sendingMessage = ''
+      yield put({ type: UPDATE_MESSAGE, payload: msg })
+    }
+  }
+
+  console.log('4 - AFTER')
+}
+
+// TODO: cleanup code here
+function* handleCommTransaction({ comment }) {
+  const drizzle = yield getContext('drizzle')
+  console.log('SAGA Here')
+  comment.sendingMessage = 'Transaction Pending - Confirm through Metamask'
+  yield put({ type: COMMENT_POSTED, payload: comment })
+
+  let txId = yield call(
+    drizzle.contracts.InkDrop.methods.createComment.cacheSend,
+    comment.parent,
+    comment.content
+  )
+  let txComplete = false
+
+  while (!txComplete) {
+    // wait until something happens
+    const { confirmation, broadcasted, success, error } = yield race({
+      confirmation: take(TX_CONFIRMAITON),
+      broadcasted: take(TX_BROADCASTED),
+      success: take(TX_SUCCESSFUL),
+      error: take(TX_ERROR),
+    })
+
+    if (broadcasted) {
+      console.log('1 - BROADCASTED')
+      comment.sendingMessage = 'Submitting transaction to blockchain'
+      yield put({ type: UPDATE_COMMENT, payload: comment })
+      txComplete = false
+    } else if (confirmation) {
+      console.log('2 - CONFIRMATION')
+      // TODO: show the confirmation number in the frontend
+      // yield put({ type: 'UPDATE_MESSAGE', id: msg.id, payload: msg })
+      txComplete = false
+    } else if (success) {
+      console.log('3 - SUCCESS')
+      let state = yield select(getState)
+      let txHash = state.transactionStack[txId]
+      // TODO: change message in store to fromBlockchain=true and id=argsHash
+      let argsHash = yield call(drizzle.contracts.InkDrop.methods.getMessage.cacheCall, comment.id)
+      let oldMsgId = comment.id
+      // msg.id = argsHash
+      comment.fromBlockchain = true
+      comment.sendingMessage = ''
+      yield put({ type: UPDATE_COMMENT, payload: comment })
+      txComplete = txHash && state.transactions[txHash].status === 'success'
+    } else if (error) {
+      console.log('ERROR')
+      comment.error = 'Transaction failed'
+      comment.sendingMessage = ''
+      yield put({ type: UPDATE_COMMENT, payload: comment })
+    }
+  }
+
+  console.log('4 - AFTER')
+}
+
+// TODO: cleanup code here
+function* handleLikeTransaction({ msg }) {
+  const drizzle = yield getContext('drizzle')
+  console.log('LIKE SAGA Here')
+  let newMsg = Object.assign({}, msg, {
+    likes: msg.likes + 1,
+  })
+  newMsg.sendingMessage = 'Transaction Pending - Confirm through Metamask'
+  yield put({ type: UPDATE_MESSAGE, payload: newMsg })
+  let txId = yield call(drizzle.contracts.InkDrop.methods.likeMessage.cacheSend, msg.id)
+  let txComplete = false
+
+  while (!txComplete) {
+    // wait until something happens
+    const { confirmation, broadcasted, success, error } = yield race({
+      confirmation: take(TX_CONFIRMAITON),
+      broadcasted: take(TX_BROADCASTED),
+      success: take(TX_SUCCESSFUL),
+      error: take(TX_ERROR),
+    })
+
+    if (broadcasted) {
+      console.log('1 - BROADCASTED')
+      // TODO: add message to store
+      newMsg.sendingMessage = 'Submitting transaction to blockchain'
+      yield put({ type: UPDATE_MESSAGE, payload: newMsg })
+      txComplete = false
+    } else if (confirmation) {
+      console.log('2 - CONFIRMATION')
+      // TODO: show the confirmation number in the frontend
+      txComplete = false
+    } else if (success) {
+      console.log('3 - SUCCESS')
+      let state = yield select()
+      let txHash = state.transactionStack[txId]
+      // TODO: change message in store to fromBlockchain=true and id=argsHash
+      // let argsHash = yield call(drizzle.contracts.InkDrop.methods.getMessage.cacheCall, msg.id)
+      // let oldMsgId = msg.id
+      // msg.id = argsHash
+      // msg.fromBlockchain = true
+      // yield put({ type: UPDATE_MESSAGE, id: oldMsgId, payload: msg })
+      newMsg.sendingMessage = ''
+      yield put({ type: UPDATE_MESSAGE, payload: newMsg })
+      txComplete = txHash && state.transactions[txHash].status === 'success'
+    } else if (error) {
+      console.log('ERROR')
+      msg.error = 'Transaction failed'
+      yield put({ type: UPDATE_MESSAGE, payload: msg })
+    }
+  }
+
+  console.log('4 - AFTER')
+}
+
+// TODO: cleanup code here
+function* handleDropTransaction({ msg, drops }) {
+  const drizzle = yield getContext('drizzle')
+  console.log('DROP SAGA Here')
+  let newMsg = Object.assign({}, msg, {
+    drops: msg.drops + drops,
+  })
+  newMsg.sendingMessage = 'Transaction Pending - Confirm through Metamask'
+  yield put({ type: UPDATE_MESSAGE, payload: newMsg })
+  let txId = yield call(drizzle.contracts.InkDrop.methods.dropMessage.cacheSend, msg.id, msg.drops)
+  let txComplete = false
+
+  while (!txComplete) {
+    // wait until something happens
+    const { confirmation, broadcasted, success, error } = yield race({
+      confirmation: take(TX_CONFIRMAITON),
+      broadcasted: take(TX_BROADCASTED),
+      success: take(TX_SUCCESSFUL),
+      error: take(TX_ERROR),
+    })
+
+    if (broadcasted) {
+      console.log('1 - BROADCASTED')
+      // TODO: add message to store
+      newMsg.sendingMessage = 'Submitting transaction to blockchain'
+      yield put({ type: UPDATE_MESSAGE, payload: newMsg })
+      txComplete = false
+    } else if (confirmation) {
+      console.log('2 - CONFIRMATION')
+      // TODO: show the confirmation number in the frontend
+      txComplete = false
+    } else if (success) {
+      console.log('3 - SUCCESS')
+      let state = yield select()
+      let txHash = state.transactionStack[txId]
+      // TODO: change message in store to fromBlockchain=true and id=argsHash
+      // let argsHash = yield call(drizzle.contracts.InkDrop.methods.getMessage.cacheCall, msg.id)
+      // let oldMsgId = msg.id
+      // msg.id = argsHash
+      // msg.fromBlockchain = true
+      // yield put({ type: UPDATE_MESSAGE, id: oldMsgId, payload: msg })
+      newMsg.sendingMessage = ''
+      yield put({ type: UPDATE_MESSAGE, payload: newMsg })
+      txComplete = txHash && state.transactions[txHash].status === 'success'
+    } else if (error) {
+      console.log('ERROR')
+      msg.error = 'Transaction failed'
+      yield put({ type: UPDATE_MESSAGE, payload: msg })
     }
   }
 
@@ -128,33 +265,8 @@ function* getMessages() {
     arr.push(fork(getMessageCall, i))
   }
   yield all(arr)
+  yield put({ type: MESSAGES_GOT, payload: true })
 }
-
-// function* getMessage(msgId) {
-//   console.log('GET MESSAGE id: ', msgId)
-//   const drizzle = yield getContext('drizzle')
-//   let argsHash = yield call(drizzle.contracts.InkDrop.methods.getMessage.cacheCall, msgId)
-//   let reqComplete = false
-//   while (!reqComplete) {
-//     const { success, error } = yield race({
-//       success: take('GOT_CONTRACT_VAR'),
-//       error: take('ERROR_CONTRACT_VAR'),
-//     })
-//     if (success) {
-//       console.log('SUCCESS')
-//       let msgs = yield select(getMsgs)
-//       if (argsHash in msgs) {
-//         let msg = yield msgs[argsHash]
-//         console.log(msg)
-//         // let newMsg = parseMessage(msgId, msg)
-//         // update the store so the UI get updated
-//         // yield put({ type: 'MESSAGE_GOT', payload: newMsg })
-//       }
-//     } else if (error) {
-//       console.log('ERROR')
-//     }
-//   }
-// }
 
 function* getMessageCall(msgId) {
   // TODO: try and catch
@@ -163,7 +275,7 @@ function* getMessageCall(msgId) {
   let tmpMsg = yield call(drizzle.contracts.InkDrop.methods.getMessage(msgId).call)
   let msg = parseMessage(msgId, tmpMsg)
   // update the store so the UI get updated
-  yield put({ type: 'MESSAGE_GOT', payload: msg })
+  yield put({ type: MESSAGE_GOT, payload: msg })
   yield all([fork(getUser, msg), fork(getComments, msg)])
 }
 
@@ -173,7 +285,6 @@ function* getComments(msg) {
     arr.push(fork(getComment, msg.id, commentId))
   }
   let comments = yield all(arr)
-  // yield put({ type: 'UPDATE_MESSAGE', id: msg.id, payload: { initialized: true } })
 }
 
 function* getUser(msg) {
@@ -182,7 +293,7 @@ function* getUser(msg) {
   try {
     let user = yield call(drizzle.contracts.InkDrop.methods.getUser(msg.userAdr).call)
     let newMsg = yield parseUser(msg.id, user)
-    yield put({ type: 'UPDATE_MESSAGE', id: msg.id, payload: newMsg })
+    yield put({ type: UPDATE_MESSAGE, payload: newMsg })
   } catch (error) {
     console.log(error)
   }
@@ -197,7 +308,7 @@ function* getComment(msgId, commentId) {
   let user = yield call(drizzle.contracts.InkDrop.methods.getUser(comment.writtenBy).call)
   let newUser = yield parseUser(commentId, user)
   yield put({
-    type: 'UPDATE_MESSAGE_COMMENTS',
+    type: UPDATE_MESSAGE_COMMENTS,
     id: msgId,
     payload: [Object.assign(newComment, newUser)],
   })
@@ -251,13 +362,11 @@ function* parseUser(id, user) {
 
 // register sagas
 function* messagesSaga() {
-  yield takeLatest('MESSAGE_REQUESTED', handleTransaction)
-  yield takeLatest('MESSAGE_COUNT_REQUESTED', gotMessageCount)
-  yield takeLatest('MESSAGE_FETCH_REQUESTED', gotMessage)
   yield takeLatest('MESSAGES_FETCH_REQUESTED', getMessages)
-  yield takeLatest('MESSAGE_TX_REQUESTED', successMessageTx)
-  yield takeLatest('COMMENT_TX_REQUESTED', successCommentTx)
-  yield takeLatest('COMMENT_REQUESTED', createComment)
+  yield takeLatest('MESSAGE_REQUESTED', handleMsgTransaction)
+  yield takeLatest('COMMENT_REQUESTED', handleCommTransaction)
+  yield takeLatest('MESSAGE_DROP_REQUESTED', handleDropTransaction)
+  yield takeLatest('MESSAGE_LIKE_REQUESTED', handleLikeTransaction)
 }
 
 export default messagesSaga

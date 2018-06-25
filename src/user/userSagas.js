@@ -48,7 +48,7 @@ function* userSagas() {
   yield takeLatest('LOGOUT_REQUESTED', logUserOut)
   yield takeLatest('SIGNUP_REQUESTED', signUserUp)
   yield takeLatest('USERUPDATE_REQUESTED', updateUser)
-  yield takeLatest('MESSAGE_DROP_REQUESTED', dropFromUser)
+  // yield takeLatest('MESSAGE_DROP_REQUESTED', dropFromUser)
 }
 
 export default userSagas

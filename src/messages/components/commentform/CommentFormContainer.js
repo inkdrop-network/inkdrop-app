@@ -1,4 +1,5 @@
-import { drizzleConnect } from 'drizzle-react'
+// import { drizzleConnect } from 'drizzle-react'
+import { connect } from 'react-redux'
 import CommentForm from './CommentForm'
 
 const mapStateToProps = (state, ownProps) => {
@@ -11,11 +12,14 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => {
   return {
     onCommentMessage: comment => {
-      dispatch({ type: 'COMMENT_REQUESTED', payload: comment })
+      dispatch({ type: 'COMMENT_REQUESTED', comment })
     },
   }
 }
 
-const CommentFormContainer = drizzleConnect(CommentForm, mapStateToProps, mapDispatchToProps)
+const CommentFormContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CommentForm)
 
 export default CommentFormContainer

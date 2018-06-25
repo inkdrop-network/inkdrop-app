@@ -1,4 +1,4 @@
-import { drizzleConnect } from 'drizzle-react'
+import { connect } from 'react-redux'
 import MessageForm from './MessageForm'
 
 const mapStateToProps = (state, ownProps) => {
@@ -17,6 +17,9 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-const MessageFormContainer = drizzleConnect(MessageForm, mapStateToProps, mapDispatchToProps)
+const MessageFormContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(MessageForm)
 
 export default MessageFormContainer

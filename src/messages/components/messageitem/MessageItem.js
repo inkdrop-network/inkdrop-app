@@ -31,18 +31,7 @@ class MessageItem extends Component {
       if (this.props.user.drops - newDrops < 0) {
         alert('You have not enough funds for this transaction.')
       } else {
-        // try {
-        //   await this.contracts.InkDrop.methods.dropMessage(this.props.msgId, newDrops).send()
-        //   this.setState({
-        //     message: {
-        //       ...this.state.message,
-        //       drops: this.state.message.drops + newDrops,
-        //     },
-        //   })
-        //   this.props.onMessageDrop(newDrops)
-        // } catch (error) {
-        //   console.log(error)
-        // }
+        this.props.onMessageDrop(this.props.message, newDrops)
       }
     }
   }
@@ -80,19 +69,33 @@ class MessageItem extends Component {
   }
 
   renderTxStatus() {
-    if (!this.props.message.fromBlockchain) {
+    if (
+      !this.props.message.fromBlockchain ||
+      this.props.message.error ||
+      this.props.message.sendingMessage
+    ) {
+      let message = ''
+      let cls = 'text-muted'
+      if (this.props.message.error) {
+        message = this.props.message.error
+        cls = 'text-danger'
+      } else if (this.props.message.sendingMessage) {
+        message = this.props.message.sendingMessage
+      }
       return (
         <CardFooter className="tx-card py-0">
           <div className="row">
             <div className="col">
-              <img
-                className="mr-2 my-1"
-                src={loadingSpinner}
-                alt="profile"
-                width="20"
-                height="20"
-              />
-              <small className="text-muted">Submitting to blockchain</small>
+              {!this.props.message.error && (
+                <img
+                  className="mr-2 my-1"
+                  src={loadingSpinner}
+                  alt="profile"
+                  width="20"
+                  height="20"
+                />
+              )}
+              <small className={cls}>{message}</small>
             </div>
           </div>
         </CardFooter>
@@ -166,6 +169,7 @@ class MessageItem extends Component {
 
 MessageItem.propTypes = {
   message: PropTypes.object,
+  user: PropTypes.object,
 }
 
 export default MessageItem

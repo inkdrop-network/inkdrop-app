@@ -1,26 +1,17 @@
-import { drizzleConnect } from 'drizzle-react'
+import { connect } from 'react-redux'
 import CommentItem from './CommentItem'
 
 const mapStateToProps = (state, ownProps) => {
-  return {
-    InkDrop: state.contracts.InkDrop,
-    transactionStack: state.transactionStack,
-    transactions: state.transactions,
-  }
+  return {}
 }
 
 const mapDispatchToProps = dispatch => {
-  return {
-    onMessageCountGot: count => {
-      dispatch({ type: 'MESSAGE_COUNT_REQUESTED', payload: count })
-    },
-
-    onMessageTxSuccess: msg => {
-      dispatch({ type: 'MESSAGE_TX_REQUESTED', payload: msg })
-    },
-  }
+  return {}
 }
 
-const CommentItemContainer = drizzleConnect(CommentItem, mapStateToProps, mapDispatchToProps)
+const CommentItemContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CommentItem)
 
 export default CommentItemContainer

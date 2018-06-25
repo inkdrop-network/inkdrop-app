@@ -18,10 +18,11 @@ class LoginButton extends Component {
     if (isUser) {
       // // If the data is here, get it and display it
       let user = await this.contracts.InkDrop.methods.getUser(this.props.accounts[0]).call()
+      let userDrops = parseInt(user.drops, 10) >= 0 ? parseInt(user.drops, 10) / 100 : 0
       let newUser = {
         name: this.context.drizzle.web3.utils.toUtf8(user.username),
         bio: user.bio,
-        drops: parseInt(user.drops, 10) / 100,
+        drops: userDrops,
         ipfsHash: user.ipfsHash,
         imgUrl: `https://gateway.ipfs.io/ipfs/${user.ipfsHash}`,
         followers: parseInt(user.followers, 10),

@@ -4,7 +4,9 @@ import MessageItemContainer from '../messageitem/MessageItemContainer'
 
 class MessageList extends Component {
   componentDidMount() {
-    this.props.fetchMessages()
+    if (!this.props.initialized) {
+      this.props.fetchMessages()
+    }
   }
 
   render() {
@@ -18,6 +20,7 @@ class MessageList extends Component {
 
 MessageList.propTypes = {
   messages: PropTypes.array,
+  initialized: PropTypes.bool,
 }
 
 export default MessageList

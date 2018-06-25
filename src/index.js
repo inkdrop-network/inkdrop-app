@@ -25,15 +25,6 @@ import drizzleOptions from './drizzleOptions'
 // Initialize react-router-redux.
 const history = syncHistoryWithStore(browserHistory, store)
 
-//<Route path="/" component={App}>
-//  <IndexRoute component={Home} />
-//  <Route path="dashboard" component={UserIsAuthenticated(Dashboard)} />
-//  <Route path="newsfeed" component={UserIsAuthenticated(Newsfeed)} />
-//  <Route path="signup" component={UserIsNotAuthenticated(SignUp)} />
-//  <Route path="profile" component={UserIsAuthenticated(Profile)} />
-//  <Route path="user/:id" component={UserIsAuthenticated(UserPageContainer)} />
-//</Route>
-
 ReactDOM.render(
   <CustomDrizzleProvider drizzle={drizzle} options={drizzleOptions} store={store}>
     <Provider store={store}>
