@@ -190,14 +190,6 @@ function* handleLikeTransaction({ msg }) {
   console.log('4 - AFTER')
 }
 
-function* handleDropTransaction2({ msg, drops }) {
-  const drizzle = yield getContext('drizzle')
-  console.log('DROP SAGA2 Here')
-  // let txId = yield call(drizzle.contracts.InkDrop.methods.dropMessage.cacheSend, msg.id, msg.drops)
-  let txId = yield call(drizzle.contracts.InkDrop.methods.dropMessage(msg.id, msg.drops).send)
-  console.log(txId)
-}
-
 // TODO: cleanup code here
 function* handleDropTransaction({ msg, drops }) {
   const drizzle = yield getContext('drizzle')
@@ -206,11 +198,9 @@ function* handleDropTransaction({ msg, drops }) {
     drops: msg.drops + drops,
   })
   newMsg.sendingMessage = 'Transaction Pending - Confirm through Metamask'
-  console.log(newMsg)
   yield put({ type: UPDATE_MESSAGE, payload: newMsg })
-  // let txId = yield call(drizzle.contracts.InkDrop.methods.dropMessage.cacheSend, msg.id, msg.drops)
-  let txId = yield call(drizzle.contracts.InkDrop.methods.dropMessage(msg.id, msg.drops).send)
-  return
+  // TODO: update user. Reduce drops.
+  let txId = yield call(drizzle.contracts.InkDrop.methods.dropMessage.cacheSend, newMsg.id, drops)
   let txComplete = false
 
   while (!txComplete) {
@@ -234,6 +224,7 @@ function* handleDropTransaction({ msg, drops }) {
       txComplete = false
     } else if (success) {
       console.log('3 - SUCCESS')
+      console.log(success)
       let state = yield select()
       let txHash = state.transactionStack[txId]
       // TODO: change message in store to fromBlockchain=true and id=argsHash
@@ -243,12 +234,14 @@ function* handleDropTransaction({ msg, drops }) {
       // msg.fromBlockchain = true
       // yield put({ type: UPDATE_MESSAGE, id: oldMsgId, payload: msg })
       newMsg.sendingMessage = ''
+      console.log(newMsg)
       yield put({ type: UPDATE_MESSAGE, payload: newMsg })
       txComplete = txHash && state.transactions[txHash].status === 'success'
     } else if (error) {
       console.log('ERROR')
       msg.error = 'Transaction failed'
       yield put({ type: UPDATE_MESSAGE, payload: msg })
+      // TODO: update user. Give back drops.
     }
   }
 
@@ -271,7 +264,6 @@ function* getMessages() {
 
 function* getMessageCall(msgId) {
   // TODO: try and catch
-  console.log('GET MESSAGE id: ', msgId)
   const drizzle = yield getContext('drizzle')
   let tmpMsg = yield call(drizzle.contracts.InkDrop.methods.getMessage(msgId).call)
   let msg = parseMessage(msgId, tmpMsg)
@@ -289,7 +281,6 @@ function* getComments(msg) {
 }
 
 function* getUser(msg) {
-  console.log('GET USER: ', msg.id)
   const drizzle = yield getContext('drizzle')
   try {
     let user = yield call(drizzle.contracts.InkDrop.methods.getUser(msg.userAdr).call)
@@ -302,7 +293,6 @@ function* getUser(msg) {
 
 function* getComment(msgId, commentId) {
   // TODO: try and catch
-  console.log('GET COMMENT: ', msgId, commentId)
   const drizzle = yield getContext('drizzle')
   let comment = yield call(drizzle.contracts.InkDrop.methods.getComment(commentId).call)
   let newComment = parseComment(commentId, comment)
@@ -366,7 +356,7 @@ function* messagesSaga() {
   yield takeEvery('MESSAGES_FETCH_REQUESTED', getMessages)
   yield takeEvery('MESSAGE_REQUESTED', handleMsgTransaction)
   yield takeEvery('COMMENT_REQUESTED', handleCommTransaction)
-  yield takeEvery('MESSAGE_DROP_REQUESTED', handleDropTransaction2)
+  yield takeEvery('MESSAGE_DROP_REQUESTED', handleDropTransaction)
   yield takeEvery('MESSAGE_LIKE_REQUESTED', handleLikeTransaction)
 }
 
