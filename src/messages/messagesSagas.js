@@ -1,14 +1,4 @@
-import {
-  take,
-  put,
-  call,
-  all,
-  fork,
-  takeLatest,
-  race,
-  select,
-  getContext,
-} from 'redux-saga/effects'
+import { take, put, call, all, fork, takeEvery, race, select, getContext } from 'redux-saga/effects'
 
 // actions
 const MESSAGES_GOT = 'MESSAGES_GOT'
@@ -200,6 +190,14 @@ function* handleLikeTransaction({ msg }) {
   console.log('4 - AFTER')
 }
 
+function* handleDropTransaction2({ msg, drops }) {
+  const drizzle = yield getContext('drizzle')
+  console.log('DROP SAGA2 Here')
+  // let txId = yield call(drizzle.contracts.InkDrop.methods.dropMessage.cacheSend, msg.id, msg.drops)
+  let txId = yield call(drizzle.contracts.InkDrop.methods.dropMessage(msg.id, msg.drops).send)
+  console.log(txId)
+}
+
 // TODO: cleanup code here
 function* handleDropTransaction({ msg, drops }) {
   const drizzle = yield getContext('drizzle')
@@ -208,8 +206,11 @@ function* handleDropTransaction({ msg, drops }) {
     drops: msg.drops + drops,
   })
   newMsg.sendingMessage = 'Transaction Pending - Confirm through Metamask'
+  console.log(newMsg)
   yield put({ type: UPDATE_MESSAGE, payload: newMsg })
-  let txId = yield call(drizzle.contracts.InkDrop.methods.dropMessage.cacheSend, msg.id, msg.drops)
+  // let txId = yield call(drizzle.contracts.InkDrop.methods.dropMessage.cacheSend, msg.id, msg.drops)
+  let txId = yield call(drizzle.contracts.InkDrop.methods.dropMessage(msg.id, msg.drops).send)
+  return
   let txComplete = false
 
   while (!txComplete) {
@@ -362,11 +363,11 @@ function* parseUser(id, user) {
 
 // register sagas
 function* messagesSaga() {
-  yield takeLatest('MESSAGES_FETCH_REQUESTED', getMessages)
-  yield takeLatest('MESSAGE_REQUESTED', handleMsgTransaction)
-  yield takeLatest('COMMENT_REQUESTED', handleCommTransaction)
-  yield takeLatest('MESSAGE_DROP_REQUESTED', handleDropTransaction)
-  yield takeLatest('MESSAGE_LIKE_REQUESTED', handleLikeTransaction)
+  yield takeEvery('MESSAGES_FETCH_REQUESTED', getMessages)
+  yield takeEvery('MESSAGE_REQUESTED', handleMsgTransaction)
+  yield takeEvery('COMMENT_REQUESTED', handleCommTransaction)
+  yield takeEvery('MESSAGE_DROP_REQUESTED', handleDropTransaction2)
+  yield takeEvery('MESSAGE_LIKE_REQUESTED', handleLikeTransaction)
 }
 
 export default messagesSaga
