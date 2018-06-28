@@ -1,4 +1,5 @@
-import { take, put, call, all, fork, takeEvery, race, select, getContext } from 'redux-saga/effects'
+import { take, put, call, all, fork, takeEvery, select, getContext } from 'redux-saga/effects'
+import { eventChannel, END } from 'redux-saga'
 
 // actions
 const MESSAGES_GOT = 'MESSAGES_GOT'
@@ -10,8 +11,10 @@ const UPDATE_MESSAGE = 'UPDATE_MESSAGE'
 const UPDATE_COMMENT = 'UPDATE_COMMENT'
 const UPDATE_MESSAGE_COMMENTS = 'UPDATE_MESSAGE_COMMENTS'
 
-const DELETE_MESSAGE = 'DELETE_MESSAGE'
-const DELETE_COMMENT = 'DELETE_COMMENT'
+// const DELETE_MESSAGE = 'DELETE_MESSAGE'
+// const DELETE_COMMENT = 'DELETE_COMMENT'
+
+const USER_DROPPED = 'USER_DROPPED'
 
 // drizzle's transactions events
 const TX_CONFIRMAITON = 'TX_CONFIRMAITON'
@@ -20,64 +23,98 @@ const TX_SUCCESSFUL = 'TX_SUCCESSFUL'
 const TX_ERROR = 'TX_ERROR'
 
 // selectors
-const getState = state => state
+// const getState = state => state
+// const getUserState = state => state.user.data
+const getUserAdr = state => state.accounts[0]
 // const getTxStack = state => state.transactionStack
 // const getTxs = state => state.transactions
 // const getMsgs = state => state.contracts.InkDrop.getMessage
 
-// TODO: cleanup code here
-function* handleMsgTransaction({ msg }) {
+function createTxChannel({ txObject, contractName, sendArgs = {} }) {
+  var persistTxHash
+
+  return eventChannel(emit => {
+    const txPromiEvent = txObject
+      .send(sendArgs)
+      .on('transactionHash', txHash => {
+        persistTxHash = txHash
+
+        emit({ type: TX_BROADCASTED, txHash })
+        emit({ type: 'CONTRACT_SYNC_IND', contractName })
+      })
+      .on('confirmation', (confirmationNumber, receipt) => {
+        emit({
+          type: TX_CONFIRMAITON,
+          confirmationNumber: confirmationNumber,
+          confirmationReceipt: receipt,
+          txHash: persistTxHash,
+        })
+      })
+      .on('receipt', receipt => {
+        emit({ type: TX_SUCCESSFUL, receipt: receipt, txHash: persistTxHash })
+        emit(END)
+      })
+      .on('error', error => {
+        emit({ type: TX_ERROR, error: error, txHash: persistTxHash })
+        emit(END)
+      })
+
+    const unsubscribe = () => {
+      txPromiEvent.off()
+    }
+
+    return unsubscribe
+  })
+}
+
+function* handleMsgTx({ msg }) {
   const drizzle = yield getContext('drizzle')
-  console.log('SAGA Here')
+  // pre-cache message to store
   msg.sendingMessage = 'Transaction Pending - Confirm through Metamask'
   yield put({ type: MESSAGE_POSTED, payload: msg })
-  let txId = yield call(
-    drizzle.contracts.InkDrop.methods.createMessage.cacheSend,
+
+  const contractName = 'InkDrop'
+  const args = {
+    content: msg.content,
+    drops: msg.drops,
+  }
+  const txObject = yield call(
+    drizzle.contracts.InkDrop.methods.createMessage,
     msg.content,
     msg.drops
   )
-  let txComplete = false
+  const txChannel = yield call(createTxChannel, { txObject, contractName, args })
 
-  while (!txComplete) {
-    // wait until something happens
-    const { confirmation, broadcasted, success, error } = yield race({
-      confirmation: take(TX_CONFIRMAITON),
-      broadcasted: take(TX_BROADCASTED),
-      success: take(TX_SUCCESSFUL),
-      error: take(TX_ERROR),
-    })
-
-    if (broadcasted) {
-      console.log('1 - BROADCASTED')
-      msg.sendingMessage = 'Submitting transaction to blockchain'
-      yield put({ type: UPDATE_MESSAGE, payload: msg })
-      txComplete = false
-    } else if (confirmation) {
-      console.log('2 - CONFIRMATION')
-      // TODO: show the confirmation number in the frontend
-      txComplete = false
-    } else if (success) {
-      console.log('3 - SUCCESS')
-      let state = yield select(getState)
-      let txHash = state.transactionStack[txId]
-      // TODO: change message in store to fromBlockchain=true and id=argsHash
-      let argsHash = yield call(drizzle.contracts.InkDrop.methods.getMessage.cacheCall, msg.id)
-      let oldMsgId = msg.id
-      // msg.id = argsHash
-      msg.fromBlockchain = true
-      msg.sendingMessage = ''
-      yield put({ type: UPDATE_MESSAGE, payload: msg })
-      txComplete = txHash && state.transactions[txHash].status === 'success'
-    } else if (error) {
-      console.log('ERROR')
-      // yield put({ type: DELETE_MESSAGE, payload: msg })
-      msg.error = 'Transaction failed'
-      msg.sendingMessage = ''
-      yield put({ type: UPDATE_MESSAGE, payload: msg })
+  try {
+    while (true) {
+      let event = yield take(txChannel)
+      // forward the standard drizzle events
+      yield put(event)
+      // catch the tx related events and update store
+      if (event.type === TX_BROADCASTED) {
+        console.log('1 - BROADCASTED')
+        msg.sendingMessage = 'Submitting transaction to blockchain'
+        yield put({ type: UPDATE_MESSAGE, payload: msg })
+      } else if (event.type === TX_CONFIRMAITON) {
+        console.log('2 - CONFIRMATION')
+        // TODO: show the confirmation number in the frontend
+      } else if (event.type === TX_SUCCESSFUL) {
+        console.log('3 - SUCCESS')
+        msg.fromBlockchain = true
+        msg.sendingMessage = ''
+        yield put({ type: UPDATE_MESSAGE, payload: msg })
+      } else if (event.type === TX_ERROR) {
+        console.log('ERROR')
+        // yield put({ type: DELETE_MESSAGE, payload: msg })
+        msg.error = 'Transaction failed'
+        msg.sendingMessage = ''
+        yield put({ type: UPDATE_MESSAGE, payload: msg })
+      }
     }
+  } finally {
+    console.log('TX CHANNEL CLOSED')
+    txChannel.close()
   }
-
-  console.log('4 - AFTER')
 }
 
 // TODO: cleanup code here
@@ -87,56 +124,50 @@ function* handleCommTransaction({ comment }) {
   comment.sendingMessage = 'Transaction Pending - Confirm through Metamask'
   yield put({ type: COMMENT_POSTED, payload: comment })
 
-  let txId = yield call(
-    drizzle.contracts.InkDrop.methods.createComment.cacheSend,
+  const contractName = 'InkDrop'
+  const args = {
+    parent: comment.parent,
+    content: comment.content,
+  }
+  const txObject = yield call(
+    drizzle.contracts.InkDrop.methods.createComment,
     comment.parent,
     comment.content
   )
-  let txComplete = false
+  const txChannel = yield call(createTxChannel, { txObject, contractName, args })
+  try {
+    while (true) {
+      let event = yield take(txChannel)
+      // forward the standard drizzle events
+      yield put(event)
 
-  while (!txComplete) {
-    // wait until something happens
-    const { confirmation, broadcasted, success, error } = yield race({
-      confirmation: take(TX_CONFIRMAITON),
-      broadcasted: take(TX_BROADCASTED),
-      success: take(TX_SUCCESSFUL),
-      error: take(TX_ERROR),
-    })
-
-    if (broadcasted) {
-      console.log('1 - BROADCASTED')
-      comment.sendingMessage = 'Submitting transaction to blockchain'
-      yield put({ type: UPDATE_COMMENT, payload: comment })
-      txComplete = false
-    } else if (confirmation) {
-      console.log('2 - CONFIRMATION')
-      // TODO: show the confirmation number in the frontend
-      // yield put({ type: 'UPDATE_MESSAGE', id: msg.id, payload: msg })
-      txComplete = false
-    } else if (success) {
-      console.log('3 - SUCCESS')
-      let state = yield select(getState)
-      let txHash = state.transactionStack[txId]
-      // TODO: change message in store to fromBlockchain=true and id=argsHash
-      let argsHash = yield call(drizzle.contracts.InkDrop.methods.getMessage.cacheCall, comment.id)
-      let oldMsgId = comment.id
-      // msg.id = argsHash
-      comment.fromBlockchain = true
-      comment.sendingMessage = ''
-      yield put({ type: UPDATE_COMMENT, payload: comment })
-      txComplete = txHash && state.transactions[txHash].status === 'success'
-    } else if (error) {
-      console.log('ERROR')
-      comment.error = 'Transaction failed'
-      comment.sendingMessage = ''
-      yield put({ type: UPDATE_COMMENT, payload: comment })
+      // catch the tx related events and update store
+      if (event.type === TX_BROADCASTED) {
+        console.log('1 - BROADCASTED')
+        comment.sendingMessage = 'Submitting transaction to blockchain'
+        yield put({ type: UPDATE_COMMENT, payload: comment })
+      } else if (event.type === TX_CONFIRMAITON) {
+        console.log('2 - CONFIRMATION')
+        // TODO: show the confirmation number in the frontend
+        // yield put({ type: 'UPDATE_MESSAGE', id: msg.id, payload: msg })
+      } else if (event.type === TX_SUCCESSFUL) {
+        console.log('3 - SUCCESS')
+        comment.fromBlockchain = true
+        comment.sendingMessage = ''
+        yield put({ type: UPDATE_COMMENT, payload: comment })
+      } else if (event.type === TX_ERROR) {
+        console.log('ERROR')
+        comment.error = 'Transaction failed'
+        comment.sendingMessage = ''
+        yield put({ type: UPDATE_COMMENT, payload: comment })
+      }
     }
+  } finally {
+    console.log('TX CHANNEL CLOSED')
+    txChannel.close()
   }
-
-  console.log('4 - AFTER')
 }
 
-// TODO: cleanup code here
 function* handleLikeTransaction({ msg }) {
   const drizzle = yield getContext('drizzle')
   console.log('LIKE SAGA Here')
@@ -145,52 +176,43 @@ function* handleLikeTransaction({ msg }) {
   })
   newMsg.sendingMessage = 'Transaction Pending - Confirm through Metamask'
   yield put({ type: UPDATE_MESSAGE, payload: newMsg })
-  let txId = yield call(drizzle.contracts.InkDrop.methods.likeMessage.cacheSend, msg.id)
-  let txComplete = false
 
-  while (!txComplete) {
-    // wait until something happens
-    const { confirmation, broadcasted, success, error } = yield race({
-      confirmation: take(TX_CONFIRMAITON),
-      broadcasted: take(TX_BROADCASTED),
-      success: take(TX_SUCCESSFUL),
-      error: take(TX_ERROR),
-    })
+  const contractName = 'InkDrop'
+  const args = { id: msg.id }
+  const txObject = yield call(drizzle.contracts.InkDrop.methods.likeMessage, msg.id)
+  const txChannel = yield call(createTxChannel, { txObject, contractName, args })
 
-    if (broadcasted) {
-      console.log('1 - BROADCASTED')
-      // TODO: add message to store
-      newMsg.sendingMessage = 'Submitting transaction to blockchain'
-      yield put({ type: UPDATE_MESSAGE, payload: newMsg })
-      txComplete = false
-    } else if (confirmation) {
-      console.log('2 - CONFIRMATION')
-      // TODO: show the confirmation number in the frontend
-      txComplete = false
-    } else if (success) {
-      console.log('3 - SUCCESS')
-      let state = yield select()
-      let txHash = state.transactionStack[txId]
-      // TODO: change message in store to fromBlockchain=true and id=argsHash
-      // let argsHash = yield call(drizzle.contracts.InkDrop.methods.getMessage.cacheCall, msg.id)
-      // let oldMsgId = msg.id
-      // msg.id = argsHash
-      // msg.fromBlockchain = true
-      // yield put({ type: UPDATE_MESSAGE, id: oldMsgId, payload: msg })
-      newMsg.sendingMessage = ''
-      yield put({ type: UPDATE_MESSAGE, payload: newMsg })
-      txComplete = txHash && state.transactions[txHash].status === 'success'
-    } else if (error) {
-      console.log('ERROR')
-      msg.error = 'Transaction failed'
-      yield put({ type: UPDATE_MESSAGE, payload: msg })
+  try {
+    while (true) {
+      let event = yield take(txChannel)
+      // forward the standard drizzle events
+      yield put(event)
+
+      // catch the tx related events and update store
+      if (event.type === TX_BROADCASTED) {
+        console.log('1 - BROADCASTED')
+        newMsg.sendingMessage = 'Submitting transaction to blockchain'
+        yield put({ type: UPDATE_MESSAGE, payload: newMsg })
+      } else if (event.type === TX_CONFIRMAITON) {
+        console.log('2 - CONFIRMATION')
+        // TODO: show the confirmation number in the frontend
+      } else if (event.type === TX_SUCCESSFUL) {
+        console.log('3 - SUCCESS')
+        newMsg.sendingMessage = ''
+        yield put({ type: UPDATE_MESSAGE, payload: newMsg })
+      } else if (event.type === TX_ERROR) {
+        console.log('ERROR')
+        msg.error = 'Transaction failed'
+        msg.sendingMessage = ''
+        yield put({ type: UPDATE_MESSAGE, payload: msg })
+      }
     }
+  } finally {
+    console.log('TX CHANNEL CLOSED')
+    txChannel.close()
   }
-
-  console.log('4 - AFTER')
 }
 
-// TODO: cleanup code here
 function* handleDropTransaction({ msg, drops }) {
   const drizzle = yield getContext('drizzle')
   console.log('DROP SAGA Here')
@@ -199,53 +221,51 @@ function* handleDropTransaction({ msg, drops }) {
   })
   newMsg.sendingMessage = 'Transaction Pending - Confirm through Metamask'
   yield put({ type: UPDATE_MESSAGE, payload: newMsg })
-  // TODO: update user. Reduce drops.
-  let txId = yield call(drizzle.contracts.InkDrop.methods.dropMessage.cacheSend, newMsg.id, drops)
-  let txComplete = false
-
-  while (!txComplete) {
-    // wait until something happens
-    const { confirmation, broadcasted, success, error } = yield race({
-      confirmation: take(TX_CONFIRMAITON),
-      broadcasted: take(TX_BROADCASTED),
-      success: take(TX_SUCCESSFUL),
-      error: take(TX_ERROR),
-    })
-
-    if (broadcasted) {
-      console.log('1 - BROADCASTED')
-      // TODO: add message to store
-      newMsg.sendingMessage = 'Submitting transaction to blockchain'
-      yield put({ type: UPDATE_MESSAGE, payload: newMsg })
-      txComplete = false
-    } else if (confirmation) {
-      console.log('2 - CONFIRMATION')
-      // TODO: show the confirmation number in the frontend
-      txComplete = false
-    } else if (success) {
-      console.log('3 - SUCCESS')
-      console.log(success)
-      let state = yield select()
-      let txHash = state.transactionStack[txId]
-      // TODO: change message in store to fromBlockchain=true and id=argsHash
-      // let argsHash = yield call(drizzle.contracts.InkDrop.methods.getMessage.cacheCall, msg.id)
-      // let oldMsgId = msg.id
-      // msg.id = argsHash
-      // msg.fromBlockchain = true
-      // yield put({ type: UPDATE_MESSAGE, id: oldMsgId, payload: msg })
-      newMsg.sendingMessage = ''
-      console.log(newMsg)
-      yield put({ type: UPDATE_MESSAGE, payload: newMsg })
-      txComplete = txHash && state.transactions[txHash].status === 'success'
-    } else if (error) {
-      console.log('ERROR')
-      msg.error = 'Transaction failed'
-      yield put({ type: UPDATE_MESSAGE, payload: msg })
-      // TODO: update user. Give back drops.
-    }
+  // update user & reduce his drops
+  // TODO: check if user is author of the message. If yes, give him 50% of the drops
+  let userAdr = yield select(getUserAdr)
+  let userShare = 0
+  if (userAdr === msg.userAdr) {
+    userShare = 0.5 * drops
   }
+  yield put({ type: USER_DROPPED, payload: drops - userShare })
 
-  console.log('4 - AFTER')
+  const contractName = 'InkDrop'
+  const args = { id: msg.id, drops: drops }
+  const txObject = yield call(drizzle.contracts.InkDrop.methods.dropMessage, msg.id, drops)
+  const txChannel = yield call(createTxChannel, { txObject, contractName, args })
+
+  try {
+    while (true) {
+      let event = yield take(txChannel)
+      // forward the standard drizzle events
+      yield put(event)
+
+      // catch the tx related events and update store
+      if (event.type === TX_BROADCASTED) {
+        console.log('1 - BROADCASTED')
+        newMsg.sendingMessage = 'Submitting transaction to blockchain'
+        yield put({ type: UPDATE_MESSAGE, payload: newMsg })
+      } else if (event.type === TX_CONFIRMAITON) {
+        console.log('2 - CONFIRMATION')
+        // TODO: show the confirmation number in the frontend
+      } else if (event.type === TX_SUCCESSFUL) {
+        console.log('3 - SUCCESS')
+        newMsg.sendingMessage = ''
+        yield put({ type: UPDATE_MESSAGE, payload: newMsg })
+      } else if (event.type === TX_ERROR) {
+        console.log('ERROR')
+        msg.error = 'Transaction failed'
+        msg.sendingMessage = ''
+        yield put({ type: UPDATE_MESSAGE, payload: msg })
+        // update user & give back drops used
+        yield put({ type: USER_DROPPED, payload: -(drops - userShare) })
+      }
+    }
+  } finally {
+    console.log('TX CHANNEL CLOSED')
+    txChannel.close()
+  }
 }
 
 function* getMessages() {
@@ -277,7 +297,7 @@ function* getComments(msg) {
   for (let commentId of msg.commentIds) {
     arr.push(fork(getComment, msg.id, commentId))
   }
-  let comments = yield all(arr)
+  yield all(arr)
 }
 
 function* getUser(msg) {
@@ -354,7 +374,7 @@ function* parseUser(id, user) {
 // register sagas
 function* messagesSaga() {
   yield takeEvery('MESSAGES_FETCH_REQUESTED', getMessages)
-  yield takeEvery('MESSAGE_REQUESTED', handleMsgTransaction)
+  yield takeEvery('MESSAGE_REQUESTED', handleMsgTx)
   yield takeEvery('COMMENT_REQUESTED', handleCommTransaction)
   yield takeEvery('MESSAGE_DROP_REQUESTED', handleDropTransaction)
   yield takeEvery('MESSAGE_LIKE_REQUESTED', handleLikeTransaction)
