@@ -1,20 +1,21 @@
 import { take, put, call, all, fork, takeEvery, select, getContext } from 'redux-saga/effects'
 import { eventChannel, END } from 'redux-saga'
+import {
+  MESSAGES_GOT,
+  MESSAGE_GOT,
+  MESSAGE_POSTED,
+  COMMENT_POSTED,
+  UPDATE_MESSAGE,
+  UPDATE_COMMENT,
+  UPDATE_MESSAGE_COMMENTS,
+} from './messagesReducer'
+import { USER_DROPPED } from '../user/userReducer'
 
-// actions
-const MESSAGES_GOT = 'MESSAGES_GOT'
-const MESSAGE_GOT = 'MESSAGE_GOT'
-const MESSAGE_POSTED = 'MESSAGE_POSTED'
-const COMMENT_POSTED = 'COMMENT_POSTED'
-
-const UPDATE_MESSAGE = 'UPDATE_MESSAGE'
-const UPDATE_COMMENT = 'UPDATE_COMMENT'
-const UPDATE_MESSAGE_COMMENTS = 'UPDATE_MESSAGE_COMMENTS'
-
-// const DELETE_MESSAGE = 'DELETE_MESSAGE'
-// const DELETE_COMMENT = 'DELETE_COMMENT'
-
-const USER_DROPPED = 'USER_DROPPED'
+// saga actions
+export const MESSAGES_FETCH_REQUESTED = 'MESSAGES_FETCH_REQUESTED'
+export const MESSAGE_REQUESTED = 'MESSAGE_REQUESTED'
+export const COMMENT_REQUESTED = 'COMMENT_REQUESTED'
+export const MESSAGE_DROP_REQUESTED = 'MESSAGE_DROP_REQUESTED'
 
 // drizzle's transactions events
 const TX_CONFIRMAITON = 'TX_CONFIRMAITON'
@@ -23,12 +24,7 @@ const TX_SUCCESSFUL = 'TX_SUCCESSFUL'
 const TX_ERROR = 'TX_ERROR'
 
 // selectors
-// const getState = state => state
-// const getUserState = state => state.user.data
 const getUserAdr = state => state.accounts[0]
-// const getTxStack = state => state.transactionStack
-// const getTxs = state => state.transactions
-// const getMsgs = state => state.contracts.InkDrop.getMessage
 
 function createTxChannel({ txObject, contractName, sendArgs = {} }) {
   var persistTxHash
@@ -160,51 +156,6 @@ function* handleCommTransaction({ comment }) {
         comment.error = 'Transaction failed'
         comment.sendingMessage = ''
         yield put({ type: UPDATE_COMMENT, payload: comment })
-      }
-    }
-  } finally {
-    console.log('TX CHANNEL CLOSED')
-    txChannel.close()
-  }
-}
-
-function* handleLikeTransaction({ msg }) {
-  const drizzle = yield getContext('drizzle')
-  console.log('LIKE SAGA Here')
-  let newMsg = Object.assign({}, msg, {
-    likes: msg.likes + 1,
-  })
-  newMsg.sendingMessage = 'Transaction Pending - Confirm through Metamask'
-  yield put({ type: UPDATE_MESSAGE, payload: newMsg })
-
-  const contractName = 'InkDrop'
-  const args = { id: msg.id }
-  const txObject = yield call(drizzle.contracts.InkDrop.methods.likeMessage, msg.id)
-  const txChannel = yield call(createTxChannel, { txObject, contractName, args })
-
-  try {
-    while (true) {
-      let event = yield take(txChannel)
-      // forward the standard drizzle events
-      yield put(event)
-
-      // catch the tx related events and update store
-      if (event.type === TX_BROADCASTED) {
-        console.log('1 - BROADCASTED')
-        newMsg.sendingMessage = 'Submitting transaction to blockchain'
-        yield put({ type: UPDATE_MESSAGE, payload: newMsg })
-      } else if (event.type === TX_CONFIRMAITON) {
-        console.log('2 - CONFIRMATION')
-        // TODO: show the confirmation number in the frontend
-      } else if (event.type === TX_SUCCESSFUL) {
-        console.log('3 - SUCCESS')
-        newMsg.sendingMessage = ''
-        yield put({ type: UPDATE_MESSAGE, payload: newMsg })
-      } else if (event.type === TX_ERROR) {
-        console.log('ERROR')
-        msg.error = 'Transaction failed'
-        msg.sendingMessage = ''
-        yield put({ type: UPDATE_MESSAGE, payload: msg })
       }
     }
   } finally {
@@ -373,11 +324,10 @@ function* parseUser(id, user) {
 
 // register sagas
 function* messagesSaga() {
-  yield takeEvery('MESSAGES_FETCH_REQUESTED', getMessages)
-  yield takeEvery('MESSAGE_REQUESTED', handleMsgTx)
-  yield takeEvery('COMMENT_REQUESTED', handleCommTransaction)
-  yield takeEvery('MESSAGE_DROP_REQUESTED', handleDropTransaction)
-  yield takeEvery('MESSAGE_LIKE_REQUESTED', handleLikeTransaction)
+  yield takeEvery(MESSAGES_FETCH_REQUESTED, getMessages)
+  yield takeEvery(MESSAGE_REQUESTED, handleMsgTx)
+  yield takeEvery(COMMENT_REQUESTED, handleCommTransaction)
+  yield takeEvery(MESSAGE_DROP_REQUESTED, handleDropTransaction)
 }
 
 export default messagesSaga

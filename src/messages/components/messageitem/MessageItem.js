@@ -20,7 +20,6 @@ class MessageItem extends Component {
     }
 
     this.toggleComments = this.toggleComments.bind(this)
-    this.likeMessage = this.likeMessage.bind(this)
     this.dropMessage = this.dropMessage.bind(this)
   }
 
@@ -33,22 +32,6 @@ class MessageItem extends Component {
       } else {
         this.props.onMessageDrop(this.props.message, newDrops)
       }
-    }
-  }
-
-  async likeMessage() {
-    if (!this.props.message.cached) {
-      // try {
-      //   await this.contracts.InkDrop.methods.likeMessage(this.props.msgId).send()
-      //   this.setState({
-      //     message: {
-      //       ...this.state.message,
-      //       likes: this.state.message.likes + 1,
-      //     },
-      //   })
-      // } catch (error) {
-      //   console.log(error)
-      // }
     }
   }
 
@@ -106,7 +89,7 @@ class MessageItem extends Component {
   renderDonations(msg) {
     return (
       <div className="col text-center">
-        <div className="like-message-button mx-auto" onClick={this.likeMessage}>
+        <div className="like-message-button mx-auto">
           <img src={iconLike} width="20" height="20" className="" alt="likes" />
           <span className="like-number icon-number ml-1">{msg.likes}</span>
         </div>

@@ -1,61 +1,59 @@
 const initialState = {
   data: [],
-  // userdata: [],
-  // commentsdata: [],
-  // count: 0,
   initialized: false,
 }
 
+// actions
+export const MESSAGES_GOT = 'MESSAGES_GOT'
+export const MESSAGE_GOT = 'MESSAGE_GOT'
+export const MESSAGE_POSTED = 'MESSAGE_POSTED'
+export const COMMENT_POSTED = 'COMMENT_POSTED'
+
+export const UPDATE_MESSAGE = 'UPDATE_MESSAGE'
+export const UPDATE_COMMENT = 'UPDATE_COMMENT'
+export const UPDATE_MESSAGE_COMMENTS = 'UPDATE_MESSAGE_COMMENTS'
+
+export const DELETE_MESSAGE = 'DELETE_MESSAGE'
+export const DELETE_COMMENT = 'DELETE_COMMENT'
+
+// reducer
 const messagesReducer = (state = initialState, action) => {
-  if (action.type === 'MESSAGES_GOT') {
+  if (action.type === MESSAGES_GOT) {
     return Object.assign({}, state, {
       initialized: action.payload,
     })
   }
 
-  if (action.type === 'MESSAGE_GOT') {
+  if (action.type === MESSAGE_GOT) {
     return Object.assign({}, state, {
       data: state.data.concat(action.payload),
     })
   }
 
-  // if (action.type === 'MESSAGE_TX_SUCCESS') {
-  //   return Object.assign({}, state, {
-  //     data: state.data.filter(msg => msg.id !== action.payload.id),
-  //   })
-  // }
-
-  // if (action.type === 'MESSAGE_COUNT_GOT') {
-  //   return Object.assign({}, state, {
-  //     count: action.payload,
-  //   })
-  // }
-
-  // if (action.type === 'USER_MESSAGES_GOT') {
-  //   return Object.assign({}, state, {
-  //     userdata: action.payload,
-  //   })
-  // }
-
-  // if (action.type === 'USER_MESSAGES_RESET') {
-  //   return Object.assign({}, state, {
-  //     userdata: action.payload,
-  //   })
-  // }
-
-  if (action.type === 'MESSAGE_POSTED') {
-    return Object.assign({}, state, {
-      data: state.data.concat(action.payload),
-    })
-  }
-
-  if (action.type === 'DELETE_MESSAGE') {
+  if (action.type === DELETE_MESSAGE) {
     return Object.assign({}, state, {
       data: state.data.filter(msg => msg.id !== action.payload.id),
     })
   }
 
-  if (action.type === 'UPDATE_MESSAGE_COMMENTS') {
+  if (action.type === MESSAGE_POSTED) {
+    return Object.assign({}, state, {
+      data: state.data.concat(action.payload),
+    })
+  }
+
+  if (action.type === UPDATE_MESSAGE) {
+    return Object.assign({}, state, {
+      data: state.data.map(item => {
+        if (item.id === action.payload.id) {
+          return { ...item, ...action.payload }
+        }
+        return item
+      }),
+    })
+  }
+
+  if (action.type === UPDATE_MESSAGE_COMMENTS) {
     return Object.assign({}, state, {
       data: state.data.map(item => {
         if (item.id === action.id) {
@@ -69,54 +67,7 @@ const messagesReducer = (state = initialState, action) => {
     })
   }
 
-  if (action.type === 'UPDATE_MESSAGE') {
-    return Object.assign({}, state, {
-      data: state.data.map(item => {
-        if (item.id === action.payload.id) {
-          return { ...item, ...action.payload }
-        }
-        return item
-      }),
-    })
-  }
-
-  if (action.type === 'LIKE_MESSAGE') {
-    return Object.assign({}, state, {
-      data: state.data.map(item => {
-        if (item.id === action.payload.id) {
-          return { ...item, ...action.payload }
-        }
-
-        return item
-      }),
-    })
-  }
-
-  if (action.type === 'DROP_MESSAGE') {
-    return Object.assign({}, state, {
-      data: state.data.map((item, index) => {
-        if (item.id === action.payload.id) {
-          return { ...item, ...action.payload }
-        }
-
-        return item
-      }),
-    })
-  }
-
-  // if (action.type === 'COMMENT_POSTED') {
-  //   return Object.assign({}, state, {
-  //     commentsdata: state.commentsdata.concat(action.payload),
-  //   })
-  // }
-
-  // if (action.type === 'COMMENT_TX_SUCCESS') {
-  //   return Object.assign({}, state, {
-  //     commentsdata: state.commentsdata.filter(comment => comment.id !== action.payload.id),
-  //   })
-  // }
-
-  if (action.type === 'COMMENT_POSTED') {
+  if (action.type === COMMENT_POSTED) {
     return Object.assign({}, state, {
       data: state.data.map((item, index) => {
         if (item.id === action.payload.parent) {
@@ -131,7 +82,7 @@ const messagesReducer = (state = initialState, action) => {
     })
   }
 
-  if (action.type === 'UPDATE_COMMENT') {
+  if (action.type === UPDATE_COMMENT) {
     return Object.assign({}, state, {
       data: state.data.map(item => {
         if (item.id === action.payload.parent) {
@@ -153,19 +104,6 @@ const messagesReducer = (state = initialState, action) => {
       }),
     })
   }
-
-  //   if (action.type === 'COMMENTS_GOT') {
-  //     let newState = Object.assign({}, state, {
-  //       data: state.data.map((item, index) => {
-  //         if (item.id === action.parent) {
-  //           return { ...item, ...action.payload }
-  //         }
-
-  //         return item
-  //       }),
-  //     })
-  //     return newState
-  //   }
 
   return state
 }
