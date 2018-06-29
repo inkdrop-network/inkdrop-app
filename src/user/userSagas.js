@@ -1,9 +1,11 @@
 import { put, takeLatest } from 'redux-saga/effects'
+import { USER_LOGGED_IN, USER_LOGGED_OUT, USER_UPDATED } from './userReducer'
 
-// actions
-const USER_LOGGED_IN = 'USER_LOGGED_IN'
-const USER_LOGGED_OUT = 'USER_LOGGED_OUT'
-const USER_UPDATED = 'USER_UPDATED'
+// saga actions actions
+const LOGIN_REQUESTED = 'LOGIN_REQUESTED'
+const LOGOUT_REQUESTED = 'LOGOUT_REQUESTED'
+const SIGNUP_REQUESTED = 'SIGNUP_REQUESTED'
+const USERUPDATE_REQUESTED = 'USERUPDATE_REQUESTED'
 
 // sagas
 function* logUserIn(action) {
@@ -36,10 +38,10 @@ function* updateUser(action) {
 
 // register sagas
 function* userSagas() {
-  yield takeLatest('LOGIN_REQUESTED', logUserIn)
-  yield takeLatest('LOGOUT_REQUESTED', logUserOut)
-  yield takeLatest('SIGNUP_REQUESTED', signUserUp)
-  yield takeLatest('USERUPDATE_REQUESTED', updateUser)
+  yield takeLatest(LOGIN_REQUESTED, logUserIn)
+  yield takeLatest(LOGOUT_REQUESTED, logUserOut)
+  yield takeLatest(SIGNUP_REQUESTED, signUserUp)
+  yield takeLatest(USERUPDATE_REQUESTED, updateUser)
 }
 
 export default userSagas

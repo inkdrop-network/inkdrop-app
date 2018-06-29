@@ -3,23 +3,22 @@ import { connect } from 'react-redux'
 import LoginButton from './LoginButton'
 
 const mapStateToProps = (state, ownProps) => {
-	return {
-		accounts: state.accounts,
-		InkDrop: state.contracts.InkDrop,
-	}
+  return {
+    accounts: state.accounts,
+  }
 }
 
 const mapDispatchToProps = dispatch => {
-	return {
-		onLoginUser: user => {
-			dispatch({ type: 'LOGIN_REQUESTED', payload: user })
-		},
-	}
+  return {
+    onLoginUser: user => {
+      dispatch({ type: 'LOGIN_REQUESTED', payload: user })
+    },
+  }
 }
 
 const LoginButtonContainer = connect(
-	mapStateToProps,
-	mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(LoginButton)
 
 export default LoginButtonContainer

@@ -63,7 +63,7 @@ function createTxChannel({ txObject, contractName, sendArgs = {} }) {
   })
 }
 
-function* handleMsgTransaction({ msg }) {
+function* messageRequested({ msg }) {
   const drizzle = yield getContext('drizzle')
   // pre-cache message to store
   msg.sendingMessage = 'Transaction Pending - Confirm through Metamask'
@@ -114,7 +114,7 @@ function* handleMsgTransaction({ msg }) {
 }
 
 // TODO: cleanup code here
-function* handleCommTransaction({ comment }) {
+function* commentRequested({ comment }) {
   const drizzle = yield getContext('drizzle')
   console.log('SAGA Here')
   comment.sendingMessage = 'Transaction Pending - Confirm through Metamask'
@@ -164,7 +164,7 @@ function* handleCommTransaction({ comment }) {
   }
 }
 
-function* handleDropTransaction({ msg, drops }) {
+function* messageDropRequested({ msg, drops }) {
   const drizzle = yield getContext('drizzle')
   console.log('DROP SAGA Here')
   let newMsg = Object.assign({}, msg, {
@@ -219,7 +219,7 @@ function* handleDropTransaction({ msg, drops }) {
   }
 }
 
-function* getMessages() {
+function* messagesFetchRequested() {
   // TODO: try and catch
   console.log('FETCH MESSAGES')
   const drizzle = yield getContext('drizzle')
@@ -324,10 +324,10 @@ function* parseUser(id, user) {
 
 // register sagas
 function* messagesSaga() {
-  yield takeEvery(MESSAGES_FETCH_REQUESTED, getMessages)
-  yield takeEvery(MESSAGE_REQUESTED, handleMsgTransaction)
-  yield takeEvery(COMMENT_REQUESTED, handleCommTransaction)
-  yield takeEvery(MESSAGE_DROP_REQUESTED, handleDropTransaction)
+  yield takeEvery(MESSAGES_FETCH_REQUESTED, messagesFetchRequested)
+  yield takeEvery(MESSAGE_REQUESTED, messageRequested)
+  yield takeEvery(COMMENT_REQUESTED, commentRequested)
+  yield takeEvery(MESSAGE_DROP_REQUESTED, messageDropRequested)
 }
 
 export default messagesSaga

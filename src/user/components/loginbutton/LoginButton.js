@@ -23,6 +23,7 @@ class LoginButton extends Component {
         name: this.context.drizzle.web3.utils.toUtf8(user.username),
         bio: user.bio,
         drops: userDrops,
+        address: this.props.accounts[0],
         ipfsHash: user.ipfsHash,
         imgUrl: `https://gateway.ipfs.io/ipfs/${user.ipfsHash}`,
         followers: parseInt(user.followers, 10),
