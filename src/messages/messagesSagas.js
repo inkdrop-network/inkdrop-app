@@ -63,7 +63,7 @@ function createTxChannel({ txObject, contractName, sendArgs = {} }) {
   })
 }
 
-function* handleMsgTx({ msg }) {
+function* handleMsgTransaction({ msg }) {
   const drizzle = yield getContext('drizzle')
   // pre-cache message to store
   msg.sendingMessage = 'Transaction Pending - Confirm through Metamask'
@@ -325,7 +325,7 @@ function* parseUser(id, user) {
 // register sagas
 function* messagesSaga() {
   yield takeEvery(MESSAGES_FETCH_REQUESTED, getMessages)
-  yield takeEvery(MESSAGE_REQUESTED, handleMsgTx)
+  yield takeEvery(MESSAGE_REQUESTED, handleMsgTransaction)
   yield takeEvery(COMMENT_REQUESTED, handleCommTransaction)
   yield takeEvery(MESSAGE_DROP_REQUESTED, handleDropTransaction)
 }
