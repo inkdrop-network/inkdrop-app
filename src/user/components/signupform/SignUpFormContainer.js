@@ -11,7 +11,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onSignupUser: user => {
+    onSignupUser: (user, buffer) => {
       dispatch({ type: 'SIGNUP_REQUESTED', user })
     },
     onIpfsUpload: buffer => {

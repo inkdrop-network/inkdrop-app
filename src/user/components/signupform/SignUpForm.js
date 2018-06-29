@@ -64,53 +64,50 @@ class SignUpForm extends Component {
     let user = {
       name: this.state.name,
       bio: this.state.bio,
-      // the initial 10 drops
-      drops: 10,
       address: this.props.accounts[0],
-      followers: 0,
     }
 
-    return this.props.onSignupUser(user)
+    this.props.onSignupUser(user, this.state.buffer)
 
-    // this.props.onSignUpFormSubmit(this.state.name, this.state.bio, this.state.buffer)
-    if (this.state.ipfsHash === '') {
-      let ipfsHash = await ipfs.add(this.state.buffer)
-      this.setState({ ipfsHash: ipfsHash[0].hash })
-    }
+    // // this.props.onSignUpFormSubmit(this.state.name, this.state.bio, this.state.buffer)
+    // if (this.state.ipfsHash === '') {
+    //   let ipfsHash = await ipfs.add(this.state.buffer)
+    //   this.setState({ ipfsHash: ipfsHash[0].hash })
+    // }
 
-    try {
-      // this.contracts.Authentication.methods.signup
-      await this.contracts.InkDrop.methods
-        .createUser(
-          this.context.drizzle.web3.utils.fromAscii(this.state.name),
-          this.state.bio,
-          this.state.ipfsHash
-        )
-        .send()
+    // try {
+    //   // this.contracts.Authentication.methods.signup
+    //   await this.contracts.InkDrop.methods
+    //     .createUser(
+    //       this.context.drizzle.web3.utils.fromAscii(this.state.name),
+    //       this.state.bio,
+    //       this.state.ipfsHash
+    //     )
+    //     .send()
 
-      // dispatch login saga
-      this.props.onSignupUser({
-        name: this.state.name,
-        bio: this.state.bio,
-        // the initial 10 drops
-        drops: 10,
-        ipfsHash: this.state.ipfsHash,
-        imgUrl: `https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}`,
-        followers: 0,
-      })
-    } catch (error) {
-      console.log(error)
-    }
+    //   // dispatch login saga
+    //   this.props.onSignupUser({
+    //     name: this.state.name,
+    //     bio: this.state.bio,
+    //     // the initial 10 drops
+    //     drops: 10,
+    //     ipfsHash: this.state.ipfsHash,
+    //     imgUrl: `https://gateway.ipfs.io/ipfs/${this.state.ipfsHash}`,
+    //     followers: 0,
+    //   })
+    // } catch (error) {
+    //   console.log(error)
+    // }
 
-    // Used a manual redirect here as opposed to a wrapper.
-    // This way, once logged in a user can still access the home page.
-    var currentLocation = browserHistory.getCurrentLocation()
+    // // Used a manual redirect here as opposed to a wrapper.
+    // // This way, once logged in a user can still access the home page.
+    // var currentLocation = browserHistory.getCurrentLocation()
 
-    if ('redirect' in currentLocation.query) {
-      return browserHistory.push(decodeURIComponent(currentLocation.query.redirect))
-    }
+    // if ('redirect' in currentLocation.query) {
+    //   return browserHistory.push(decodeURIComponent(currentLocation.query.redirect))
+    // }
 
-    browserHistory.push('/newsfeed')
+    // browserHistory.push('/newsfeed')
   }
 
   captureFile(event) {
@@ -132,7 +129,7 @@ class SignUpForm extends Component {
     const buffer = await Buffer.from(reader.result)
     //set this buffer
     this.setState({ buffer: buffer })
-    this.props.onIpfsUpload(buffer)
+    // this.props.onIpfsUpload(buffer)
     // let ipfsHash = await ipfs.add(buffer)
     // this.setState({ ipfsHash: ipfsHash[0].hash })
   }
