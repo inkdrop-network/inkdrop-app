@@ -11,7 +11,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => {
   return {
     onLoginUser: user => {
-      dispatch({ type: 'LOGIN_REQUESTED', payload: user })
+      dispatch({ type: 'LOGIN_REQUESTED', user })
     },
   }
 }

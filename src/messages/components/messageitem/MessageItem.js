@@ -130,9 +130,7 @@ class MessageItem extends Component {
             </div>
 
             <div className="col">
-              <div
-                className="comment-message-button float-right"
-                onClick={() => this.toggleComments()}>
+              <div className="comment-message-button float-right" onClick={this.toggleComments}>
                 <img src={iconComment} width="20" height="20" className="" alt="comments" />
                 <span className={`comment-number icon-number ml-1 ${commentsNrClass}`}>
                   {msg.commentIds.length}
