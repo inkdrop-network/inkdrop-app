@@ -103,7 +103,9 @@ function* signupRequested({ user }) {
 }
 
 function* logoutRequested(action) {
+  console.log('LOGOUT REQUESTED')
   yield put({ type: USER_LOGGED_OUT })
+  yield browserHistory.push('/')
 }
 
 function* userUpdateRequested({ user }) {
