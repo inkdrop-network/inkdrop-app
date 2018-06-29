@@ -32,6 +32,10 @@ class SignUpForm extends Component {
     }
 
     this.renderTxStatus = this.renderTxStatus.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
+    this.captureFile = this.captureFile.bind(this)
+    this.onNameChange = this.onNameChange.bind(this)
+    this.onBioChange = this.onBioChange.bind(this)
 
     // TODO: Check https://github.com/NFhbar/Token-Deployer/blob/master/src/layouts/home/Home.js
   }
@@ -56,6 +60,17 @@ class SignUpForm extends Component {
     }
 
     this.setState({ submitting: true })
+
+    let user = {
+      name: this.state.name,
+      bio: this.state.bio,
+      // the initial 10 drops
+      drops: 10,
+      address: this.props.accounts[0],
+      followers: 0,
+    }
+
+    return this.props.onSignupUser(user)
 
     // this.props.onSignUpFormSubmit(this.state.name, this.state.bio, this.state.buffer)
     if (this.state.ipfsHash === '') {
@@ -117,9 +132,9 @@ class SignUpForm extends Component {
     const buffer = await Buffer.from(reader.result)
     //set this buffer
     this.setState({ buffer: buffer })
-    let ipfsHash = await ipfs.add(buffer)
-    console.log(ipfsHash)
-    this.setState({ ipfsHash: ipfsHash[0].hash })
+    this.props.onIpfsUpload(buffer)
+    // let ipfsHash = await ipfs.add(buffer)
+    // this.setState({ ipfsHash: ipfsHash[0].hash })
   }
 
   renderTxStatus() {
@@ -147,7 +162,7 @@ class SignUpForm extends Component {
     return (
       <Card className="profile-card">
         <CardBody>
-          <Form onSubmit={this.handleSubmit.bind(this)}>
+          <Form onSubmit={this.handleSubmit}>
             <FormGroup>
               <img
                 id="signup-profile-picture"
@@ -159,7 +174,7 @@ class SignUpForm extends Component {
                 type="file"
                 name="file"
                 id="signup-user-img"
-                onChange={this.captureFile.bind(this)}
+                onChange={this.captureFile}
                 accept="image/gif, image/jpeg, image/png"
                 required
               />
@@ -175,7 +190,7 @@ class SignUpForm extends Component {
                   id="name"
                   type="text"
                   value={this.state.name}
-                  onChange={this.onNameChange.bind(this)}
+                  onChange={this.onNameChange}
                   placeholder="Your name"
                   required
                 />
@@ -186,7 +201,7 @@ class SignUpForm extends Component {
                 id="bio"
                 type="text"
                 value={this.state.bio}
-                onChange={this.onBioChange.bind(this)}
+                onChange={this.onBioChange}
                 placeholder="Tell us something about yourself"
               />
             </FormGroup>

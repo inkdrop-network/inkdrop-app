@@ -3,18 +3,21 @@ import { drizzleConnect } from 'drizzle-react'
 import SignUpForm from './SignUpForm'
 
 const mapStateToProps = (state, ownProps) => {
-	return {
-		accounts: state.accounts,
-		InkDrop: state.contracts.InkDrop,
-	}
+  return {
+    accounts: state.accounts,
+    InkDrop: state.contracts.InkDrop,
+  }
 }
 
 const mapDispatchToProps = dispatch => {
-	return {
-		onSignupUser: user => {
-			dispatch({ type: 'SIGNUP_REQUESTED', payload: user })
-		},
-	}
+  return {
+    onSignupUser: user => {
+      dispatch({ type: 'SIGNUP_REQUESTED', user })
+    },
+    onIpfsUpload: buffer => {
+      dispatch({ type: 'IPFS_UPLOAD_REQUESTED', buffer })
+    },
+  }
 }
 
 const SignUpFormContainer = drizzleConnect(SignUpForm, mapStateToProps, mapDispatchToProps)

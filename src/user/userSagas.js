@@ -1,12 +1,14 @@
-import { put, takeEvery, getContext } from 'redux-saga/effects'
+import { call, put, takeEvery, getContext } from 'redux-saga/effects'
 import { eventChannel, END } from 'redux-saga'
 import { browserHistory } from 'react-router'
 import { USER_LOGGED_IN, USER_LOGGED_OUT, USER_UPDATED } from './userReducer'
+import ipfs from '../ipfs'
 
 // saga actions actions
 const LOGIN_REQUESTED = 'LOGIN_REQUESTED'
 const LOGOUT_REQUESTED = 'LOGOUT_REQUESTED'
 const SIGNUP_REQUESTED = 'SIGNUP_REQUESTED'
+const IPFS_UPLOAD_REQUESTED = 'IPFS_UPLOAD_REQUESTED'
 const USERUPDATE_REQUESTED = 'USERUPDATE_REQUESTED'
 
 // drizzle's transactions events
@@ -60,7 +62,7 @@ function* loginRequested({ user }) {
 
   if (userTest) {
     try {
-      let tmpUser = yield drizzle.contracts.InkDrop.methods.getUser(user.address).call()
+      let tmpUser = yield call(drizzle.contracts.InkDrop.methods.getUser(user.address).call)
       let userDrops = parseInt(user.drops, 10) >= 0 ? parseInt(user.drops, 10) / 100 : 0
       let newUser = {
         name: drizzle.web3.utils.toUtf8(tmpUser.username),
@@ -92,14 +94,38 @@ function* loginRequested({ user }) {
 
 function* isUser(address) {
   const drizzle = yield getContext('drizzle')
-  return yield drizzle.contracts.InkDrop.methods.isUser(address).call()
+  return yield call(drizzle.contracts.InkDrop.methods.isUser(address).call)
+}
+
+function* ipfsUploadRequested({ buffer }) {
+  console.log('IPFS UPLOAD REQUESTED')
+  let ipfsHash = yield call(ipfs.add, buffer)
+  // ipfsHash[0].hash
+  console.log(ipfsHash[0].hash)
+  let user = {
+    ipfsHash: ipfsHash[0].hash,
+    imgUrl: `https://gateway.ipfs.io/ipfs/${ipfsHash[0].hash}`,
+  }
+  yield put({
+    type: USER_UPDATED,
+    payload: user,
+  })
 }
 
 function* signupRequested({ user }) {
-  yield put({
-    type: USER_LOGGED_IN,
-    payload: user,
-  })
+  const drizzle = yield getContext('drizzle')
+  console.log('SIGNUP REQUESTED')
+  let userTest = yield isUser(user.address)
+
+  if (!userTest) {
+    yield put({
+      type: USER_LOGGED_IN,
+      payload: user,
+    })
+  } else {
+    // already user, so forward to login saga
+    yield loginRequested(user)
+  }
 }
 
 function* logoutRequested(action) {
@@ -120,6 +146,7 @@ function* userSagas() {
   yield takeEvery(LOGIN_REQUESTED, loginRequested)
   yield takeEvery(LOGOUT_REQUESTED, logoutRequested)
   yield takeEvery(SIGNUP_REQUESTED, signupRequested)
+  yield takeEvery(IPFS_UPLOAD_REQUESTED, ipfsUploadRequested)
   yield takeEvery(USERUPDATE_REQUESTED, userUpdateRequested)
 }
 
