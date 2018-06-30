@@ -11,30 +11,26 @@ import {
   CardBody,
   CardFooter,
 } from 'reactstrap'
-import ipfs from '../../../ipfs'
 
 import loadingSpinner from '../../../../public/icons/loading-spinner.svg'
 
 class ProfileForm extends PureComponent {
-  constructor(props, context) {
+  constructor(props) {
     super(props)
-    super(props)
-    this.contracts = context.drizzle.contracts
 
     this.state = {
       name: this.props.user.name,
       bio: this.props.user.bio,
+      address: this.props.accounts[0],
       imgUrl: this.props.user.imgUrl,
-      ipfsHash: this.props.user.ipfsHash,
       buffer: '',
-      submitting: false,
     }
 
+    this.handleSubmit = this.handleSubmit.bind(this)
+    this.onNameChange = this.onNameChange.bind(this)
+    this.onBioChange = this.onBioChange.bind(this)
+    this.captureFile = this.captureFile.bind(this)
     this.renderTxStatus = this.renderTxStatus.bind(this)
-  }
-
-  componentWillUnmount() {
-    this.setState({ submitting: false })
   }
 
   onNameChange(event) {
@@ -45,43 +41,53 @@ class ProfileForm extends PureComponent {
     this.setState({ bio: event.target.value })
   }
 
-  async handleSubmit(event) {
+  handleSubmit(event) {
     event.preventDefault()
 
     if (this.state.name.length < 2) {
       return alert('Please fill in your name.')
     }
 
-    this.setState({ submitting: true })
-
-    // TODO: Chech if double upload is needed
-    let ipfsHash = await ipfs.add(this.state.buffer)
-    this.setState({ ipfsHash: ipfsHash[0].hash })
-    this.setState({ imgUrl: `https://gateway.ipfs.io/ipfs/${ipfsHash[0].hash}` })
-
-    try {
-      // this.contracts.Authentication.methods.signup
-      await this.contracts.InkDrop.methods
-        .updateUser(
-          this.context.drizzle.web3.utils.fromAscii(this.state.name),
-          this.state.bio,
-          this.state.ipfsHash
-        )
-        .send()
-
-      // dispatch login saga
-      this.props.onUpdateUser({
-        name: this.state.name,
-        bio: this.state.bio,
-        drops: this.props.user.drops,
-        imgUrl: this.state.imgUrl,
-        ipfsHash: this.state.ipfsHash,
-        followers: this.props.user.followers,
-      })
-      this.setState({ submitting: false })
-    } catch (error) {
-      console.log(error)
+    let user = {
+      name: this.state.name,
+      bio: this.state.bio,
+      drops: this.props.user.drops,
+      followers: this.props.user.followers,
+      address: this.props.accounts[0],
     }
+
+    this.props.onUpdateUser(user, this.state.buffer)
+
+    // this.setState({ submitting: true })
+
+    // // TODO: Chech if double upload is needed
+    // let ipfsHash = await ipfs.add(this.state.buffer)
+    // this.setState({ ipfsHash: ipfsHash[0].hash })
+    // this.setState({ imgUrl: `https://gateway.ipfs.io/ipfs/${ipfsHash[0].hash}` })
+
+    // try {
+    //   // this.contracts.Authentication.methods.signup
+    //   await this.contracts.InkDrop.methods
+    //     .updateUser(
+    //       this.context.drizzle.web3.utils.fromAscii(this.state.name),
+    //       this.state.bio,
+    //       this.state.ipfsHash
+    //     )
+    //     .send()
+
+    //   // dispatch login saga
+    //   this.props.onUpdateUser({
+    //     name: this.state.name,
+    //     bio: this.state.bio,
+    //     drops: this.props.user.drops,
+    //     imgUrl: this.state.imgUrl,
+    //     ipfsHash: this.state.ipfsHash,
+    //     followers: this.props.user.followers,
+    //   })
+    //   this.setState({ submitting: false })
+    // } catch (error) {
+    //   console.log(error)
+    // }
   }
 
   captureFile(event) {
@@ -103,25 +109,36 @@ class ProfileForm extends PureComponent {
     const buffer = await Buffer.from(reader.result)
     //set this buffer -using es6 syntax
     this.setState({ buffer: buffer })
-    let ipfsHash = await ipfs.add(buffer)
-    this.setState({ ipfsHash: ipfsHash[0].hash })
-    this.setState({ imgUrl: `https://gateway.ipfs.io/ipfs/${ipfsHash[0].hash}` })
+    // let ipfsHash = await ipfs.add(buffer)
+    // this.setState({ ipfsHash: ipfsHash[0].hash })
+    // this.setState({ imgUrl: `https://gateway.ipfs.io/ipfs/${ipfsHash[0].hash}` })
   }
 
   renderTxStatus() {
-    if (this.state.submitting) {
+    if (this.props.error || this.props.txMessage) {
+      let message = ''
+      let cls = ''
+      if (this.props.error) {
+        message = this.props.errorMessage
+        cls = 'text-danger'
+      } else if (this.props.txMessage) {
+        cls = this.props.loading ? 'text-muted' : 'text-green'
+        message = this.props.txMessage
+      }
       return (
         <CardFooter className="tx-card py-0">
           <div className="row">
             <div className="col text-right">
-              <img
-                className="mr-2 my-1"
-                src={loadingSpinner}
-                alt="profile"
-                width="20"
-                height="20"
-              />
-              <small className="text-muted">Submitting to blockchain. Please wait...</small>
+              {this.props.loading && (
+                <img
+                  className="mr-2 my-1"
+                  src={loadingSpinner}
+                  alt="profile"
+                  width="20"
+                  height="20"
+                />
+              )}
+              <small className={cls}>{message}</small>
             </div>
           </div>
         </CardFooter>
@@ -133,7 +150,7 @@ class ProfileForm extends PureComponent {
     return (
       <Card className="profile-card">
         <CardBody>
-          <Form onSubmit={this.handleSubmit.bind(this)}>
+          <Form onSubmit={this.handleSubmit}>
             <FormGroup>
               <img
                 id="update-profile-picture"
@@ -145,7 +162,7 @@ class ProfileForm extends PureComponent {
                 type="file"
                 name="file"
                 id="update-user-img"
-                onChange={this.captureFile.bind(this)}
+                onChange={this.captureFile}
                 accept="image/gif, image/jpeg, image/png"
               />
             </FormGroup>
@@ -156,7 +173,7 @@ class ProfileForm extends PureComponent {
                   id="name"
                   type="text"
                   value={this.state.name}
-                  onChange={this.onNameChange.bind(this)}
+                  onChange={this.onNameChange}
                   placeholder="Your name"
                   required
                 />
@@ -167,7 +184,7 @@ class ProfileForm extends PureComponent {
                 id="bio"
                 type="text"
                 value={this.state.bio}
-                onChange={this.onBioChange.bind(this)}
+                onChange={this.onBioChange}
                 placeholder="Tell us something about yourself"
               />
             </FormGroup>
@@ -180,8 +197,13 @@ class ProfileForm extends PureComponent {
   }
 }
 
-ProfileForm.contextTypes = {
-  drizzle: PropTypes.object,
+ProfileForm.propTypes = {
+  user: PropTypes.object,
+  accounts: PropTypes.object,
+  error: PropTypes.bool,
+  errorMessage: PropTypes.string,
+  loading: PropTypes.bool,
+  txMessage: PropTypes.string,
 }
 
 export default ProfileForm

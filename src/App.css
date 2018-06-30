@@ -23,7 +23,8 @@ a:hover {
   color: var(--green-dark);
 }
 
-.font-green {
+.font-green,
+.text-green {
   color: var(--green);
 }
 

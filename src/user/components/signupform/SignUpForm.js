@@ -83,23 +83,21 @@ class SignUpForm extends PureComponent {
   }
 
   renderTxStatus() {
-    if (this.props.signup) {
+    if (this.props.error || this.props.txMessage) {
       let message = ''
-      let cls = 'text-muted'
-      let error = false
-      if ('error' in this.props.signup) {
-        error = true
+      let cls = ''
+      if (this.props.error) {
+        message = this.props.errorMessage
         cls = 'text-danger'
-        message = this.props.signup.error
-      } else if ('sendingMessage' in this.props.signup) {
-        message = this.props.signup.sendingMessage
+      } else if (this.props.txMessage) {
+        cls = this.props.loading ? 'text-muted' : 'text-green'
+        message = this.props.txMessage
       }
-
       return (
         <CardFooter className="tx-card py-0">
           <div className="row">
             <div className="col text-right">
-              {!error && (
+              {this.props.loading && (
                 <img
                   className="mr-2 my-1"
                   src={loadingSpinner}
@@ -175,6 +173,10 @@ class SignUpForm extends PureComponent {
 SignUpForm.propTypes = {
   signup: PropTypes.object,
   accounts: PropTypes.object,
+  error: PropTypes.bool,
+  errorMessage: PropTypes.string,
+  loading: PropTypes.bool,
+  txMessage: PropTypes.string,
 }
 
 export default SignUpForm

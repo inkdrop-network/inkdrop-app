@@ -5,6 +5,10 @@ const mapStateToProps = state => {
   return {
     accounts: state.accounts,
     signup: state.user.signup,
+    error: state.user.error,
+    errorMessage: state.user.errorMessage,
+    loading: state.user.loading,
+    txMessage: state.user.txMessage,
   }
 }
 

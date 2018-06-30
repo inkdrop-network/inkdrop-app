@@ -1,7 +1,14 @@
 import { call, put, takeEvery, getContext, select, take } from 'redux-saga/effects'
 import { eventChannel, END, delay } from 'redux-saga'
 import { browserHistory } from 'react-router'
-import { USER_LOGGED_IN, USER_LOGGED_OUT, USER_UPDATED, USER_SIGNUP } from './userReducer'
+import {
+  USER_LOGGED_IN,
+  USER_LOGGED_OUT,
+  USER_UPDATED,
+  USER_ERR_TX_RESET,
+  USER_TX_MSG,
+  USER_ERROR,
+} from './userReducer'
 import ipfs from '../ipfs'
 
 // saga actions actions
@@ -18,7 +25,7 @@ const TX_SUCCESSFUL = 'TX_SUCCESSFUL'
 const TX_ERROR = 'TX_ERROR'
 
 // selectors
-const getIpfs = state => state.user.signup.ipfsHash
+const getUser = state => state.user.data
 
 function createTxChannel({ txObject, contractName, sendArgs = {} }) {
   var persistTxHash
@@ -61,6 +68,7 @@ function createTxChannel({ txObject, contractName, sendArgs = {} }) {
 function* loginRequested({ user }) {
   const drizzle = yield getContext('drizzle')
   console.log('LOGIN REQUESTED')
+  yield put({ type: USER_ERR_TX_RESET })
   let userTest = yield isUser(user.address)
 
   if (userTest) {
@@ -86,9 +94,9 @@ function* loginRequested({ user }) {
 
       if ('redirect' in currentLocation.query) {
         yield browserHistory.push(decodeURIComponent(currentLocation.query.redirect))
+      } else {
+        yield browserHistory.push('/newsfeed')
       }
-
-      yield browserHistory.push('/newsfeed')
     } catch (error) {}
   } else {
     yield browserHistory.push('/signup')
@@ -104,40 +112,36 @@ function* ipfsUploadRequested({ buffer }) {
   console.log('IPFS UPLOAD REQUESTED')
   try {
     yield put({
-      type: USER_SIGNUP,
-      payload: {
-        sendingMessage: 'Uploading image to IPFS - Please wait',
-      },
+      type: USER_TX_MSG,
+      payload: 'Uploading image to IPFS - Please wait',
+      loading: true,
     })
     let ipfsHash = yield call(ipfs.add, buffer)
-    yield put({
-      type: USER_SIGNUP,
-      payload: {
-        ipfsHash: ipfsHash[0].hash,
-      },
-    })
+    return ipfsHash[0].hash
   } catch (error) {
     console.log(error)
+    yield put({
+      type: USER_ERROR,
+      payload: error.message || 'Something went wrong.',
+    })
   }
 }
 
 function* signupRequested({ user, buffer }) {
   const drizzle = yield getContext('drizzle')
   console.log('SIGNUP REQUESTED')
-
+  yield put({ type: USER_ERR_TX_RESET })
   let userTest = yield isUser(user.address)
 
   if (!userTest) {
     // upload image to ipfs
-    yield call(ipfsUploadRequested, { buffer })
-    let ipfsHash = yield select(getIpfs)
+    let ipfsHash = yield call(ipfsUploadRequested, { buffer })
+
     // show message in the UI
     yield put({
-      type: USER_SIGNUP,
-      payload: {
-        ipfsHash: ipfsHash,
-        sendingMessage: 'Transaction Pending - Confirm through Metamask',
-      },
+      type: USER_TX_MSG,
+      payload: 'Transaction Pending - Confirm through Metamask',
+      loading: true,
     })
 
     const contractName = 'InkDrop'
@@ -163,10 +167,9 @@ function* signupRequested({ user, buffer }) {
         if (event.type === TX_BROADCASTED) {
           console.log('1 - BROADCASTED')
           yield put({
-            type: USER_SIGNUP,
-            payload: {
-              sendingMessage: 'Submitting transaction to blockchain',
-            },
+            type: USER_TX_MSG,
+            payload: 'Submitting transaction to blockchain',
+            loading: true,
           })
         } else if (event.type === TX_CONFIRMAITON) {
           console.log('2 - CONFIRMATION')
@@ -194,17 +197,14 @@ function* signupRequested({ user, buffer }) {
 
           if ('redirect' in currentLocation.query) {
             yield browserHistory.push(decodeURIComponent(currentLocation.query.redirect))
+          } else {
+            yield browserHistory.push('/newsfeed')
           }
-
-          yield browserHistory.push('/newsfeed')
         } else if (event.type === TX_ERROR) {
           console.log('ERROR')
           yield put({
-            type: USER_SIGNUP,
-            payload: {
-              sendingMessage: '',
-              error: 'Transaction failed. Please try again.',
-            },
+            type: USER_ERROR,
+            payload: event.error.message || 'Something went wrong.',
           })
         }
       }
@@ -215,10 +215,9 @@ function* signupRequested({ user, buffer }) {
   } else {
     // already user, so forward to login saga
     yield put({
-      type: USER_SIGNUP,
-      payload: {
-        sendingMessage: 'You already have an account. Logging in now.',
-      },
+      type: USER_TX_MSG,
+      payload: 'You already have an account. Logging in now.',
+      loading: true,
     })
     // delay the login in order to show the message to the user
     yield delay(2000)
@@ -232,11 +231,92 @@ function* logoutRequested(action) {
   yield browserHistory.push('/')
 }
 
-function* userUpdateRequested({ user }) {
+function* userUpdateRequested({ user, buffer }) {
+  const drizzle = yield getContext('drizzle')
+  console.log('USER UPDATE REQUESTED')
+  yield put({ type: USER_ERR_TX_RESET })
+  // get the current user
+  let currentUser = yield select(getUser)
+  // merge current user with new info
+  let newUser = {
+    ...currentUser,
+    ...user,
+  }
+  // update store
   yield put({
     type: USER_UPDATED,
-    payload: user,
+    payload: newUser,
   })
+  // upload image to ipfs
+  let ipfsHash = yield call(ipfsUploadRequested, { buffer })
+  // merge ipfsHash with newUser
+  newUser = {
+    ...newUser,
+    ipfsHash: ipfsHash,
+    imgUrl: `https://gateway.ipfs.io/ipfs/${ipfsHash}`,
+  }
+  // update store
+  yield put({
+    type: USER_UPDATED,
+    payload: newUser,
+  })
+
+  const contractName = 'InkDrop'
+  const args = {
+    username: drizzle.web3.utils.fromAscii(user.name),
+    bio: user.bio,
+    ipfsHash: ipfsHash,
+  }
+  const txObject = yield call(
+    drizzle.contracts.InkDrop.methods.updateUser,
+    drizzle.web3.utils.fromAscii(user.name),
+    user.bio,
+    ipfsHash
+  )
+  const txChannel = yield call(createTxChannel, { txObject, contractName, args })
+
+  try {
+    while (true) {
+      let event = yield take(txChannel)
+      // forward the standard drizzle events
+      yield put(event)
+      // catch the tx related events and update store
+      if (event.type === TX_BROADCASTED) {
+        console.log('1 - BROADCASTED')
+        yield put({
+          type: USER_TX_MSG,
+          payload: 'Submitting transaction to blockchain',
+          loading: true,
+        })
+      } else if (event.type === TX_CONFIRMAITON) {
+        console.log('2 - CONFIRMATION')
+        // TODO: show the confirmation number in the frontend
+      } else if (event.type === TX_SUCCESSFUL) {
+        console.log('3 - SUCCESS')
+
+        yield put({
+          type: USER_TX_MSG,
+          payload: 'Transaction successfull.',
+          loading: false,
+        })
+        yield delay(3000)
+        yield put({ type: USER_ERR_TX_RESET })
+      } else if (event.type === TX_ERROR) {
+        console.log('ERROR')
+        yield put({
+          type: USER_ERROR,
+          payload: event.error.message || 'Something went wrong.',
+        })
+        yield put({
+          type: USER_UPDATED,
+          payload: currentUser,
+        })
+      }
+    }
+  } finally {
+    console.log('TX CHANNEL CLOSED')
+    txChannel.close()
+  }
 }
 
 // register sagas
