@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react'
+import PropTypes from 'prop-types'
 import { Link } from 'react-router'
 import {
   Nav,
@@ -18,8 +19,8 @@ import inkdropWhite from '../../../../public/icons/icon-inkdrop-white.svg'
 class ProfileHeader extends PureComponent {
   // constructor(props) {
   //   super(props)
-  //TODO: Check why ProfileHeady in initiated after every account snyc
-  // console.log('Profile header created')
+  //   // TODO: Check why ProfileHeady in initiated after every account snyc
+  //   console.log('Profile header created')
   // }
 
   render() {
@@ -70,6 +71,10 @@ class ProfileHeader extends PureComponent {
       </Nav>
     )
   }
+}
+
+ProfileHeader.propTypes = {
+  user: PropTypes.object,
 }
 
 export default ProfileHeader

@@ -106,7 +106,6 @@ function* ipfsUploadRequested({ buffer }) {
     yield put({
       type: USER_SIGNUP,
       payload: {
-        error: '',
         sendingMessage: 'Uploading image to IPFS - Please wait',
       },
     })
@@ -137,7 +136,6 @@ function* signupRequested({ user, buffer }) {
       type: USER_SIGNUP,
       payload: {
         ipfsHash: ipfsHash,
-        error: '',
         sendingMessage: 'Transaction Pending - Confirm through Metamask',
       },
     })
