@@ -1,12 +1,12 @@
 const initialState = {
   data: null,
-  ipfsHash: null,
+  signup: null,
 }
 
 // actions
 export const USER_LOGGED_IN = 'USER_LOGGED_IN'
 export const USER_UPDATED = 'USER_UPDATED'
-export const USER_IPFS = 'USER_IPFS'
+export const USER_SIGNUP = 'USER_SIGNUP'
 export const USER_LOGGED_OUT = 'USER_LOGGED_OUT'
 export const USER_DROPPED = 'USER_DROPPED'
 
@@ -15,20 +15,22 @@ const userReducer = (state = initialState, action) => {
   if (action.type === USER_LOGGED_IN || action.type === USER_UPDATED) {
     return Object.assign({}, state, {
       data: action.payload,
-      ipfsHash: null,
     })
   }
 
   if (action.type === USER_LOGGED_OUT) {
     return Object.assign({}, state, {
       data: null,
-      ipfsHash: null,
+      signup: null,
     })
   }
 
-  if (action.type === USER_IPFS) {
+  if (action.type === USER_SIGNUP) {
     return Object.assign({}, state, {
-      ipfsHash: action.payload,
+      signup: {
+        ...state.signup,
+        ...action.payload,
+      },
     })
   }
 

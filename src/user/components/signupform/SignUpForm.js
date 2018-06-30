@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { browserHistory } from 'react-router'
 import {
   Button,
   Form,
@@ -135,7 +134,10 @@ class SignUpForm extends Component {
   }
 
   renderTxStatus() {
-    if (this.state.submitting) {
+    if (this.props.signup && 'sendingMessage' in this.props.signup) {
+      let message = ''
+      let cls = 'text-muted'
+      message = this.props.signup.sendingMessage
       return (
         <CardFooter className="tx-card py-0">
           <div className="row">
@@ -147,7 +149,7 @@ class SignUpForm extends Component {
                 width="20"
                 height="20"
               />
-              <small className="text-muted">Submitting to blockchain. Please wait...</small>
+              <small className={cls}>{message}</small>
             </div>
           </div>
         </CardFooter>
@@ -213,6 +215,11 @@ class SignUpForm extends Component {
 
 SignUpForm.contextTypes = {
   drizzle: PropTypes.object,
+}
+
+SignUpForm.propTypes = {
+  signup: PropTypes.object,
+  accounts: PropTypes.object,
 }
 
 export default SignUpForm

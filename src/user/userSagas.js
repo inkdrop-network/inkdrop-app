@@ -1,7 +1,7 @@
 import { call, put, takeEvery, getContext, select, take } from 'redux-saga/effects'
 import { eventChannel, END } from 'redux-saga'
 import { browserHistory } from 'react-router'
-import { USER_LOGGED_IN, USER_LOGGED_OUT, USER_UPDATED, USER_IPFS } from './userReducer'
+import { USER_LOGGED_IN, USER_LOGGED_OUT, USER_UPDATED, USER_SIGNUP } from './userReducer'
 import ipfs from '../ipfs'
 
 // saga actions actions
@@ -18,7 +18,7 @@ const TX_SUCCESSFUL = 'TX_SUCCESSFUL'
 const TX_ERROR = 'TX_ERROR'
 
 // selectors
-// const getIpfs = state => state.user.ipfsHash
+const getIpfs = state => state.user.signup.ipfsHash
 
 function createTxChannel({ txObject, contractName, sendArgs = {} }) {
   var persistTxHash
@@ -103,10 +103,19 @@ function* isUser(address) {
 function* ipfsUploadRequested({ buffer }) {
   console.log('IPFS UPLOAD REQUESTED')
   try {
+    yield put({
+      type: USER_SIGNUP,
+      payload: {
+        sendingMessage: 'Uploading image to IPFS - Please wait',
+      },
+    })
     let ipfsHash = yield call(ipfs.add, buffer)
     yield put({
-      type: USER_IPFS,
-      payload: ipfsHash[0].hash,
+      type: USER_SIGNUP,
+      payload: {
+        ipfsHash: ipfsHash[0].hash,
+        sendingMessage: 'Transaction Pending - Confirm through Metamask',
+      },
     })
   } catch (error) {
     console.log(error)
@@ -116,9 +125,7 @@ function* ipfsUploadRequested({ buffer }) {
 function* signupRequested({ user, buffer }) {
   const drizzle = yield getContext('drizzle')
   console.log('SIGNUP REQUESTED')
-  console.log(user)
-  console.log(buffer)
-  return
+
   let userTest = yield isUser(user.address)
 
   if (!userTest) {
@@ -130,10 +137,11 @@ function* signupRequested({ user, buffer }) {
     //   type: IPFS_UPLOAD_REQUESTED,
     //   buffer,
     // })
-    // let ipfsHash = yield select(getIpfs())
+    yield call(ipfsUploadRequested, { buffer })
+    let ipfsHash = yield select(getIpfs)
     // }
-    let ipfsHash = yield call(ipfs.add, buffer)
-    ipfsHash = ipfsHash[0].hash
+    // let ipfsHash = yield call(ipfs.add, buffer)
+    // ipfsHash = ipfsHash[0].hash
     console.log(ipfsHash)
 
     const contractName = 'InkDrop'
@@ -182,7 +190,7 @@ function* signupRequested({ user, buffer }) {
           })
           // Used a manual redirect here as opposed to a wrapper.
           // This way, once logged in a user can still access the home page.
-          var currentLocation = browserHistory.getCurrentLocation()
+          let currentLocation = browserHistory.getCurrentLocation()
 
           if ('redirect' in currentLocation.query) {
             yield browserHistory.push(decodeURIComponent(currentLocation.query.redirect))

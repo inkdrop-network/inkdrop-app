@@ -5,6 +5,7 @@ import SignUpForm from './SignUpForm'
 const mapStateToProps = (state, ownProps) => {
   return {
     accounts: state.accounts,
+    signup: state.user.signup,
     InkDrop: state.contracts.InkDrop,
   }
 }
@@ -12,7 +13,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => {
   return {
     onSignupUser: (user, buffer) => {
-      dispatch({ type: 'SIGNUP_REQUESTED', user })
+      dispatch({ type: 'SIGNUP_REQUESTED', user, buffer })
     },
     onIpfsUpload: buffer => {
       dispatch({ type: 'IPFS_UPLOAD_REQUESTED', buffer })
