@@ -1,6 +1,6 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 
-class LogoutButton extends Component {
+class LogoutButton extends PureComponent {
   constructor(props) {
     super(props)
 

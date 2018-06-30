@@ -1,5 +1,5 @@
 import { call, put, takeEvery, getContext, select, take } from 'redux-saga/effects'
-import { eventChannel, END } from 'redux-saga'
+import { eventChannel, END, delay } from 'redux-saga'
 import { browserHistory } from 'react-router'
 import { USER_LOGGED_IN, USER_LOGGED_OUT, USER_UPDATED, USER_SIGNUP } from './userReducer'
 import ipfs from '../ipfs'
@@ -8,7 +8,7 @@ import ipfs from '../ipfs'
 const LOGIN_REQUESTED = 'LOGIN_REQUESTED'
 const LOGOUT_REQUESTED = 'LOGOUT_REQUESTED'
 const SIGNUP_REQUESTED = 'SIGNUP_REQUESTED'
-const IPFS_UPLOAD_REQUESTED = 'IPFS_UPLOAD_REQUESTED'
+// const IPFS_UPLOAD_REQUESTED = 'IPFS_UPLOAD_REQUESTED'
 const USERUPDATE_REQUESTED = 'USERUPDATE_REQUESTED'
 
 // drizzle's transactions events
@@ -66,7 +66,7 @@ function* loginRequested({ user }) {
   if (userTest) {
     try {
       let tmpUser = yield call(drizzle.contracts.InkDrop.methods.getUser(user.address).call)
-      let userDrops = parseInt(user.drops, 10) >= 0 ? parseInt(user.drops, 10) / 100 : 0
+      let userDrops = parseInt(tmpUser.drops, 10) >= 0 ? parseInt(tmpUser.drops, 10) / 100 : 0
       let newUser = {
         name: drizzle.web3.utils.toUtf8(tmpUser.username),
         bio: tmpUser.bio,
@@ -106,6 +106,7 @@ function* ipfsUploadRequested({ buffer }) {
     yield put({
       type: USER_SIGNUP,
       payload: {
+        error: '',
         sendingMessage: 'Uploading image to IPFS - Please wait',
       },
     })
@@ -114,7 +115,6 @@ function* ipfsUploadRequested({ buffer }) {
       type: USER_SIGNUP,
       payload: {
         ipfsHash: ipfsHash[0].hash,
-        sendingMessage: 'Transaction Pending - Confirm through Metamask',
       },
     })
   } catch (error) {
@@ -129,20 +129,18 @@ function* signupRequested({ user, buffer }) {
   let userTest = yield isUser(user.address)
 
   if (!userTest) {
-    // let ipfsHash = yield select(getIpfs())
-    // if (ipfsHash === null) {
-    // ipfsHash = yield call(ipfs.add, buffer)
-    // ipfsHash = ipfsHash[0].hash
-    // yield put({
-    //   type: IPFS_UPLOAD_REQUESTED,
-    //   buffer,
-    // })
+    // upload image to ipfs
     yield call(ipfsUploadRequested, { buffer })
     let ipfsHash = yield select(getIpfs)
-    // }
-    // let ipfsHash = yield call(ipfs.add, buffer)
-    // ipfsHash = ipfsHash[0].hash
-    console.log(ipfsHash)
+    // show message in the UI
+    yield put({
+      type: USER_SIGNUP,
+      payload: {
+        ipfsHash: ipfsHash,
+        error: '',
+        sendingMessage: 'Transaction Pending - Confirm through Metamask',
+      },
+    })
 
     const contractName = 'InkDrop'
     const args = {
@@ -166,8 +164,12 @@ function* signupRequested({ user, buffer }) {
         // catch the tx related events and update store
         if (event.type === TX_BROADCASTED) {
           console.log('1 - BROADCASTED')
-          // msg.sendingMessage = 'Submitting transaction to blockchain'
-          // yield put({ type: UPDATE_MESSAGE, payload: msg })
+          yield put({
+            type: USER_SIGNUP,
+            payload: {
+              sendingMessage: 'Submitting transaction to blockchain',
+            },
+          })
         } else if (event.type === TX_CONFIRMAITON) {
           console.log('2 - CONFIRMATION')
           // TODO: show the confirmation number in the frontend
@@ -199,6 +201,13 @@ function* signupRequested({ user, buffer }) {
           yield browserHistory.push('/newsfeed')
         } else if (event.type === TX_ERROR) {
           console.log('ERROR')
+          yield put({
+            type: USER_SIGNUP,
+            payload: {
+              sendingMessage: '',
+              error: 'Transaction failed. Please try again.',
+            },
+          })
         }
       }
     } finally {
@@ -207,7 +216,15 @@ function* signupRequested({ user, buffer }) {
     }
   } else {
     // already user, so forward to login saga
-    yield loginRequested(user)
+    yield put({
+      type: USER_SIGNUP,
+      payload: {
+        sendingMessage: 'You already have an account. Logging in now.',
+      },
+    })
+    // delay the login in order to show the message to the user
+    yield delay(2000)
+    yield loginRequested({ user })
   }
 }
 
@@ -229,7 +246,7 @@ function* userSagas() {
   yield takeEvery(LOGIN_REQUESTED, loginRequested)
   yield takeEvery(LOGOUT_REQUESTED, logoutRequested)
   yield takeEvery(SIGNUP_REQUESTED, signupRequested)
-  yield takeEvery(IPFS_UPLOAD_REQUESTED, ipfsUploadRequested)
+  // yield takeEvery(IPFS_UPLOAD_REQUESTED, ipfsUploadRequested)
   yield takeEvery(USERUPDATE_REQUESTED, userUpdateRequested)
 }
 

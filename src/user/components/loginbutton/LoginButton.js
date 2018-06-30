@@ -1,7 +1,7 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 
-class LoginButton extends Component {
+class LoginButton extends PureComponent {
   constructor(props) {
     super(props)
 
@@ -9,7 +9,6 @@ class LoginButton extends Component {
   }
 
   handleLogin(event) {
-    console.log(event)
     event.preventDefault()
     let user = {
       address: this.props.accounts[0],

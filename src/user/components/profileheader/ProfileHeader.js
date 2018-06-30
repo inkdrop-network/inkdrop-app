@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import { Link } from 'react-router'
 import {
   Nav,
@@ -15,7 +15,7 @@ import LogoutButtonContainer from '../logoutbutton/LogoutButtonContainer'
 // import iconMessage from '../../../../public/icons/icon-message.svg'
 import inkdropWhite from '../../../../public/icons/icon-inkdrop-white.svg'
 
-class ProfileHeader extends Component {
+class ProfileHeader extends PureComponent {
   // constructor(props) {
   //   super(props)
   //TODO: Check why ProfileHeady in initiated after every account snyc

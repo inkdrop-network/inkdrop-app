@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import {
   Button,
@@ -15,7 +15,7 @@ import ipfs from '../../../ipfs'
 
 import loadingSpinner from '../../../../public/icons/loading-spinner.svg'
 
-class ProfileForm extends Component {
+class ProfileForm extends PureComponent {
   constructor(props, context) {
     super(props)
     super(props)

@@ -2,7 +2,7 @@
 import { connect } from 'react-redux'
 import LogoutButton from './LogoutButton'
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = state => {
 	return {}
 }
 

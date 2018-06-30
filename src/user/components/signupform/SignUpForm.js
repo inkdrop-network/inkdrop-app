@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import {
   Button,
@@ -12,22 +12,19 @@ import {
   CardBody,
   CardFooter,
 } from 'reactstrap'
-import ipfs from '../../../ipfs'
 
 import loadingSpinner from '../../../../public/icons/loading-spinner.svg'
 
-class SignUpForm extends Component {
-  constructor(props, context) {
+class SignUpForm extends PureComponent {
+  constructor(props) {
     super(props)
-    this.contracts = context.drizzle.contracts
 
     this.state = {
       name: '',
       bio: '',
+      address: this.props.accounts[0],
       userUrl: '',
       buffer: '',
-      ipfsHash: '',
-      submitting: false,
     }
 
     this.renderTxStatus = this.renderTxStatus.bind(this)
@@ -47,18 +44,12 @@ class SignUpForm extends Component {
     this.setState({ bio: event.target.value })
   }
 
-  componentWillUnmount() {
-    this.setState({ submitting: false })
-  }
-
-  async handleSubmit(event) {
+  handleSubmit(event) {
     event.preventDefault()
 
     if (this.state.name.length < 2) {
       return alert('Please fill in your name.')
     }
-
-    this.setState({ submitting: true })
 
     let user = {
       name: this.state.name,
@@ -134,21 +125,31 @@ class SignUpForm extends Component {
   }
 
   renderTxStatus() {
-    if (this.props.signup && 'sendingMessage' in this.props.signup) {
+    if (this.props.signup) {
       let message = ''
       let cls = 'text-muted'
-      message = this.props.signup.sendingMessage
+      let error = false
+      if ('error' in this.props.signup) {
+        error = true
+        cls = 'text-danger'
+        message = this.props.signup.error
+      } else if ('sendingMessage' in this.props.signup) {
+        message = this.props.signup.sendingMessage
+      }
+
       return (
         <CardFooter className="tx-card py-0">
           <div className="row">
             <div className="col text-right">
-              <img
-                className="mr-2 my-1"
-                src={loadingSpinner}
-                alt="profile"
-                width="20"
-                height="20"
-              />
+              {!error && (
+                <img
+                  className="mr-2 my-1"
+                  src={loadingSpinner}
+                  alt="profile"
+                  width="20"
+                  height="20"
+                />
+              )}
               <small className={cls}>{message}</small>
             </div>
           </div>
@@ -211,10 +212,6 @@ class SignUpForm extends Component {
       </Card>
     )
   }
-}
-
-SignUpForm.contextTypes = {
-  drizzle: PropTypes.object,
 }
 
 SignUpForm.propTypes = {

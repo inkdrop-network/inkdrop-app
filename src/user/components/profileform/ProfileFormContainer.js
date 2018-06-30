@@ -2,7 +2,7 @@
 import { connect } from 'react-redux'
 import ProfileForm from './ProfileForm'
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = state => {
 	return {
 		user: state.user.data,
 	}

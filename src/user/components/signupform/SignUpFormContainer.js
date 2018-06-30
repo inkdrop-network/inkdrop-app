@@ -1,12 +1,10 @@
-import { drizzleConnect } from 'drizzle-react'
-// import { connect } from 'react-redux'
+import { connect } from 'react-redux'
 import SignUpForm from './SignUpForm'
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = state => {
   return {
     accounts: state.accounts,
     signup: state.user.signup,
-    InkDrop: state.contracts.InkDrop,
   }
 }
 
@@ -21,6 +19,9 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-const SignUpFormContainer = drizzleConnect(SignUpForm, mapStateToProps, mapDispatchToProps)
+const SignUpFormContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(SignUpForm)
 
 export default SignUpFormContainer
