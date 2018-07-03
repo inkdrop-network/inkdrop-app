@@ -1,8 +1,8 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Button, Form, FormGroup, Input, Card, CardBody } from 'reactstrap'
 
-class MessageForm extends Component {
+class MessageForm extends PureComponent {
   constructor(props) {
     super(props)
 

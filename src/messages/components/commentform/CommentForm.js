@@ -1,8 +1,8 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Form, FormGroup, Input, Button } from 'reactstrap'
 
-class CommentForm extends Component {
+class CommentForm extends PureComponent {
   constructor(props) {
     super(props)
 

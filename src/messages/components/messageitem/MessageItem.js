@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router'
 import { Card, CardBody, CardFooter } from 'reactstrap'
@@ -11,7 +11,7 @@ import iconLike from '../../../../public/icons/icon-like.svg'
 import iconComment from '../../../../public/icons/icon-comments.svg'
 import loadingSpinner from '../../../../public/icons/loading-spinner.svg'
 
-class MessageItem extends Component {
+class MessageItem extends PureComponent {
   constructor(props) {
     super(props)
 

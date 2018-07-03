@@ -1,8 +1,8 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import MessageItemContainer from '../messageitem/MessageItemContainer'
 
-class MessageList extends Component {
+class MessageList extends PureComponent {
   componentDidMount() {
     if (!this.props.initialized) {
       this.props.fetchMessages()

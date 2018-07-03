@@ -1,5 +1,6 @@
 import { connect } from 'react-redux'
 import MessageList from './MessageList'
+import { MESSAGES_FETCH_REQUESTED } from '../../messagesSagas'
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -11,7 +12,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => {
   return {
     fetchMessages: () => {
-      dispatch({ type: 'MESSAGES_FETCH_REQUESTED' })
+      dispatch({ type: MESSAGES_FETCH_REQUESTED })
     },
   }
 }

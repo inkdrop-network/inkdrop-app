@@ -1,14 +1,14 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import CommentItemContainer from '../commentitem/CommentItemContainer'
+import CommentItem from '../commentitem/CommentItem'
 import CommentFormContainer from '../commentform/CommentFormContainer'
 
-class CommentList extends Component {
+class CommentList extends PureComponent {
   render() {
     return (
       <div className="comments">
         {this.props.message.comments.map((comment, index) => (
-          <CommentItemContainer comment={comment} key={index} />
+          <CommentItem comment={comment} key={index} />
         ))}
 
         <CommentFormContainer message={this.props.message} />

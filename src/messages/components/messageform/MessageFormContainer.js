@@ -1,5 +1,6 @@
 import { connect } from 'react-redux'
 import MessageForm from './MessageForm'
+import { MESSAGE_REQUESTED } from '../../messagesSagas'
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -12,7 +13,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => {
   return {
     onCreateMessage: msg => {
-      dispatch({ type: 'MESSAGE_REQUESTED', msg })
+      dispatch({ type: MESSAGE_REQUESTED, msg })
     },
   }
 }

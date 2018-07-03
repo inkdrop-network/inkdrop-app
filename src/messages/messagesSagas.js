@@ -8,6 +8,11 @@ import {
   UPDATE_MESSAGE,
   UPDATE_COMMENT,
   UPDATE_MESSAGE_COMMENTS,
+  USER_MESSAGE_GOT,
+  USER_PAGE_GOT,
+  USER_MESSAGE_UPDATE,
+  UPDATE_USER_MESSAGE_COMMENTS,
+  USER_MESSAGE_RESET,
 } from './messagesReducer'
 import { USER_DROPPED } from '../user/userReducer'
 
@@ -16,6 +21,8 @@ export const MESSAGES_FETCH_REQUESTED = 'MESSAGES_FETCH_REQUESTED'
 export const MESSAGE_REQUESTED = 'MESSAGE_REQUESTED'
 export const COMMENT_REQUESTED = 'COMMENT_REQUESTED'
 export const MESSAGE_DROP_REQUESTED = 'MESSAGE_DROP_REQUESTED'
+export const USER_MESSAGES_FETCH_REQUESTED = 'USER_MESSAGES_FETCH_REQUESTED'
+export const USER_MESSAGES_RESET_REQUESTED = 'USER_MESSAGES_RESET_REQUESTED'
 
 // drizzle's transactions events
 const TX_CONFIRMAITON = 'TX_CONFIRMAITON'
@@ -224,7 +231,6 @@ function* messagesFetchRequested() {
   console.log('FETCH MESSAGES')
   const drizzle = yield getContext('drizzle')
   let count = yield call(drizzle.contracts.InkDrop.methods.getMessageCount().call)
-  console.log(count)
   let arr = []
   for (let i = count - 1; i >= 0; --i) {
     arr.push(fork(getMessageCall, i))
@@ -322,12 +328,106 @@ function* parseUser(id, user) {
   }
 }
 
+function* parseCompleteUser(user) {
+  const drizzle = yield getContext('drizzle')
+  return {
+    username: drizzle.web3.utils.toUtf8(user.username),
+    userUrl: `https://gateway.ipfs.io/ipfs/${user.ipfsHash}`,
+    drops: parseInt(user.drops, 10) / 100,
+    bio: user.bio,
+    followers: parseInt(user.followers, 10),
+    messageIds: user.messages.map(function(e) {
+      return parseInt(e, 10)
+    }),
+    messages: [],
+  }
+}
+
+function* userMessagesFetchRequested({ address }) {
+  console.log('FETCH USER MESSAGES: ' + address)
+  const drizzle = yield getContext('drizzle')
+  try {
+    let tmpUser = yield call(drizzle.contracts.InkDrop.methods.getUser(address).call)
+    let user = yield parseCompleteUser(tmpUser)
+
+    yield put({
+      type: USER_PAGE_GOT,
+      payload: user,
+    })
+
+    let arr = []
+    for (let i = user.messageIds.length - 1; i >= 0; --i) {
+      arr.push(fork(getUserMessageCall, user.messageIds[i]))
+    }
+    yield all(arr)
+  } catch (error) {
+    console.log(error)
+  }
+  // yield put({
+  //   type: USER_MESSAGE_GOT,
+  //   payload: [],
+  // })
+}
+
+function* getUserMessageCall(msgId) {
+  // TODO: try and catch
+  const drizzle = yield getContext('drizzle')
+  console.log('getUserMessageCall')
+  let tmpMsg = yield call(drizzle.contracts.InkDrop.methods.getMessage(msgId).call)
+  let msg = parseMessage(msgId, tmpMsg)
+  // update the store so the UI get updated
+  yield put({ type: USER_MESSAGE_GOT, payload: msg })
+  yield all([fork(getUserpageUser, msg), fork(getUserComments, msg)])
+}
+
+function* getUserComments(msg) {
+  let arr = []
+  for (let commentId of msg.commentIds) {
+    arr.push(fork(getUserComment, msg.id, commentId))
+  }
+  yield all(arr)
+}
+
+function* getUserpageUser(msg) {
+  const drizzle = yield getContext('drizzle')
+  try {
+    let user = yield call(drizzle.contracts.InkDrop.methods.getUser(msg.userAdr).call)
+    let newMsg = yield parseUser(msg.id, user)
+    yield put({ type: USER_MESSAGE_UPDATE, payload: newMsg })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+function* getUserComment(msgId, commentId) {
+  // TODO: try and catch
+  const drizzle = yield getContext('drizzle')
+  let comment = yield call(drizzle.contracts.InkDrop.methods.getComment(commentId).call)
+  let newComment = parseComment(commentId, comment)
+  let user = yield call(drizzle.contracts.InkDrop.methods.getUser(comment.writtenBy).call)
+  let newUser = yield parseUser(commentId, user)
+  yield put({
+    type: UPDATE_USER_MESSAGE_COMMENTS,
+    id: msgId,
+    payload: [Object.assign(newComment, newUser)],
+  })
+}
+
+function* userMessagesResetRequested() {
+  console.log('RESET USER MESSAGES')
+  yield put({
+    type: USER_MESSAGE_RESET,
+  })
+}
+
 // register sagas
 function* messagesSaga() {
   yield takeEvery(MESSAGES_FETCH_REQUESTED, messagesFetchRequested)
   yield takeEvery(MESSAGE_REQUESTED, messageRequested)
   yield takeEvery(COMMENT_REQUESTED, commentRequested)
   yield takeEvery(MESSAGE_DROP_REQUESTED, messageDropRequested)
+  yield takeEvery(USER_MESSAGES_FETCH_REQUESTED, userMessagesFetchRequested)
+  yield takeEvery(USER_MESSAGES_RESET_REQUESTED, userMessagesResetRequested)
 }
 
 export default messagesSaga

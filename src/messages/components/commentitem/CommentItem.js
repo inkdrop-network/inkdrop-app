@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router'
 import { Card, CardBody, CardFooter } from 'reactstrap'
@@ -6,7 +6,7 @@ import Moment from 'react-moment'
 
 import loadingSpinner from '../../../../public/icons/loading-spinner.svg'
 
-class CommentItem extends Component {
+class CommentItem extends PureComponent {
   renderTxStatus() {
     if (!this.props.comment.fromBlockchain) {
       let message = ''

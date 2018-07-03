@@ -1,6 +1,7 @@
 // import { drizzleConnect } from 'drizzle-react'
 import { connect } from 'react-redux'
 import CommentForm from './CommentForm'
+import { COMMENT_REQUESTED } from '../../messagesSagas'
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -12,7 +13,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => {
   return {
     onCommentMessage: comment => {
-      dispatch({ type: 'COMMENT_REQUESTED', comment })
+      dispatch({ type: COMMENT_REQUESTED, comment })
     },
   }
 }

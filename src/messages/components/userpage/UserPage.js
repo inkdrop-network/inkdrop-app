@@ -1,41 +1,32 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import MessageItemContainer from '../../../messages/components/messageitem/MessageItemContainer'
+import MessageItemContainer from '../messageitem/MessageItemContainer'
 
 // icons
 import iconDrop from '../../../../public/icons/icon-profile-drop.svg'
 import iconSubs from '../../../../public/icons/icon-profile-subs.svg'
 
-class UserPage extends Component {
-  constructor(props, context) {
-    super(props)
-    this.contracts = context.drizzle.contracts
+class UserPage extends PureComponent {
+  componentDidMount() {
+    this.props.fetchUserMessages(this.props.address)
+  }
 
-    this.state = {
-      username: '',
-      bio: '',
-      drops: '',
-      followers: '',
-      ipfsHash: '',
-      imgUrl: '',
-      messages: [],
-    }
-
-    this.dataKey = this.contracts.InkDrop.methods.getUser.cacheCall(this.props.address)
+  componentWillUnmount() {
+    this.props.resetUserMessages()
   }
 
   render() {
-    let user = this.state
-    if (this.dataKey in this.props.InkDrop.getUser) {
-      let tmpUser = this.props.InkDrop.getUser[this.dataKey].value
+    let user = this.props.user
+
+    // temporary values until the data is fetched from the blockchain
+    if (this.props.user === null) {
       user = {
-        username: this.context.drizzle.web3.utils.toUtf8(tmpUser.username),
-        bio: tmpUser.bio,
-        drops: parseInt(tmpUser.drops, 10) / 100,
-        followers: parseInt(tmpUser.followers, 10),
-        ipfsHash: tmpUser.ipfsHash,
-        imgUrl: `https://gateway.ipfs.io/ipfs/${tmpUser.ipfsHash}`,
-        messages: tmpUser.messages,
+        username: '',
+        bio: '',
+        drops: '',
+        followers: '',
+        ipfsHash: '',
+        userUrl: '',
       }
     }
 
@@ -47,7 +38,7 @@ class UserPage extends Component {
               <img
                 id="profile-page-picture"
                 className="profile-img-lg"
-                src={user.imgUrl || 'http://via.placeholder.com/190/29313e/29313e'}
+                src={user.userUrl || 'http://via.placeholder.com/190/29313e/29313e'}
                 alt=""
               />
               <h3 id="profile-page-username" className="mt-4 mb-1">
@@ -71,9 +62,7 @@ class UserPage extends Component {
             </div>
 
             <div id="profile-page-messages" className="col-sm-7 mt-2">
-              {user.messages.map(msgId => (
-                <MessageItemContainer msgId={msgId} cached={false} cachedMsg={false} key={msgId} />
-              ))}
+              {this.props.messages.map(msg => <MessageItemContainer message={msg} key={msg.id} />)}
             </div>
           </div>
         </div>
@@ -84,10 +73,8 @@ class UserPage extends Component {
 
 UserPage.propTypes = {
   address: PropTypes.string,
-}
-
-UserPage.contextTypes = {
-  drizzle: PropTypes.object,
+  user: PropTypes.object,
+  messages: PropTypes.array,
 }
 
 export default UserPage

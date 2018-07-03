@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import { Link } from 'react-router'
 import { HiddenOnlyAuth, VisibleOnlyAuth } from './utils/wrappers.js'
 import { Navbar, Nav, NavItem } from 'reactstrap'
@@ -15,7 +15,7 @@ import './App.css'
 // Images
 import inkdropLogo from '../public/icons/inkdrop_logo.svg'
 
-class App extends Component {
+class App extends PureComponent {
   render() {
     const OnlyAuthLinks = VisibleOnlyAuth(() => (
       <div className="container">
@@ -28,7 +28,6 @@ class App extends Component {
             alt="InkDrop Logo"
           />InkDrop<span className="font-green">.</span>
         </Link>
-
         <ProfileHeaderContainer />
       </div>
     ))
