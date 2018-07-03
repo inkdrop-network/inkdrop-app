@@ -7,6 +7,12 @@ import iconDrop from '../../../../public/icons/icon-profile-drop.svg'
 import iconSubs from '../../../../public/icons/icon-profile-subs.svg'
 
 class UserPage extends PureComponent {
+  // constructor(props) {
+  //   super(props)
+  // this.followUser = this.followUser.bind(this)
+  // this.unfollowUser = this.unfollowUser.bind(this)
+  // }
+
   componentDidMount() {
     this.props.fetchUserMessages(this.props.address)
   }
@@ -14,6 +20,14 @@ class UserPage extends PureComponent {
   componentWillUnmount() {
     this.props.resetUserMessages()
   }
+
+  // followUser() {
+  //   this.props.followUser(this.props.address)
+  // }
+
+  // unfollowUser() {
+  //   this.props.unfollowUser(this.props.address)
+  // }
 
   render() {
     let user = this.props.user
@@ -38,27 +52,25 @@ class UserPage extends PureComponent {
               <img
                 id="profile-page-picture"
                 className="profile-img-lg"
-                src={user.userUrl || 'http://via.placeholder.com/190/29313e/29313e'}
+                src={user.userUrl || 'http://via.placeholder.com/190/85bd3e/85bd3e'}
                 alt=""
               />
               <h3 id="profile-page-username" className="mt-4 mb-1">
                 @{user.username}
               </h3>
               <div id="profile-page-occupation">{user.bio}</div>
-              <div id="follow-buttons">
-                <button id="follow-user-button" className="btn btn-green my-4 px-4 d-block">
-                  Follow
-                </button>
-              </div>
-              <img src={iconDrop} width="35" height="35" className="" alt="" />
-              <span id="profile-page-drops" className="ml-1">
-                {user.drops}
-              </span>
 
-              <img src={iconSubs} width="35" height="35" className="ml-5" alt="" />
-              <span id="profile-page-subs" className="ml-1">
-                {user.followers}
-              </span>
+              <div id="profile-page-userstats" className="my-4">
+                <img src={iconDrop} width="35" height="35" className="" alt="" />
+                <span id="profile-page-drops" className="ml-1">
+                  {user.drops}
+                </span>
+
+                <img src={iconSubs} width="35" height="35" className="ml-5" alt="" />
+                <span id="profile-page-subs" className="ml-1">
+                  {user.followers}
+                </span>
+              </div>
             </div>
 
             <div id="profile-page-messages" className="col-sm-7 mt-2">
@@ -69,6 +81,12 @@ class UserPage extends PureComponent {
       </main>
     )
   }
+
+  //   <div id="follow-buttons">
+  //   <button id="follow-user-button" className="btn btn-green my-4 px-4 d-block">
+  //     Follow
+  //   </button>
+  // </div>
 }
 
 UserPage.propTypes = {

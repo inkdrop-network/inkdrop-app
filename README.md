@@ -8,22 +8,16 @@
 
 # TODOs Front-end
 
-- Show profile --> get user info via userInfo.call(adr)
 - Pagination for newsfeed
-- Show errors for blockchain transaction
 - Trigger messagelist re-render if message gets drops (ranking should be changed according to the messages' drops)
-- Use await/async instead of promise chaining with .then()
+- Trigger comments # update in case of new comment
 - Improved error handling (see https://github.com/NFhbar/Token-Deployer/blob/master/src/layouts/home/Home.js)
-- Comments dropdown caret inline
-- Comment issue after re-rendering: new BigNumber() not a number:
 - Image resizing on ipfs upload
 - React on metamask changes (https://medium.com/@sebinatx/building-an-ethereum-firebase-user-profile-dapp-part-2-226bcc11ae62)
 
 # TODOs system architecture
 
 - Deploy to testnet (DONE)
-- Check out drizzle
-- Loading indicators (app init, signup, update profile)
 
 ### Prospectives
 

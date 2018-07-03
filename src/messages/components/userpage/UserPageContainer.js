@@ -1,6 +1,7 @@
 import { connect } from 'react-redux'
 import UserPage from './UserPage'
 import { USER_MESSAGES_FETCH_REQUESTED, USER_MESSAGES_RESET_REQUESTED } from '../../messagesSagas'
+import { USERFOLLOW_REQUESTED, USERUNFOLLOW_REQUESTED } from '../../../user/userSagas'
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -17,6 +18,14 @@ const mapDispatchToProps = dispatch => {
     },
     resetUserMessages: () => {
       dispatch({ type: USER_MESSAGES_RESET_REQUESTED })
+    },
+
+    followUser: address => {
+      dispatch({ type: USERFOLLOW_REQUESTED, address })
+    },
+
+    unfollowUser: address => {
+      dispatch({ type: USERUNFOLLOW_REQUESTED, address })
     },
   }
 }

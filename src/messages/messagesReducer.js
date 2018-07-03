@@ -39,36 +39,6 @@ const messagesReducer = (state = initialState, action) => {
     })
   }
 
-  if (action.type === USER_PAGE_GOT) {
-    return Object.assign({}, state, {
-      userpage_user: action.payload,
-    })
-  }
-
-  if (action.type === USER_MESSAGE_GOT) {
-    return Object.assign({}, state, {
-      userpage_messages: state.userpage_messages.concat(action.payload),
-    })
-  }
-
-  if (action.type === USER_MESSAGE_UPDATE) {
-    return Object.assign({}, state, {
-      userpage_messages: state.userpage_messages.map(item => {
-        if (item.id === action.payload.id) {
-          return { ...item, ...action.payload }
-        }
-        return item
-      }),
-    })
-  }
-
-  if (action.type === USER_MESSAGE_RESET) {
-    return Object.assign({}, state, {
-      userpage_user: null,
-      userpage_messages: [],
-    })
-  }
-
   if (action.type === DELETE_MESSAGE) {
     return Object.assign({}, state, {
       data: state.data.filter(msg => msg.id !== action.payload.id),
@@ -144,6 +114,36 @@ const messagesReducer = (state = initialState, action) => {
     })
   }
 
+  if (action.type === USER_PAGE_GOT) {
+    return Object.assign({}, state, {
+      userpage_user: action.payload,
+    })
+  }
+
+  if (action.type === USER_MESSAGE_GOT) {
+    return Object.assign({}, state, {
+      userpage_messages: state.userpage_messages.concat(action.payload),
+    })
+  }
+
+  if (action.type === USER_MESSAGE_UPDATE) {
+    return Object.assign({}, state, {
+      userpage_messages: state.userpage_messages.map(item => {
+        if (item.id === action.payload.id) {
+          return { ...item, ...action.payload }
+        }
+        return item
+      }),
+    })
+  }
+
+  if (action.type === USER_MESSAGE_RESET) {
+    return Object.assign({}, state, {
+      userpage_user: null,
+      userpage_messages: [],
+    })
+  }
+
   if (action.type === UPDATE_USER_MESSAGE_COMMENTS) {
     return Object.assign({}, state, {
       userpage_messages: state.userpage_messages.map(item => {
@@ -157,29 +157,6 @@ const messagesReducer = (state = initialState, action) => {
       }),
     })
   }
-
-  // if (action.type === UPDATE_USER_MESSAGE_COMMENTS) {
-  //   return Object.assign({}, state, {
-  //     userpage_messages: state.userpage_messages.map(item => {
-  //       if (item.id === action.payload.parent) {
-  //         return {
-  //           ...item,
-  //           comments: item.comments.map(comment => {
-  //             if (comment.id === action.payload.id) {
-  //               return {
-  //                 ...comment,
-  //                 ...action.payload,
-  //               }
-  //             }
-  //             return comment
-  //           }),
-  //         }
-  //       }
-
-  //       return item
-  //     }),
-  //   })
-  // }
 
   return state
 }

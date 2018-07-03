@@ -227,26 +227,32 @@ function* messageDropRequested({ msg, drops }) {
 }
 
 function* messagesFetchRequested() {
-  // TODO: try and catch
   console.log('FETCH MESSAGES')
   const drizzle = yield getContext('drizzle')
-  let count = yield call(drizzle.contracts.InkDrop.methods.getMessageCount().call)
-  let arr = []
-  for (let i = count - 1; i >= 0; --i) {
-    arr.push(fork(getMessageCall, i))
+  try {
+    let count = yield call(drizzle.contracts.InkDrop.methods.getMessageCount().call)
+    let arr = []
+    for (let i = count - 1; i >= 0; --i) {
+      arr.push(fork(getMessageCall, i))
+    }
+    yield all(arr)
+    yield put({ type: MESSAGES_GOT, payload: true })
+  } catch (error) {
+    console.log(error)
   }
-  yield all(arr)
-  yield put({ type: MESSAGES_GOT, payload: true })
 }
 
 function* getMessageCall(msgId) {
-  // TODO: try and catch
   const drizzle = yield getContext('drizzle')
-  let tmpMsg = yield call(drizzle.contracts.InkDrop.methods.getMessage(msgId).call)
-  let msg = parseMessage(msgId, tmpMsg)
-  // update the store so the UI get updated
-  yield put({ type: MESSAGE_GOT, payload: msg })
-  yield all([fork(getUser, msg), fork(getComments, msg)])
+  try {
+    let tmpMsg = yield call(drizzle.contracts.InkDrop.methods.getMessage(msgId).call)
+    let msg = parseMessage(msgId, tmpMsg)
+    // update the store so the UI get updated
+    yield put({ type: MESSAGE_GOT, payload: msg })
+    yield all([fork(getUser, msg), fork(getComments, msg)])
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 function* getComments(msg) {
@@ -269,17 +275,20 @@ function* getUser(msg) {
 }
 
 function* getComment(msgId, commentId) {
-  // TODO: try and catch
   const drizzle = yield getContext('drizzle')
-  let comment = yield call(drizzle.contracts.InkDrop.methods.getComment(commentId).call)
-  let newComment = parseComment(commentId, comment)
-  let user = yield call(drizzle.contracts.InkDrop.methods.getUser(comment.writtenBy).call)
-  let newUser = yield parseUser(commentId, user)
-  yield put({
-    type: UPDATE_MESSAGE_COMMENTS,
-    id: msgId,
-    payload: [Object.assign(newComment, newUser)],
-  })
+  try {
+    let comment = yield call(drizzle.contracts.InkDrop.methods.getComment(commentId).call)
+    let newComment = parseComment(commentId, comment)
+    let user = yield call(drizzle.contracts.InkDrop.methods.getUser(comment.writtenBy).call)
+    let newUser = yield parseUser(commentId, user)
+    yield put({
+      type: UPDATE_MESSAGE_COMMENTS,
+      id: msgId,
+      payload: [Object.assign(newComment, newUser)],
+    })
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 function parseMessage(id, msg) {
@@ -363,21 +372,19 @@ function* userMessagesFetchRequested({ address }) {
   } catch (error) {
     console.log(error)
   }
-  // yield put({
-  //   type: USER_MESSAGE_GOT,
-  //   payload: [],
-  // })
 }
 
 function* getUserMessageCall(msgId) {
-  // TODO: try and catch
   const drizzle = yield getContext('drizzle')
-  console.log('getUserMessageCall')
-  let tmpMsg = yield call(drizzle.contracts.InkDrop.methods.getMessage(msgId).call)
-  let msg = parseMessage(msgId, tmpMsg)
-  // update the store so the UI get updated
-  yield put({ type: USER_MESSAGE_GOT, payload: msg })
-  yield all([fork(getUserpageUser, msg), fork(getUserComments, msg)])
+  try {
+    let tmpMsg = yield call(drizzle.contracts.InkDrop.methods.getMessage(msgId).call)
+    let msg = parseMessage(msgId, tmpMsg)
+    // update the store so the UI get updated
+    yield put({ type: USER_MESSAGE_GOT, payload: msg })
+    yield all([fork(getUserpageUser, msg), fork(getUserComments, msg)])
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 function* getUserComments(msg) {
@@ -400,17 +407,20 @@ function* getUserpageUser(msg) {
 }
 
 function* getUserComment(msgId, commentId) {
-  // TODO: try and catch
   const drizzle = yield getContext('drizzle')
-  let comment = yield call(drizzle.contracts.InkDrop.methods.getComment(commentId).call)
-  let newComment = parseComment(commentId, comment)
-  let user = yield call(drizzle.contracts.InkDrop.methods.getUser(comment.writtenBy).call)
-  let newUser = yield parseUser(commentId, user)
-  yield put({
-    type: UPDATE_USER_MESSAGE_COMMENTS,
-    id: msgId,
-    payload: [Object.assign(newComment, newUser)],
-  })
+  try {
+    let comment = yield call(drizzle.contracts.InkDrop.methods.getComment(commentId).call)
+    let newComment = parseComment(commentId, comment)
+    let user = yield call(drizzle.contracts.InkDrop.methods.getUser(comment.writtenBy).call)
+    let newUser = yield parseUser(commentId, user)
+    yield put({
+      type: UPDATE_USER_MESSAGE_COMMENTS,
+      id: msgId,
+      payload: [Object.assign(newComment, newUser)],
+    })
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 function* userMessagesResetRequested() {
