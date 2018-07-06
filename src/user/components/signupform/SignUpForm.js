@@ -123,7 +123,7 @@ class SignUpForm extends PureComponent {
               <img
                 id="signup-profile-picture"
                 className="profile-img mb-2"
-                src={this.state.userUrl || 'http://via.placeholder.com/150/85bd3e/85bd3e'}
+                src={this.state.userUrl || 'https://via.placeholder.com/150/85bd3e/85bd3e'}
                 alt="profile"
               />
               <Input

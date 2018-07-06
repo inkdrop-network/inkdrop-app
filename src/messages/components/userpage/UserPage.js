@@ -52,7 +52,7 @@ class UserPage extends PureComponent {
               <img
                 id="profile-page-picture"
                 className="profile-img-lg"
-                src={user.userUrl || 'http://via.placeholder.com/190/85bd3e/85bd3e'}
+                src={user.userUrl || 'https://via.placeholder.com/190/85bd3e/85bd3e'}
                 alt=""
               />
               <h3 id="profile-page-username" className="mt-4 mb-1">

@@ -107,7 +107,7 @@ class MessageItem extends PureComponent {
         <CardBody className="d-flex flex-row pb-2">
           <img
             className="mr-2 profile-img"
-            src={msg.userUrl || 'http://via.placeholder.com/50/85bd3e/85bd3e'}
+            src={msg.userUrl || 'https://via.placeholder.com/50/85bd3e/85bd3e'}
             alt="profile"
           />
           <div>

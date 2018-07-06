@@ -45,7 +45,7 @@ class MessageList extends PureComponent {
       <div id="messages" className="">
         {this.props.messages.map(msg => <MessageItemContainer message={msg} key={msg.id} />)}
         {this.props.pagination.isLoading && (
-          <div class="text-center">
+          <div className="text-center">
             <img src={loadingSpinner} alt="loading" width="20" height="20" />
           </div>
         )}

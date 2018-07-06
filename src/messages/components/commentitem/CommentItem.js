@@ -47,7 +47,7 @@ class CommentItem extends PureComponent {
           <div className="d-flex flex-row">
             <img
               className="mr-2 profile-img"
-              src={this.props.comment.userUrl || 'http://via.placeholder.com/50/85bd3e/85bd3e'}
+              src={this.props.comment.userUrl || 'https://via.placeholder.com/50/85bd3e/85bd3e'}
               alt="profile"
             />
             <div>

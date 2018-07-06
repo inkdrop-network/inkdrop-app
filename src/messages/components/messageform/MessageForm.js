@@ -69,7 +69,7 @@ class MessageForm extends PureComponent {
             <img
               id="post-message-profile-picture"
               className="mr-2 profile-img"
-              src={this.props.user.imgUrl || 'http://via.placeholder.com/50/85bd3e/85bd3e'}
+              src={this.props.user.imgUrl || 'https://via.placeholder.com/50/85bd3e/85bd3e'}
               alt="profile"
             />
             <div>
