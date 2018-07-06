@@ -51,60 +51,57 @@ class LoadingContainer extends Component {
       this.getBalance() <= 0
     ) {
       return (
-        <main className="bg-dark vh-100">
-          <div className="container h-100">
-            <div className="row justify-content-center py-5">
-              <div className="col-sm-7">
-                <Card>
-                  <CardBody>
-                    <h1 className="text-center">
-                      New to <span className="font-green">Crypto</span>?
-                    </h1>
-                    <h4 className="text-center">Let's get you started</h4>
-                    <p className="mt-4">
-                      In order to interact with the InkDrop Ethereum app, you just need a couple of
-                      things:
-                    </p>
-                    <ol>
-                      <li>Install MetaMask {this.props.web3.status === 'failed' ? '❌' : '👍'}</li>
-                      <li>
-                        Choose the Rinkeby network{' '}
-                        {this.getNetworkName() !== 'Rinkeby' ? '📛' : '💪'}
-                      </li>
-                      <li>
-                        Log in to MetaMask{' '}
-                        {this.props.web3.status === 'initialized' &&
-                        Object.keys(this.props.accounts).length === 0
-                          ? '🆘'
-                          : '👌'}
-                      </li>
-                      <li>Get some Ether {this.getBalance() <= 0 ? '🚫' : '💸'}</li>
-                    </ol>
-                  </CardBody>
-                  <CardFooter className="py-4">
-                    <p>Possible solutions:</p>
-                    <ol>
-                      <li>
-                        We recommend to use the Chrome/FireFox extension{' '}
-                        <a href="https://metamask.io/" target="_blank">
-                          MetaMask
-                        </a>, or dedicated Ethereum browsers like Mist or Parity.
-                      </li>
-                      <li>
-                        Click on the upper left network dropdown in MetaMask and select the Rinkeby
-                        network.
-                      </li>
-                      <li>Please log in to MetaMask and then refresh the page.</li>
-                      <li>
-                        Get some Ether with the{' '}
-                        <a href="https://faucet.rinkeby.io/" target="_blank">
-                          Rinkeby Ether Faucet
-                        </a>.
-                      </li>
-                    </ol>
-                  </CardFooter>
-                </Card>
-              </div>
+        <main className="container">
+          <div className="row justify-content-center py-5">
+            <div className="col-sm-7">
+              <Card>
+                <CardBody>
+                  <h1 className="text-center">
+                    New to <span className="font-green">Crypto</span>?
+                  </h1>
+                  <h4 className="text-center">Let's get you started</h4>
+                  <p className="mt-4">
+                    In order to interact with the InkDrop Ethereum app, you just need a couple of
+                    things:
+                  </p>
+                  <ol>
+                    <li>Install MetaMask {this.props.web3.status === 'failed' ? '❌' : '👍'}</li>
+                    <li>
+                      Choose the Rinkeby network {this.getNetworkName() !== 'Rinkeby' ? '📛' : '💪'}
+                    </li>
+                    <li>
+                      Log in to MetaMask{' '}
+                      {this.props.web3.status === 'initialized' &&
+                      Object.keys(this.props.accounts).length === 0
+                        ? '🆘'
+                        : '👌'}
+                    </li>
+                    <li>Get some Ether {this.getBalance() <= 0 ? '🚫' : '💸'}</li>
+                  </ol>
+                </CardBody>
+                <CardFooter className="py-4">
+                  <p>Possible solutions:</p>
+                  <ol>
+                    <li>
+                      We recommend to use the Chrome/FireFox extension{' '}
+                      <a href="https://metamask.io/" target="_blank">
+                        MetaMask
+                      </a>, or dedicated Ethereum browsers like Mist or Parity.
+                    </li>
+                    <li>
+                      Click on the upper left network dropdown in MetaMask and select the Rinkeby
+                      network.
+                    </li>
+                    <li>Please log in to MetaMask and then refresh the page.</li>
+                    <li>
+                      Get some Ether with the{' '}
+                      <a href="https://faucet.rinkeby.io/" target="_blank">
+                        Rinkeby Ether Faucet
+                      </a>.
+                    </li>
+                  </ol>
+                </CardFooter>
+              </Card>
             </div>
           </div>
         </main>
