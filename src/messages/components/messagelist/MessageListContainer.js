@@ -6,13 +6,14 @@ const mapStateToProps = (state, ownProps) => {
   return {
     messages: state.messages.data,
     initialized: state.messages.initialized,
+    pagination: state.messages.pagination,
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchMessages: () => {
-      dispatch({ type: MESSAGES_FETCH_REQUESTED })
+    fetchMessages: items => {
+      dispatch({ type: MESSAGES_FETCH_REQUESTED, items })
     },
   }
 }

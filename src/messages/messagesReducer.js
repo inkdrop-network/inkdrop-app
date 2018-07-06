@@ -1,12 +1,15 @@
+import { USER_LOGGED_OUT } from '../user/userReducer'
 const initialState = {
   data: [],
   userpage_user: null,
   userpage_messages: [],
-  initialized: false,
+  pagination: {
+    isLoading: false,
+    items: 0,
+  },
 }
 
 // actions
-export const MESSAGES_GOT = 'MESSAGES_GOT'
 export const MESSAGE_GOT = 'MESSAGE_GOT'
 export const USER_MESSAGE_GOT = 'USER_MESSAGE_GOT'
 export const USER_PAGE_GOT = 'USER_PAGE_GOT'
@@ -25,17 +28,23 @@ export const USER_MESSAGE_RESET = 'USER_MESSAGE_RESET'
 export const DELETE_MESSAGE = 'DELETE_MESSAGE'
 export const DELETE_COMMENT = 'DELETE_COMMENT'
 
+export const MESSAGES_PAGINATION = 'MESSAGES_PAGINATION'
+
 // reducer
 const messagesReducer = (state = initialState, action) => {
-  if (action.type === MESSAGES_GOT) {
-    return Object.assign({}, state, {
-      initialized: action.payload,
-    })
+  if (action.type === USER_LOGGED_OUT) {
+    return Object.assign({}, state, initialState)
   }
 
   if (action.type === MESSAGE_GOT) {
     return Object.assign({}, state, {
       data: state.data.concat(action.payload),
+    })
+  }
+
+  if (action.type === MESSAGES_PAGINATION) {
+    return Object.assign({}, state, {
+      pagination: action.payload,
     })
   }
 
@@ -47,7 +56,7 @@ const messagesReducer = (state = initialState, action) => {
 
   if (action.type === MESSAGE_POSTED) {
     return Object.assign({}, state, {
-      data: state.data.concat(action.payload),
+      data: [action.payload].concat(state.data),
     })
   }
 

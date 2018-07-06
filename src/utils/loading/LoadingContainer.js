@@ -51,7 +51,7 @@ class LoadingContainer extends Component {
       this.getBalance() <= 0
     ) {
       return (
-        <main className="bg-dark h-100">
+        <main className="bg-dark vh-100">
           <div className="container h-100">
             <div className="row justify-content-center py-5">
               <div className="col-sm-7">

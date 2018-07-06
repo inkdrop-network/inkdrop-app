@@ -1,6 +1,6 @@
 import { browserHistory } from 'react-router'
 import { createStore, applyMiddleware, compose } from 'redux'
-// import thunkMiddleware from 'redux-thunk'
+// import  from 'redux-thunk'
 import { routerMiddleware } from 'react-router-redux'
 import reducer from './reducer'
 import rootSaga from './rootSaga'

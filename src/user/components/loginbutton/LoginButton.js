@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
+import { NavItem } from 'reactstrap'
 
 class LoginButton extends PureComponent {
   constructor(props) {
@@ -18,11 +19,11 @@ class LoginButton extends PureComponent {
 
   render() {
     return (
-      <li className="nav-item mr-4">
-        <a href="#" className="" onClick={this.handleLogin}>
+      <NavItem className="mr-4">
+        <a href="#" onClick={this.handleLogin}>
           Login
         </a>
-      </li>
+      </NavItem>
     )
   }
 }

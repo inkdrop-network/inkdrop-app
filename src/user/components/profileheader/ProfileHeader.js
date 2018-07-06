@@ -25,7 +25,7 @@ class ProfileHeader extends PureComponent {
 
   render() {
     return (
-      <Nav navbar>
+      <Nav navbar className="d-inline-flex flex-row">
         <UncontrolledDropdown nav inNavbar>
           <DropdownToggle nav caret className="py-0">
             <img
@@ -56,7 +56,7 @@ class ProfileHeader extends PureComponent {
           </DropdownMenu>
         </UncontrolledDropdown>
 
-        <NavItem className="mr-4">
+        <NavItem className="ml-3">
           <img
             src={inkdropWhite}
             className="align-middle nav-icons"

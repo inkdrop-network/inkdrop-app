@@ -1,7 +1,6 @@
 import { take, put, call, all, fork, takeEvery, select, getContext } from 'redux-saga/effects'
 import { eventChannel, END } from 'redux-saga'
 import {
-  MESSAGES_GOT,
   MESSAGE_GOT,
   MESSAGE_POSTED,
   COMMENT_POSTED,
@@ -13,6 +12,7 @@ import {
   USER_MESSAGE_UPDATE,
   UPDATE_USER_MESSAGE_COMMENTS,
   USER_MESSAGE_RESET,
+  MESSAGES_PAGINATION,
 } from './messagesReducer'
 import { USER_DROPPED } from '../user/userReducer'
 
@@ -32,6 +32,7 @@ const TX_ERROR = 'TX_ERROR'
 
 // selectors
 const getUserAdr = state => state.accounts[0]
+const getMessagesLength = state => state.messages.data.length
 
 function createTxChannel({ txObject, contractName, sendArgs = {} }) {
   var persistTxHash
@@ -226,17 +227,30 @@ function* messageDropRequested({ msg, drops }) {
   }
 }
 
-function* messagesFetchRequested() {
+function* messagesFetchRequested({ items }) {
   console.log('FETCH MESSAGES')
   const drizzle = yield getContext('drizzle')
   try {
     let count = yield call(drizzle.contracts.InkDrop.methods.getMessageCount().call)
-    let arr = []
-    for (let i = count - 1; i >= 0; --i) {
-      arr.push(fork(getMessageCall, i))
+    // get messages length from store
+    let msgsLength = yield select(getMessagesLength)
+    // do not procede if all messages are already loaded
+    // and stop as well if some messages added to the store in the meantime
+    if (items !== count && msgsLength < count) {
+      yield put({ type: MESSAGES_PAGINATION, payload: { items: items, isLoading: true } })
+      let newItems = items + 3 >= count ? count : items + 3
+      let maxItems = count - items
+      let minItems = count - newItems
+
+      let arr = []
+      for (let i = maxItems - 1; i >= minItems; --i) {
+        console.log(i)
+        arr.push(fork(getMessageCall, i))
+      }
+      yield all(arr)
+
+      yield put({ type: MESSAGES_PAGINATION, payload: { items: newItems, isLoading: false } })
     }
-    yield all(arr)
-    yield put({ type: MESSAGES_GOT, payload: true })
   } catch (error) {
     console.log(error)
   }

@@ -44,11 +44,9 @@ class App extends PureComponent {
           />InkDrop<span className="font-green">.</span>
         </Link>
 
-        <Nav navbar>
+        <Nav navbar className="d-inline-flex flex-row">
           <NavItem className="mr-4">
-            <Link to="/signup" className="">
-              Sign Up
-            </Link>
+            <Link to="/signup">Sign Up</Link>
           </NavItem>
           <LoginButtonContainer />
         </Nav>

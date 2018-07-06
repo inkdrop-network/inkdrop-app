@@ -24,13 +24,7 @@ const userReducer = (state = initialState, action) => {
   }
 
   if (action.type === USER_LOGGED_OUT) {
-    return Object.assign({}, state, {
-      data: null,
-      error: false,
-      errorMessage: null,
-      loading: false,
-      txMessage: null,
-    })
+    return Object.assign({}, state, initialState)
   }
 
   if (action.type === USER_ERR_TX_RESET) {
