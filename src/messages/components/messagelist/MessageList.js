@@ -35,7 +35,7 @@ class MessageList extends PureComponent {
     // TODO: trigger the reload 100px before the windowBottom
     const windowBottom = windowHeight + window.pageYOffset
     if (windowBottom >= docHeight && !this.props.pagination.isLoading) {
-      console.log('bottom reached')
+      // console.log('bottom reached')
       this.props.fetchMessages(this.props.pagination.items)
     }
   }
@@ -45,7 +45,9 @@ class MessageList extends PureComponent {
       <div id="messages" className="">
         {this.props.messages.map(msg => <MessageItemContainer message={msg} key={msg.id} />)}
         {this.props.pagination.isLoading && (
-          <img className="mr-2 my-1" src={loadingSpinner} alt="profile" width="20" height="20" />
+          <div class="text-center">
+            <img src={loadingSpinner} alt="loading" width="20" height="20" />
+          </div>
         )}
       </div>
     )

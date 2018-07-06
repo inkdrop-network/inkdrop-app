@@ -1,5 +1,5 @@
 import { take, put, call, all, fork, takeEvery, select, getContext } from 'redux-saga/effects'
-import { eventChannel, END } from 'redux-saga'
+import { eventChannel, END, delay } from 'redux-saga'
 import {
   MESSAGE_GOT,
   MESSAGE_POSTED,
@@ -244,11 +244,11 @@ function* messagesFetchRequested({ items }) {
 
       let arr = []
       for (let i = maxItems - 1; i >= minItems; --i) {
-        console.log(i)
         arr.push(fork(getMessageCall, i))
       }
       yield all(arr)
 
+      yield delay(2000)
       yield put({ type: MESSAGES_PAGINATION, payload: { items: newItems, isLoading: false } })
     }
   } catch (error) {

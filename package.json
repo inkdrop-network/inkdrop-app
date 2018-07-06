@@ -77,20 +77,19 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
+    "s3_upload": "aws s3 sync build_webpack/ s3://aws-website-inkdrop-beta-hn57w",
+    "cdn_invalidation":
+      "aws cloudfront create-invalidation --distribution-id EFXNQ7A2KLVQZ --paths '/*'",
+    "deploy": "npm run s3_upload && npm run cdn_invalidation",
     "test": "node scripts/test.js --env=jsdom",
     "format": "prettier --write \"src/**/*.{js,jsx,json,css}\"",
-    "chain": "geth --datadir=\"/tmp/eth/60/01\" --nodiscover --maxpeers 0 --port 30301 --rpc --rpcapi \"db,eth,net,web3\" --rpcport 8101 --verbosity 6 console"
+    "chain":
+      "geth --datadir=\"/tmp/eth/60/01\" --nodiscover --maxpeers 0 --port 30301 --rpc --rpcapi \"db,eth,net,web3\" --rpcport 8101 --verbosity 6 console"
   },
   "jest": {
-    "collectCoverageFrom": [
-      "src/**/*.{js,jsx}"
-    ],
-    "setupFiles": [
-      "<rootDir>\\config\\polyfills.js"
-    ],
-    "testPathIgnorePatterns": [
-      "<rootDir>[/\\\\](build|docs|node_modules)[/\\\\]"
-    ],
+    "collectCoverageFrom": ["src/**/*.{js,jsx}"],
+    "setupFiles": ["<rootDir>\\config\\polyfills.js"],
+    "testPathIgnorePatterns": ["<rootDir>[/\\\\](build|docs|node_modules)[/\\\\]"],
     "testEnvironment": "node",
     "testURL": "http://localhost",
     "transform": {
@@ -98,17 +97,13 @@
       "^.+\\.css$": "<rootDir>\\config\\jest\\cssTransform.js",
       "^(?!.*\\.(js|jsx|css|json)$)": "<rootDir>\\config\\jest\\fileTransform.js"
     },
-    "transformIgnorePatterns": [
-      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"
-    ],
+    "transformIgnorePatterns": ["[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"],
     "moduleNameMapper": {
       "^react-native$": "react-native-web"
     }
   },
   "babel": {
-    "presets": [
-      "react-app"
-    ]
+    "presets": ["react-app"]
   },
   "eslintConfig": {
     "extends": "react-app"

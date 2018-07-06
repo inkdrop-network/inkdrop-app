@@ -15,14 +15,14 @@ const routingMiddleware = routerMiddleware(browserHistory)
 const sagaMiddleware = createSagaMiddleware()
 
 const initialState = {
-	contracts: generateContractsInitialState(drizzleOptions),
+  contracts: generateContractsInitialState(drizzleOptions),
 }
 
 const store = createStore(
-	reducer,
-	initialState,
-	// composeEnhancers(applyMiddleware(thunkMiddleware, routingMiddleware, sagaMiddleware))
-	composeEnhancers(applyMiddleware(sagaMiddleware, routingMiddleware))
+  reducer,
+  initialState,
+  // composeEnhancers(applyMiddleware(thunkMiddleware, routingMiddleware, sagaMiddleware))
+  composeEnhancers(applyMiddleware(sagaMiddleware, routingMiddleware))
 )
 
 // NEW line here
@@ -31,7 +31,7 @@ const drizzle = new Drizzle(drizzleOptions, store)
 sagaMiddleware.run(rootSaga)
 // NEW line here
 sagaMiddleware.setContext({
-	drizzle,
+  drizzle,
 })
 
 export { store, drizzle }

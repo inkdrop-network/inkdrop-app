@@ -25,7 +25,7 @@ class CommentItem extends PureComponent {
                 <img
                   className="mr-2 my-1"
                   src={loadingSpinner}
-                  alt="profile"
+                  alt="loading"
                   width="20"
                   height="20"
                 />
