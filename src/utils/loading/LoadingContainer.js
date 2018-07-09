@@ -28,6 +28,8 @@ class LoadingContainer extends Component {
           return 'Rinkeby'
         case 42:
           return 'Kovan'
+        case 5777:
+          return 'Ganache'
         default:
           return 'Unknown'
       }

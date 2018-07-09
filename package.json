@@ -18,7 +18,6 @@
     "dotenv": "2.0.0",
     "drizzle": "^1.2.0",
     "drizzle-react": "^1.1.1",
-    "drizzle-react-components": "^1.1.0",
     "eslint": "3.8.1",
     "eslint-config-react-app": "^0.5.0",
     "eslint-loader": "1.6.0",
@@ -71,8 +70,7 @@
     "redux-auth-wrapper": "^1.0.0",
     "redux-saga": "^0.15.3",
     "redux-thunk": "^2.3.0",
-    "scrypt": "^6.0.3",
-    "web3": "1.0.0-beta.34"
+    "scrypt": "^6.0.3"
   },
   "scripts": {
     "start": "node scripts/start.js",

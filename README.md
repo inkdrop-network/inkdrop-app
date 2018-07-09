@@ -1,6 +1,7 @@
 # TODOs Smart Contract
 
 - !!! Halbwertszeit !!!
+  \*\* https://medium.com/@dappbridge/settimeout-for-ethereum-77005840bee8
   \*\* https://ethereum.stackexchange.com/questions/42/how-can-a-contract-run-itself-at-a-later-time/252#252
   \*\* https://docs.oraclize.it/#ethereum
   \*\* http://www.ethereum-alarm-clock.com/
@@ -8,7 +9,6 @@
 
 # TODOs Front-end
 
-- Pagination for newsfeed
 - Trigger messagelist re-render if message gets drops (ranking should be changed according to the messages' drops)
 - Trigger comments # update in case of new comment
 - Improved error handling (see https://github.com/NFhbar/Token-Deployer/blob/master/src/layouts/home/Home.js)
@@ -16,8 +16,6 @@
 - React on metamask changes (https://medium.com/@sebinatx/building-an-ethereum-firebase-user-profile-dapp-part-2-226bcc11ae62)
 
 # TODOs system architecture
-
-- Deploy to testnet (DONE)
 
 ### Prospectives
 
