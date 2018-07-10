@@ -1,6 +1,8 @@
 .DS_Store
+.env
+.vscode/
+.idea/
+npm-debug.log*
 node_modules/
 build/
 build_webpack/
-.env
-.vscode/

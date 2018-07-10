@@ -1,8 +1,6 @@
-require('dotenv').config()
-
 var HDWalletProvider = require('truffle-hdwallet-provider')
-const MNEMONIC = process.env.MNEMONIC
-const INFURA_API_KEY = process.env.INFURA_API_KEY
+const MNEMONIC = process.env.REACT_APP_MNEMONIC
+const INFURA_API_KEY = process.env.REACT_APP_INFURA_API_KEY
 
 module.exports = {
   // See <http://truffleframework.com/docs/advanced/configuration>
