@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 var HDWalletProvider = require('truffle-hdwallet-provider')
 const MNEMONIC = process.env.REACT_APP_MNEMONIC
 const INFURA_API_KEY = process.env.REACT_APP_INFURA_API_KEY
@@ -32,7 +34,7 @@ module.exports = {
         return new HDWalletProvider(MNEMONIC, 'https://rinkeby.infura.io/' + INFURA_API_KEY)
       },
       network_id: 4,
-      gas: 4712388,
+      gas: 5912388,
       gasPrice: 100000000000,
     },
   },

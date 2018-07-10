@@ -73,6 +73,8 @@
     "scripts": {
         "start": "node scripts/start.js",
         "build": "node scripts/build.js",
+        "clean": "find . -name '.DS_Store' -delete",
+        "compile": "npm run clean && truffle compile",
         "s3_upload": "aws s3 sync build_webpack/ s3://aws-website-inkdrop-beta-hn57w",
         "cdn_invalidation":
             "aws cloudfront create-invalidation --distribution-id EFXNQ7A2KLVQZ --paths '/*'",
