@@ -1,0 +1,29 @@
+{
+  "contracts": {
+    "InkDrop": {
+      "address": "0x0dacca704c6cd32472ed318e7ecf23a4ea202a9f",
+      "constructorCode": "6080604052606460015534801561001557600080fd5b506148d1806100256000396000f300",
+      "bodyBytecodeHash": "d13be0e397f44aa37c89b4bdf5bead2adde4823b0a4d344fb5d11406978a47d8",
+      "bytecodeHash": "d193200bb27f7fd975993a4a524855f50dc716859d616cc4da786ee30334c479"
+    }
+  },
+  "proxies": {
+    "InkDrop": [
+      {
+        "address": "0xfb8c589e69eb73e31e405afa2ac289d93ffae0b0",
+        "version": "0.1.0",
+        "implementation": "0x0dacca704c6cd32472ed318e7ecf23a4ea202a9f"
+      }
+    ]
+  },
+  "app": {
+    "address": "0x9b619d8d46b3af090445e8c2449bee566d20a8bd"
+  },
+  "version": "0.1.0",
+  "package": {
+    "address": "0xc101d08c6dbf98e392cddc375d2b9315343cef11"
+  },
+  "provider": {
+    "address": "0x478e1f3d3e9952e04028bedec08a21711d52c0ca"
+  }
+}

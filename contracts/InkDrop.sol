@@ -1,6 +1,7 @@
 pragma solidity ^0.4.23;
+import "zos-lib/contracts/migrations/Migratable.sol";
 
-contract InkDrop {
+contract InkDrop is Migratable {
 
   uint MULTIPLIER = 100;
 
@@ -59,6 +60,9 @@ contract InkDrop {
   event LogNewUser   (address indexed userAddress, uint index, bytes32 username, string bio, string ipfsHash);
   event LogUpdateUser(address indexed userAddress, uint index, bytes32 username, string bio, string ipfsHash);
   event LogDeleteUser(address indexed userAddress, uint index);
+
+  function initialize() isInitializer("InkDrop", "0") public {
+  }
   
   function isUser(address _userAddress) public view returns(bool isIndeed) {
      // if the list is empty, the requested user is not present
