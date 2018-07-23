@@ -1,29 +1,35 @@
 {
   "contracts": {
     "InkDrop": {
-      "address": "0x0dacca704c6cd32472ed318e7ecf23a4ea202a9f",
-      "constructorCode": "6080604052606460015534801561001557600080fd5b506148d1806100256000396000f300",
-      "bodyBytecodeHash": "d13be0e397f44aa37c89b4bdf5bead2adde4823b0a4d344fb5d11406978a47d8",
-      "bytecodeHash": "d193200bb27f7fd975993a4a524855f50dc716859d616cc4da786ee30334c479"
+      "address": "0x1bcfaef454a0ddb44aefadaed4ad0afafda59f76",
+      "constructorCode": "60806040526000600160146101000a81548160ff021916908315150217905550606460025534801561003057600080fd5b506156b880620000416000396000f300",
+      "bodyBytecodeHash": "9ddfb0439575413834bd3da4659eed0b3cae434ab4ba8e22fb509a1b2731695b",
+      "bytecodeHash": "db596a7a4a966457679b8cac0e9308de4169d16aca9df5415a9e1e9874c3e3e3"
     }
   },
   "proxies": {
     "InkDrop": [
       {
-        "address": "0xfb8c589e69eb73e31e405afa2ac289d93ffae0b0",
-        "version": "0.1.0",
-        "implementation": "0x0dacca704c6cd32472ed318e7ecf23a4ea202a9f"
+        "address": "0x7152f90659e13e7f20062440d5a5b46c58aa680b",
+        "version": "0.4",
+        "implementation": "0x1bcfaef454a0ddb44aefadaed4ad0afafda59f76"
       }
     ]
   },
-  "app": {
-    "address": "0x9b619d8d46b3af090445e8c2449bee566d20a8bd"
+  "stdlib": {
+    "address": "0xeeb2d75f4a3cdd118814848cd4f7770d57c0f691",
+    "customDeploy": true,
+    "name": "openzeppelin-zos",
+    "version": "^1.9.1"
   },
-  "version": "0.1.0",
+  "app": {
+    "address": "0x548cf9888baeb48a740032927fe711425a5f8480"
+  },
+  "version": "0.4",
   "package": {
-    "address": "0xc101d08c6dbf98e392cddc375d2b9315343cef11"
+    "address": "0x0aa944c70701fc6cdd8f6f2983c0ffb68ef1f3f0"
   },
   "provider": {
-    "address": "0x478e1f3d3e9952e04028bedec08a21711d52c0ca"
+    "address": "0x89eaf1096ae06c616ed03ae73b206f16a40b132d"
   }
 }

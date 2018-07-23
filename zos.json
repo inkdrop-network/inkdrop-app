@@ -1,7 +1,11 @@
 {
   "name": "inkdrop_app",
-  "version": "0.1.0",
+  "version": "0.5",
   "contracts": {
     "InkDrop": "InkDrop"
+  },
+  "stdlib": {
+    "name": "openzeppelin-zos",
+    "version": "^1.9.1"
   }
 }

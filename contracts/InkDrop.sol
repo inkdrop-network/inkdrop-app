@@ -1,7 +1,12 @@
 pragma solidity ^0.4.23;
-import "zos-lib/contracts/migrations/Migratable.sol";
 
-contract InkDrop is Migratable {
+import "openzeppelin-zos/contracts/ownership/Ownable.sol";
+import "openzeppelin-zos/contracts/lifecycle/Pausable.sol";
+import "openzeppelin-zos/contracts/math/SafeMath.sol";
+
+contract InkDrop is Ownable, Pausable {
+
+  using SafeMath for uint256;
 
   uint MULTIPLIER = 100;
 
@@ -103,7 +108,7 @@ contract InkDrop is Migratable {
     return userStructs[_userAddress].followers;
   } 
   
-  function createUser(bytes32 _username, string _bio, string _ipfsHash) public payable returns(uint index) {
+  function createUser(bytes32 _username, string _bio, string _ipfsHash) whenNotPaused public payable returns(uint index) {
     require(!isUser(msg.sender)); 
     require(isValidName(_username));
     
@@ -117,7 +122,7 @@ contract InkDrop is Migratable {
     return userList.length - 1;
   }
 
-  function deleteUser() public payable returns(uint index) {
+  function deleteUser() whenNotPaused public payable returns(uint index) {
     require(isUser(msg.sender)); 
     // this would break referential integrity
     // require(userStructs[msg.sender].messageIds.length <= 0);
@@ -131,7 +136,7 @@ contract InkDrop is Migratable {
     return rowToDelete;
   }
   
-  function updateUserIpfsHash(string _ipfsHash) public payable returns(bool success) {
+  function updateUserIpfsHash(string _ipfsHash) whenNotPaused public payable returns(bool success) {
     require(isUser(msg.sender)); 
     require(bytes(_ipfsHash).length > 0);
 
@@ -140,7 +145,7 @@ contract InkDrop is Migratable {
     return true;
   }
 
-  function updateUserBio(string _bio) public payable returns(bool success) {
+  function updateUserBio(string _bio) whenNotPaused public payable returns(bool success) {
     require(isUser(msg.sender)); 
     require(bytes(_bio).length > 0);
 
@@ -149,7 +154,7 @@ contract InkDrop is Migratable {
     return true;
   }
 
-  function updateUsername(bytes32 _username) public payable returns(bool success) {
+  function updateUsername(bytes32 _username) whenNotPaused public payable returns(bool success) {
     require(isUser(msg.sender)); 
     require(isValidName(_username));
 
@@ -158,7 +163,7 @@ contract InkDrop is Migratable {
     return true;
   }
 
-  function updateUser(bytes32 _username, string _bio, string _ipfsHash) public payable returns(bool success) {
+  function updateUser(bytes32 _username, string _bio, string _ipfsHash) whenNotPaused public payable returns(bool success) {
     require(isUser(msg.sender)); 
     require(isValidName(_username));
     require(bytes(_bio).length > 0);
@@ -171,7 +176,7 @@ contract InkDrop is Migratable {
     return true;
   }
   
-  function followUser(address _user) public payable returns(uint followers) {
+  function followUser(address _user) whenNotPaused public payable returns(uint followers) {
     require(isUser(_user));
     require(isUser(msg.sender));
     require(!(msg.sender == _user));
@@ -183,7 +188,7 @@ contract InkDrop is Migratable {
     return userStructs[msg.sender].followers.length;
   }
   
-  function unfollowUser(address _user) public payable returns(uint followers) {
+  function unfollowUser(address _user) whenNotPaused public payable returns(uint followers) {
     require(isUser(_user));
     require(isUser(msg.sender));
     require(!(msg.sender == _user));
@@ -211,7 +216,7 @@ contract InkDrop is Migratable {
   }
   
 
-  function createMessage(string _content, int _dropAmount) public payable returns(uint index) {
+  function createMessage(string _content, int _dropAmount) whenNotPaused public payable returns(uint index) {
     require(isUser(msg.sender));
     require(bytes(_content).length > 0);
     require(_dropAmount >= 0);
@@ -237,7 +242,7 @@ contract InkDrop is Migratable {
     return messageList.length;
   }
 
-  function likeMessage(uint _id) public payable returns(uint newlikes) {
+  function likeMessage(uint _id) whenNotPaused public payable returns(uint newlikes) {
     require(isUser(msg.sender));
     require(_id < messageList.length);
     // require that a user can not like a message twice
@@ -249,7 +254,7 @@ contract InkDrop is Migratable {
     return messageList[_id].likes.length;
   }
 
-  function unlikeMessage(uint _id) public payable returns(uint newlikes) {
+  function unlikeMessage(uint _id) whenNotPaused public payable returns(uint newlikes) {
     require(isUser(msg.sender));
     require(_id < messageList.length);
     require(messageList[_id].likes.length > 0);
@@ -264,7 +269,7 @@ contract InkDrop is Migratable {
     return --messageList[_id].likes.length;
   }
 
-  function dropMessage(uint _id, int _dropAmount) public payable returns(uint newdrops) {
+  function dropMessage(uint _id, int _dropAmount) whenNotPaused public payable returns(uint newdrops) {
     require(isUser(msg.sender));
     require(_id < messageList.length);
     require(_dropAmount > 0);
@@ -284,7 +289,7 @@ contract InkDrop is Migratable {
   }
 
     // Write a comment
-  function createComment(uint256 _parent, string _content) public payable returns(uint index) {
+  function createComment(uint256 _parent, string _content) whenNotPaused public payable returns(uint index) {
     require(isUser(msg.sender));
     require(bytes(_content).length > 0);
     require(isMessage(_parent));
@@ -307,6 +312,10 @@ contract InkDrop is Migratable {
     require(_commentId < commentList.length);
     return (commentList[_commentId].parent, commentList[_commentId].content, commentList[_commentId].writtenBy, commentList[_commentId].timestamp, 
       commentList[_commentId].timetolive, commentList[_commentId].likes.length, commentList[_commentId].dropAmount);
+  }
+
+  function getStats() onlyOwner public constant returns(uint users, uint messages, uint comments) {
+    return (userList.length, messageList.length, commentList.length);
   }
 
 }
