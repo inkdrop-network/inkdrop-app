@@ -8,10 +8,10 @@ contract InkDrop is Ownable, Pausable {
 
   using SafeMath for uint256;
 
-  uint MULTIPLIER = 100;
+  uint256 constant MULTIPLIER = 100;
 
   struct data {
-    uint value;
+    uint256 value;
     bool isSet;
   }
 
@@ -19,19 +19,19 @@ contract InkDrop is Ownable, Pausable {
     bytes32 username;
     string bio;
     string ipfsHash;
-    uint index;
-    // uint followers;
+    uint256 index;
+    // uint256 followers;
     // User has many followers
     address[] followers; 
     mapping(address => data) followerPointers;
     // messages of a user
     uint[] messages;
-    mapping(uint => uint) messagePointers;
+    mapping(uint256 => uint256) messagePointers;
     // total drop points
-    uint dropAmount;
+    uint256 dropAmount;
     // drops of a user
     // uint[] drops;
-    // mapping(uint => uint) dropPointers;
+    // mapping(uint256 => uint) dropPointers;
   }
   
   mapping(address => User) private userStructs;
@@ -39,18 +39,18 @@ contract InkDrop is Ownable, Pausable {
 
     // The structure of a message
   struct Message {
-    uint id;
-    uint parent;
+    uint256 id;
+    uint256 parent;
     string content;
     address writtenBy;
-    uint timestamp;
-    uint timetolive;
+    uint256 timestamp;
+    uint256 timetolive;
     // addresses of users' likes
     address[] likes;
     // mapping of message id to position in likes array
     mapping(address => data) likePointers;
     // total drop points
-    uint dropAmount;
+    uint256 dropAmount;
     // addresses of users' drops
     address[] drops;
     // mapping of message id to position in drops array
@@ -58,13 +58,13 @@ contract InkDrop is Ownable, Pausable {
     uint[] comments;
   }
   
-  // mapping(uint => Message) private messageStructs;
+  // mapping(uint256 => Message) private messageStructs;
   Message[] private messageList;
   Message[] private commentList;
 
-  event LogNewUser   (address indexed userAddress, uint index, bytes32 username, string bio, string ipfsHash);
-  event LogUpdateUser(address indexed userAddress, uint index, bytes32 username, string bio, string ipfsHash);
-  event LogDeleteUser(address indexed userAddress, uint index);
+  event LogNewUser   (address indexed userAddress, uint256 index, bytes32 username, string bio, string ipfsHash);
+  event LogUpdateUser(address indexed userAddress, uint256 index, bytes32 username, string bio, string ipfsHash);
+  event LogDeleteUser(address indexed userAddress, uint256 index);
 
   function initialize() isInitializer("InkDrop", "0") public {
   }
@@ -80,23 +80,23 @@ contract InkDrop is Ownable, Pausable {
     return (!(_username == 0x0));
   }
 
-  function isMessage(uint _parent) public view returns(bool isIndeed) {
+  function isMessage(uint256 _parent) public view returns(bool isIndeed) {
      // if the list is empty, the requested message is not present
     if(messageList.length == 0) return false;
     // true = exists
     return (messageList.length > _parent);
   }
 
-  function getUserCount() public constant returns(uint count) {
+  function getUserCount() public constant returns(uint256 count) {
     return userList.length;
   }
 
-  function getUserAtIndex(uint _index) public constant returns(address userAddress) {
+  function getUserAtIndex(uint256 _index) public constant returns(address userAddress) {
     require(_index <= userList.length);
     return userList[_index];
   }
   
-  function getUser(address _userAddress) public constant returns(bytes32 username, string bio, uint drops, string ipfsHash, uint followers, uint[] messages) {
+  function getUser(address _userAddress) public constant returns(bytes32 username, string bio, uint256 drops, string ipfsHash, uint256 followers, uint[] messages) {
     require(isUser(_userAddress)); 
     return (userStructs[_userAddress].username, userStructs[_userAddress].bio, 
       userStructs[_userAddress].dropAmount, userStructs[_userAddress].ipfsHash, 
@@ -108,7 +108,7 @@ contract InkDrop is Ownable, Pausable {
     return userStructs[_userAddress].followers;
   } 
   
-  function createUser(bytes32 _username, string _bio, string _ipfsHash) whenNotPaused public payable returns(uint index) {
+  function createUser(bytes32 _username, string _bio, string _ipfsHash) whenNotPaused public payable returns(uint256 index) {
     require(!isUser(msg.sender)); 
     require(isValidName(_username));
     
@@ -122,11 +122,11 @@ contract InkDrop is Ownable, Pausable {
     return userList.length - 1;
   }
 
-  function deleteUser() whenNotPaused public payable returns(uint index) {
+  function deleteUser() whenNotPaused public payable returns(uint256 index) {
     require(isUser(msg.sender)); 
     // this would break referential integrity
     // require(userStructs[msg.sender].messageIds.length <= 0);
-    uint rowToDelete = userStructs[msg.sender].index;
+    uint256 rowToDelete = userStructs[msg.sender].index;
     address keyToMove = userList[userList.length-1];
     userList[rowToDelete] = keyToMove;
     userStructs[keyToMove].index = rowToDelete; 
@@ -176,7 +176,7 @@ contract InkDrop is Ownable, Pausable {
     return true;
   }
   
-  function followUser(address _user) whenNotPaused public payable returns(uint followers) {
+  function followUser(address _user) whenNotPaused public payable returns(uint256 followers) {
     require(isUser(_user));
     require(isUser(msg.sender));
     require(!(msg.sender == _user));
@@ -188,7 +188,7 @@ contract InkDrop is Ownable, Pausable {
     return userStructs[msg.sender].followers.length;
   }
   
-  function unfollowUser(address _user) whenNotPaused public payable returns(uint followers) {
+  function unfollowUser(address _user) whenNotPaused public payable returns(uint256 followers) {
     require(isUser(_user));
     require(isUser(msg.sender));
     require(!(msg.sender == _user));
@@ -196,7 +196,7 @@ contract InkDrop is Ownable, Pausable {
     // require that a user can not unfollow a user twice
     require(userStructs[msg.sender].followerPointers[_user].isSet);
     // delete user
-    uint rowToDelete = userStructs[msg.sender].followerPointers[_user].value;
+    uint256 rowToDelete = userStructs[msg.sender].followerPointers[_user].value;
     address keyToMove = userStructs[msg.sender].followers[userStructs[msg.sender].followers.length-1];
     userStructs[msg.sender].followers[rowToDelete] = keyToMove;
     userStructs[msg.sender].followerPointers[keyToMove].value = rowToDelete; 
@@ -204,23 +204,23 @@ contract InkDrop is Ownable, Pausable {
     return --userStructs[msg.sender].followers.length;
   }
 
-  function getMessageCount() public constant returns(uint count) {
+  function getMessageCount() public constant returns(uint256 count) {
     return messageList.length;
   }
 
   // The stack can only be 7 steps deep - only 7 return values allowed
-  function getMessage(uint _id) public constant returns(string content, address writtenBy, uint timestamp, uint timetolive, uint likes, uint drops, uint[] comments) {
+  function getMessage(uint256 _id) public constant returns(string content, address writtenBy, uint256 timestamp, uint256 timetolive, uint256 likes, uint256 drops, uint[] comments) {
     require(_id < messageList.length);
     return (messageList[_id].content, messageList[_id].writtenBy, messageList[_id].timestamp, messageList[_id].timetolive, 
       messageList[_id].likes.length, messageList[_id].dropAmount, messageList[_id].comments);
   }
   
 
-  function createMessage(string _content, int _dropAmount) whenNotPaused public payable returns(uint index) {
+  function createMessage(string _content, int _dropAmount) whenNotPaused public payable returns(uint256 index) {
     require(isUser(msg.sender));
     require(bytes(_content).length > 0);
     require(_dropAmount >= 0);
-    require(userStructs[msg.sender].dropAmount >= uint(_dropAmount)*MULTIPLIER);
+    require(userStructs[msg.sender].dropAmount >= uint256(_dropAmount)*MULTIPLIER);
 
     uint256 msgId = messageList.length;
     Message memory message;
@@ -231,18 +231,18 @@ contract InkDrop is Ownable, Pausable {
     // Compute TTL according to function
     message.timetolive = now;
     message.id = msgId;
-    message.dropAmount = uint(_dropAmount)*MULTIPLIER;
+    message.dropAmount = uint256(_dropAmount)*MULTIPLIER;
     userStructs[msg.sender].messagePointers[userStructs[msg.sender].messages.push(msgId)-1] = msgId;
     messageList.push(message);
     messageList[messageList.length-1].dropPointers[msg.sender].value = messageList[messageList.length-1].drops.push(msg.sender) - 1;
     messageList[messageList.length-1].dropPointers[msg.sender].isSet = true;
     // reduce the sender's dropAmount
-    userStructs[msg.sender].dropAmount -= (uint(_dropAmount)*MULTIPLIER);
+    userStructs[msg.sender].dropAmount -= (uint256(_dropAmount)*MULTIPLIER);
     // emit MessageSend(msg.sender, userInfo[msg.sender].name, msgId);
     return messageList.length;
   }
 
-  function likeMessage(uint _id) whenNotPaused public payable returns(uint newlikes) {
+  function likeMessage(uint256 _id) whenNotPaused public payable returns(uint256 newlikes) {
     require(isUser(msg.sender));
     require(_id < messageList.length);
     // require that a user can not like a message twice
@@ -254,14 +254,14 @@ contract InkDrop is Ownable, Pausable {
     return messageList[_id].likes.length;
   }
 
-  function unlikeMessage(uint _id) whenNotPaused public payable returns(uint newlikes) {
+  function unlikeMessage(uint256 _id) whenNotPaused public payable returns(uint256 newlikes) {
     require(isUser(msg.sender));
     require(_id < messageList.length);
     require(messageList[_id].likes.length > 0);
     // require that a user can not unlike a message twice
     require(messageList[_id].likePointers[msg.sender].isSet);
 
-    uint rowToDelete = messageList[_id].likePointers[msg.sender].value;
+    uint256 rowToDelete = messageList[_id].likePointers[msg.sender].value;
     address keyToMove = messageList[_id].likes[messageList[_id].likes.length-1];
     messageList[_id].likes[rowToDelete] = keyToMove;
     messageList[_id].likePointers[keyToMove].value = rowToDelete; 
@@ -269,27 +269,27 @@ contract InkDrop is Ownable, Pausable {
     return --messageList[_id].likes.length;
   }
 
-  function dropMessage(uint _id, int _dropAmount) whenNotPaused public payable returns(uint newdrops) {
+  function dropMessage(uint256 _id, int _dropAmount) whenNotPaused public payable returns(uint256 newdrops) {
     require(isUser(msg.sender));
     require(_id < messageList.length);
     require(_dropAmount > 0);
-    require(userStructs[msg.sender].dropAmount >= uint(_dropAmount)*MULTIPLIER);
+    require(userStructs[msg.sender].dropAmount >= uint256(_dropAmount)*MULTIPLIER);
 
     messageList[_id].drops.push(msg.sender);
-    messageList[_id].dropPointers[msg.sender].value += (uint(_dropAmount)*MULTIPLIER);
+    messageList[_id].dropPointers[msg.sender].value += (uint256(_dropAmount)*MULTIPLIER);
     messageList[_id].dropPointers[msg.sender].isSet = true;
-    messageList[_id].dropAmount += (uint(_dropAmount)*MULTIPLIER);
+    messageList[_id].dropAmount += (uint256(_dropAmount)*MULTIPLIER);
     // payout share to author of the dropped message (50%)
-    userStructs[messageList[_id].writtenBy].dropAmount += (uint(_dropAmount)*50*MULTIPLIER/100);
+    userStructs[messageList[_id].writtenBy].dropAmount += (uint256(_dropAmount)*50*MULTIPLIER/100);
     // reduce the sender's dropAmount
-    userStructs[msg.sender].dropAmount -= (uint(_dropAmount)*MULTIPLIER);
+    userStructs[msg.sender].dropAmount -= (uint256(_dropAmount)*MULTIPLIER);
     // TODO: payout of drops to InkDrop and incentive pool
     // TODO: extend the timetolive
     return messageList[_id].dropAmount;
   }
 
     // Write a comment
-  function createComment(uint256 _parent, string _content) whenNotPaused public payable returns(uint index) {
+  function createComment(uint256 _parent, string _content) whenNotPaused public payable returns(uint256 index) {
     require(isUser(msg.sender));
     require(bytes(_content).length > 0);
     require(isMessage(_parent));
@@ -308,13 +308,13 @@ contract InkDrop is Ownable, Pausable {
     return commentId;
   }
 
-  function getComment(uint _commentId) public constant returns(uint parent, string content, address writtenBy, uint timestamp, uint timetolive, uint likes, uint drops) {
+  function getComment(uint256 _commentId) public constant returns(uint256 parent, string content, address writtenBy, uint256 timestamp, uint256 timetolive, uint256 likes, uint256 drops) {
     require(_commentId < commentList.length);
     return (commentList[_commentId].parent, commentList[_commentId].content, commentList[_commentId].writtenBy, commentList[_commentId].timestamp, 
       commentList[_commentId].timetolive, commentList[_commentId].likes.length, commentList[_commentId].dropAmount);
   }
 
-  function getStats() onlyOwner public constant returns(uint users, uint messages, uint comments) {
+  function getStats() onlyOwner public constant returns(uint256 users, uint256 messages, uint256 comments) {
     return (userList.length, messageList.length, commentList.length);
   }
 
