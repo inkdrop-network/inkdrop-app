@@ -1,10 +1,11 @@
 pragma solidity ^0.4.23;
 
+import "zos-lib/contracts/migrations/Migratable.sol";
 import "openzeppelin-zos/contracts/ownership/Ownable.sol";
 import "openzeppelin-zos/contracts/lifecycle/Pausable.sol";
 import "openzeppelin-zos/contracts/math/SafeMath.sol";
 
-contract InkDrop is Ownable, Pausable {
+contract InkDrop is Migratable, Ownable, Pausable {
 
   using SafeMath for uint256;
 
@@ -315,6 +316,7 @@ contract InkDrop is Ownable, Pausable {
   }
 
   function getStats() onlyOwner public constant returns(uint256 users, uint256 messages, uint256 comments) {
+    // return (9, 6, 7);
     return (userList.length, messageList.length, commentList.length);
   }
 
