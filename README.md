@@ -39,6 +39,5 @@
 1.  Clone this repository
 2.  Run `npm install`
 3.  Get the [Ganache app](http://truffleframework.com/ganache/) and start it
-4.  Run `truffle compile`
-5.  Run `truffle migrate --reset`
-6.  Run `npm run start`
+4.  Compile and deploy the smart contracts to the testnet (see `DEPLOY_GUIDE.md`)
+5.  Run `npm run start`
