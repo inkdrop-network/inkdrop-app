@@ -40,4 +40,4 @@
 2.  Run `npm install`
 3.  Get the [Ganache app](http://truffleframework.com/ganache/) and start it
 4.  Compile and deploy the smart contracts to the testnet (see `DEPLOY_GUIDE.md`)
-5.  Run `npm run start`
+5.  Run `npm run start` 
