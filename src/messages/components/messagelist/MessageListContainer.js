@@ -5,7 +5,6 @@ import { MESSAGES_FETCH_REQUESTED } from '../../messagesSagas'
 const mapStateToProps = (state, ownProps) => {
   return {
     messages: state.messages.data,
-    initialized: state.messages.initialized,
     pagination: state.messages.pagination,
   }
 }
