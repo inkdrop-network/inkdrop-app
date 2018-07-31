@@ -63,6 +63,10 @@ contract InkDrop is Migratable, Ownable, Pausable {
   Message[] private messageList;
   Message[] private commentList;
 
+  // minimum drop amount in weis
+  // 0.001 eth
+  uint256 private MINIMUM_DROP = 1000000000000000;
+
   event LogNewUser   (address indexed userAddress, uint256 index, bytes32 username, string bio, string ipfsHash);
   event LogUpdateUser(address indexed userAddress, uint256 index, bytes32 username, string bio, string ipfsHash);
   event LogDeleteUser(address indexed userAddress, uint256 index);
@@ -274,12 +278,15 @@ contract InkDrop is Migratable, Ownable, Pausable {
     require(isUser(msg.sender));
     require(_id < messageList.length);
     require(_dropAmount > 0);
-    require(userStructs[msg.sender].dropAmount >= uint256(_dropAmount)*MULTIPLIER);
+    // require(userStructs[msg.sender].dropAmount >= uint256(_dropAmount)*MULTIPLIER);
+
+    // TODO: continue here
+    require(msg.value >= MINIMUM_DROP);
 
     messageList[_id].drops.push(msg.sender);
-    messageList[_id].dropPointers[msg.sender].value += (uint256(_dropAmount)*MULTIPLIER);
+    messageList[_id].dropPointers[msg.sender].value += msg.value;
     messageList[_id].dropPointers[msg.sender].isSet = true;
-    messageList[_id].dropAmount += (uint256(_dropAmount)*MULTIPLIER);
+    messageList[_id].dropAmount += msg.value;
     // payout share to author of the dropped message (50%)
     userStructs[messageList[_id].writtenBy].dropAmount += (uint256(_dropAmount)*50*MULTIPLIER/100);
     // reduce the sender's dropAmount
@@ -319,5 +326,15 @@ contract InkDrop is Migratable, Ownable, Pausable {
     // return (9, 6, 7);
     return (userList.length, messageList.length, commentList.length);
   }
+
+  function getMinimumDrop() public constant returns(uint256 min_drop) {
+    return MINIMUM_DROP;
+  }
+
+  function setMinimumDrop(uint256 _min_drop) onlyOwner public payable returns(uint256 min_drop) {
+    MINIMUM_DROP = _min_drop;
+    return MINIMUM_DROP;
+  }
+
 
 }
