@@ -30,6 +30,8 @@ const TX_BROADCASTED = 'TX_BROADCASTED'
 const TX_SUCCESSFUL = 'TX_SUCCESSFUL'
 const TX_ERROR = 'TX_ERROR'
 
+const PAGINATION_ITEMS = 10
+
 // selectors
 const getUserAdr = state => state.accounts[0]
 const getMessagesLength = state => state.messages.data.length
@@ -237,8 +239,8 @@ function* messagesFetchRequested({ items }) {
     // do not procede if all messages are already loaded
     // and stop as well if some messages added to the store in the meantime
     if (items !== count && msgsLength < count) {
-      yield put({ type: MESSAGES_PAGINATION, payload: { items: items, isLoading: true } })
-      let newItems = items + 3 >= count ? count : items + 3
+      yield put({ type: MESSAGES_PAGINATION, payload: { items: items } })
+      let newItems = items + PAGINATION_ITEMS >= count ? count : items + PAGINATION_ITEMS
       let maxItems = count - items
       let minItems = count - newItems
 
@@ -249,7 +251,15 @@ function* messagesFetchRequested({ items }) {
       yield all(arr)
 
       yield delay(2000)
-      yield put({ type: MESSAGES_PAGINATION, payload: { items: newItems, isLoading: false } })
+      yield put({
+        type: MESSAGES_PAGINATION,
+        payload: { items: newItems, hasMore: true },
+      })
+    } else if (items === count) {
+      yield put({
+        type: MESSAGES_PAGINATION,
+        payload: { items: items, hasMore: false },
+      })
     }
   } catch (error) {
     console.log(error)

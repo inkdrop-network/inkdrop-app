@@ -4,8 +4,8 @@ const initialState = {
   userpage_user: null,
   userpage_messages: [],
   pagination: {
-    isLoading: false,
     items: 0,
+    hasMore: true,
   },
 }
 

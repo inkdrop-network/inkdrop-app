@@ -1,62 +1,44 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
+import InfiniteScroll from 'react-infinite-scroller'
 import MessageItemContainer from '../messageitem/MessageItemContainer'
 import loadingSpinner from '../../../../public/icons/loading-spinner.svg'
 
 class MessageList extends PureComponent {
   constructor(props) {
     super(props)
-    this.onScroll = this.onScroll.bind(this)
+
+    this.loadMore = this.loadMore.bind(this)
   }
 
-  componentDidMount() {
-    window.addEventListener('scroll', this.onScroll, false)
-
+  loadMore() {
     this.props.fetchMessages(this.props.pagination.items)
   }
 
-  componentWillUnmount() {
-    window.removeEventListener('scroll', this.onScroll, false)
-  }
-
-  onScroll() {
-    // Taken from: http://blog.sodhanalibrary.com/2016/08/detect-when-user-scrolls-to-bottom-of.html#.Wz93G9gzbOQ
-    const windowHeight =
-      'innerHeight' in window ? window.innerHeight : document.documentElement.offsetHeight
-    const body = document.body
-    const html = document.documentElement
-    const docHeight = Math.max(
-      body.scrollHeight,
-      body.offsetHeight,
-      html.clientHeight,
-      html.scrollHeight,
-      html.offsetHeight
-    )
-    // TODO: trigger the reload 100px before the windowBottom
-    const windowBottom = windowHeight + window.pageYOffset
-    if (windowBottom >= docHeight && !this.props.pagination.isLoading) {
-      // console.log('bottom reached')
-      this.props.fetchMessages(this.props.pagination.items)
-    }
-  }
-
   render() {
-    return (
-      <div id="messages" className="">
-        {this.props.messages.map(msg => <MessageItemContainer message={msg} key={msg.id} />)}
-        {this.props.pagination.isLoading && (
-          <div className="text-center">
-            <img src={loadingSpinner} alt="loading" width="20" height="20" />
-          </div>
-        )}
+    const loader = (
+      <div className="text-center" key={-1}>
+        <img src={loadingSpinner} alt="loading" width="20" height="20" />
       </div>
+    )
+
+    return (
+      <InfiniteScroll
+        pageStart={0}
+        threshold={1}
+        loadMore={this.loadMore}
+        hasMore={this.props.pagination.hasMore}
+        loader={loader}>
+        <div id="messages">
+          {this.props.messages.map(msg => <MessageItemContainer message={msg} key={msg.id} />)}
+        </div>
+      </InfiniteScroll>
     )
   }
 }
 
 MessageList.propTypes = {
   messages: PropTypes.array,
-  initialized: PropTypes.bool,
   pagination: PropTypes.object,
 }
 
