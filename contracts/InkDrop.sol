@@ -28,7 +28,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
     // messages of a user
     uint[] messages;
     mapping(uint256 => uint256) messagePointers;
-    // total drop points
+    // total drop points earned with likes, content, etc.
     uint256 dropAmount;
     // drops of a user
     // uint[] drops;
@@ -120,8 +120,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
     userStructs[msg.sender].username = _username;
     userStructs[msg.sender].bio = _bio;
     userStructs[msg.sender].ipfsHash = _ipfsHash;
-    // each new user gets 10 drops initially
-    userStructs[msg.sender].dropAmount = 10*MULTIPLIER;
+    // userStructs[msg.sender].dropAmount = 10*MULTIPLIER;
     userStructs[msg.sender].index = userList.push(msg.sender) - 1;
     emit LogNewUser(msg.sender, userStructs[msg.sender].index, _username, _bio, _ipfsHash);
     return userList.length - 1;
@@ -274,10 +273,10 @@ contract InkDrop is Migratable, Ownable, Pausable {
     return --messageList[_id].likes.length;
   }
 
-  function dropMessage(uint256 _id, int _dropAmount) whenNotPaused public payable returns(uint256 newdrops) {
+  function dropMessage(uint256 _id) whenNotPaused public payable returns(uint256 newdrops) {
     require(isUser(msg.sender));
     require(_id < messageList.length);
-    require(_dropAmount > 0);
+    // require(_dropAmount > 0);
     // require(userStructs[msg.sender].dropAmount >= uint256(_dropAmount)*MULTIPLIER);
 
     // TODO: continue here
@@ -288,9 +287,9 @@ contract InkDrop is Migratable, Ownable, Pausable {
     messageList[_id].dropPointers[msg.sender].isSet = true;
     messageList[_id].dropAmount += msg.value;
     // payout share to author of the dropped message (50%)
-    userStructs[messageList[_id].writtenBy].dropAmount += (uint256(_dropAmount)*50*MULTIPLIER/100);
+    userStructs[messageList[_id].writtenBy].dropAmount += msg.value;
     // reduce the sender's dropAmount
-    userStructs[msg.sender].dropAmount -= (uint256(_dropAmount)*MULTIPLIER);
+    // userStructs[msg.sender].dropAmount -= (uint256(_dropAmount)*MULTIPLIER);
     // TODO: payout of drops to InkDrop and incentive pool
     // TODO: extend the timetolive
     return messageList[_id].dropAmount;
