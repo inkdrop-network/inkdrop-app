@@ -28,7 +28,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
     // messages of a user
     uint[] messages;
     mapping(uint256 => uint256) messagePointers;
-    // total drop points earned with likes, content, etc.
+    // total drops in wei earned with likes, content, etc.
     uint256 dropAmount;
     // drops of a user
     // uint[] drops;
@@ -50,7 +50,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
     address[] likes;
     // mapping of message id to position in likes array
     mapping(address => data) likePointers;
-    // total drop points
+    // total drops in wei
     uint256 dropAmount;
     // addresses of users' drops
     address[] drops;
@@ -223,8 +223,8 @@ contract InkDrop is Migratable, Ownable, Pausable {
   function createMessage(string _content, int _dropAmount) whenNotPaused public payable returns(uint256 index) {
     require(isUser(msg.sender));
     require(bytes(_content).length > 0);
-    require(_dropAmount >= 0);
-    require(userStructs[msg.sender].dropAmount >= uint256(_dropAmount)*MULTIPLIER);
+    // require(_dropAmount >= 0);
+    // require(userStructs[msg.sender].dropAmount >= uint256(_dropAmount)*MULTIPLIER);
 
     uint256 msgId = messageList.length;
     Message memory message;
@@ -235,13 +235,13 @@ contract InkDrop is Migratable, Ownable, Pausable {
     // Compute TTL according to function
     message.timetolive = now;
     message.id = msgId;
-    message.dropAmount = uint256(_dropAmount)*MULTIPLIER;
+    message.dropAmount = msg.value; // uint256(_dropAmount)*MULTIPLIER;
     userStructs[msg.sender].messagePointers[userStructs[msg.sender].messages.push(msgId)-1] = msgId;
     messageList.push(message);
     messageList[messageList.length-1].dropPointers[msg.sender].value = messageList[messageList.length-1].drops.push(msg.sender) - 1;
     messageList[messageList.length-1].dropPointers[msg.sender].isSet = true;
     // reduce the sender's dropAmount
-    userStructs[msg.sender].dropAmount -= (uint256(_dropAmount)*MULTIPLIER);
+    // userStructs[msg.sender].dropAmount -= (uint256(_dropAmount)*MULTIPLIER);
     // emit MessageSend(msg.sender, userInfo[msg.sender].name, msgId);
     return messageList.length;
   }
@@ -287,9 +287,9 @@ contract InkDrop is Migratable, Ownable, Pausable {
     messageList[_id].dropPointers[msg.sender].isSet = true;
     messageList[_id].dropAmount += msg.value;
     // payout share to author of the dropped message (50%)
-    userStructs[messageList[_id].writtenBy].dropAmount += msg.value;
-    // reduce the sender's dropAmount
-    // userStructs[msg.sender].dropAmount -= (uint256(_dropAmount)*MULTIPLIER);
+    // TODO: check how to cope with prime numbers 
+    // LINK: https://ethereum.stackexchange.com/questions/3010/how-does-ethereum-cope-with-division-of-prime-numbers
+    userStructs[messageList[_id].writtenBy].dropAmount += (msg.value/2);
     // TODO: payout of drops to InkDrop and incentive pool
     // TODO: extend the timetolive
     return messageList[_id].dropAmount;
