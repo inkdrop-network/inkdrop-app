@@ -124,8 +124,8 @@ class MessageItem extends PureComponent {
           <div className="row">
             <div className="col">
               <div className="drop-message-button float-left" onClick={this.dropMessage}>
-                <img src={inkdropDark} width="20" height="20" className="drops" alt="" />
-                <span className="drop-number icon-number ml-1">{msg.drops}</span>
+                {/* <img src={inkdropDark} width="20" height="20" className="drops" alt="" /> */}
+                <span className="drop-number icon-number ml-1">{msg.drops} ETH</span>
               </div>
             </div>
 

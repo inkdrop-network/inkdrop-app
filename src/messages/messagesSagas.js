@@ -39,6 +39,12 @@ const getMessagesLength = state => state.messages.data.length
 function createTxChannel({ txObject, contractName, sendArgs = {} }) {
   var persistTxHash
 
+  console.log(sendArgs)
+  // sendArgs = {
+  //   ...sendArgs,
+  //   // value: 1000000000000000,
+  // }
+
   return eventChannel(emit => {
     const txPromiEvent = txObject
       .send(sendArgs)
@@ -80,16 +86,13 @@ function* messageRequested({ msg }) {
   yield put({ type: MESSAGE_POSTED, payload: msg })
 
   const contractName = 'InkDrop'
-  const args = {
-    content: msg.content,
-    drops: msg.drops,
+
+  const sendArgs = {
+    value: msg.drops,
   }
-  const txObject = yield call(
-    drizzle.contracts.InkDrop.methods.createMessage,
-    msg.content,
-    msg.drops
-  )
-  const txChannel = yield call(createTxChannel, { txObject, contractName, args })
+
+  const txObject = yield call(drizzle.contracts.InkDrop.methods.createMessage, msg.content)
+  const txChannel = yield call(createTxChannel, { txObject, contractName, sendArgs })
 
   try {
     while (true) {
@@ -108,6 +111,7 @@ function* messageRequested({ msg }) {
         console.log('3 - SUCCESS')
         msg.fromBlockchain = true
         msg.sendingMessage = ''
+        console.log(msg)
         yield put({ type: UPDATE_MESSAGE, payload: msg })
       } else if (event.type === TX_ERROR) {
         console.log('ERROR')
@@ -250,7 +254,7 @@ function* messagesFetchRequested({ items }) {
       }
       yield all(arr)
 
-      yield delay(2000)
+      // yield delay(2000)
       yield put({
         type: MESSAGES_PAGINATION,
         payload: { items: newItems, hasMore: true },
@@ -270,7 +274,7 @@ function* getMessageCall(msgId) {
   const drizzle = yield getContext('drizzle')
   try {
     let tmpMsg = yield call(drizzle.contracts.InkDrop.methods.getMessage(msgId).call)
-    let msg = parseMessage(msgId, tmpMsg)
+    let msg = yield parseMessage(msgId, tmpMsg)
     // update the store so the UI get updated
     yield put({ type: MESSAGE_GOT, payload: msg })
     yield all([fork(getUser, msg), fork(getComments, msg)])
@@ -302,7 +306,7 @@ function* getComment(msgId, commentId) {
   const drizzle = yield getContext('drizzle')
   try {
     let comment = yield call(drizzle.contracts.InkDrop.methods.getComment(commentId).call)
-    let newComment = parseComment(commentId, comment)
+    let newComment = yield parseComment(commentId, comment)
     let user = yield call(drizzle.contracts.InkDrop.methods.getUser(comment.writtenBy).call)
     let newUser = yield parseUser(commentId, user)
     yield put({
@@ -315,7 +319,9 @@ function* getComment(msgId, commentId) {
   }
 }
 
-function parseMessage(id, msg) {
+function* parseMessage(id, msg) {
+  const drizzle = yield getContext('drizzle')
+
   return {
     id: id,
     content: msg.content,
@@ -323,7 +329,7 @@ function parseMessage(id, msg) {
     timestamp: new Date(msg.timestamp * 1000),
     timetolive: new Date(msg.timetolive * 1000),
     likes: parseInt(msg.likes, 10),
-    drops: parseInt(msg.drops, 10) / 100,
+    drops: parseFloat(drizzle.web3.utils.fromWei(msg.drops, 'ether')).toFixed(3), // parseInt(msg.drops, 10) / 100,
     userUrl: '', //`https://gateway.ipfs.io/ipfs/${tmpUser.ipfsHash}`,
     userAdr: msg.writtenBy,
     commentIds: msg.comments.map(function(e) {
@@ -335,7 +341,8 @@ function parseMessage(id, msg) {
   }
 }
 
-function parseComment(id, comment) {
+function* parseComment(id, comment) {
+  const drizzle = yield getContext('drizzle')
   return {
     id: id,
     content: comment.content,
@@ -344,7 +351,7 @@ function parseComment(id, comment) {
     timestamp: new Date(comment.timestamp * 1000),
     timetolive: new Date(comment.timetolive * 1000),
     likes: parseInt(comment.likes, 10),
-    drops: parseInt(comment.drops, 10) / 100,
+    drops: parseFloat(drizzle.web3.utils.fromWei(comment.drops, 'ether')).toFixed(3), //parseInt(comment.drops, 10) / 100,
     userUrl: '', //`https://gateway.ipfs.io/ipfs/${tmpUser.ipfsHash}`,
     userAdr: comment.writtenBy,
     fromBlockchain: true,
@@ -366,7 +373,7 @@ function* parseCompleteUser(user) {
   return {
     username: drizzle.web3.utils.toUtf8(user.username),
     userUrl: `https://gateway.ipfs.io/ipfs/${user.ipfsHash}`,
-    drops: parseInt(user.drops, 10) / 100,
+    drops: parseFloat(drizzle.web3.utils.fromWei(user.drops, 'ether')).toFixed(3), //parseInt(user.drops, 10) / 100,
     bio: user.bio,
     followers: parseInt(user.followers, 10),
     messageIds: user.messages.map(function(e) {
@@ -402,7 +409,7 @@ function* getUserMessageCall(msgId) {
   const drizzle = yield getContext('drizzle')
   try {
     let tmpMsg = yield call(drizzle.contracts.InkDrop.methods.getMessage(msgId).call)
-    let msg = parseMessage(msgId, tmpMsg)
+    let msg = yield parseMessage(msgId, tmpMsg)
     // update the store so the UI get updated
     yield put({ type: USER_MESSAGE_GOT, payload: msg })
     yield all([fork(getUserpageUser, msg), fork(getUserComments, msg)])
@@ -434,7 +441,7 @@ function* getUserComment(msgId, commentId) {
   const drizzle = yield getContext('drizzle')
   try {
     let comment = yield call(drizzle.contracts.InkDrop.methods.getComment(commentId).call)
-    let newComment = parseComment(commentId, comment)
+    let newComment = yield parseComment(commentId, comment)
     let user = yield call(drizzle.contracts.InkDrop.methods.getUser(comment.writtenBy).call)
     let newUser = yield parseUser(commentId, user)
     yield put({

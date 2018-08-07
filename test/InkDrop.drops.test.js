@@ -15,7 +15,17 @@ contract('InkDrop (drop functions)', async accounts => {
     assert.equal(count.toNumber(), 1, 'There should me now 1 message.')
     let user = await inkdropInstance.getUser(accounts[9])
     assert.equal(user[5].length, 1, 'The user should have as well 1 message.')
+    assert.equal(
+      web3.eth.getBalance(inkdropInstance.address).toNumber(),
+      0,
+      'The contract should have 0 balance.'
+    )
     await inkdropInstance.dropMessage(0, { from: accounts[7], value: 1000000000000000 })
+    assert.equal(
+      web3.eth.getBalance(inkdropInstance.address).toNumber(),
+      1000000000000000,
+      'The contract should have 1000000000000000 balance.'
+    )
 
     msg = await inkdropInstance.getMessage(0, { from: accounts[8] })
     assert.equal(
@@ -58,5 +68,46 @@ contract('InkDrop (drop functions)', async accounts => {
       const revertFound = error.message.search('revert') >= 0
       assert.equal(revertFound, true, `Expected "revert", got ${error} instead`)
     }
+  })
+
+  it('...drop message extended', async () => {
+    let inkdropInstance = await InkDrop.deployed()
+    user = await inkdropInstance.getUser(accounts[8])
+    assert.equal(user[2].toNumber(), 0, 'The author should have 0 balance.')
+
+    await inkdropInstance.createMessage('Hello world3', 0, {
+      from: accounts[8],
+      value: 1000000000000000,
+    })
+
+    let msg = await inkdropInstance.getMessage(2, { from: accounts[8] })
+    assert.equal(
+      msg[5].toNumber(),
+      1000000000000000,
+      'The message should have 1000000000000000 wei.'
+    )
+
+    await inkdropInstance.dropMessage(2, { from: accounts[7], value: 2000000000000000 })
+    await inkdropInstance.dropMessage(2, { from: accounts[9], value: 1000000000000000 })
+
+    user = await inkdropInstance.getUser(accounts[8])
+    assert.equal(
+      user[2].toNumber(),
+      1500000000000000,
+      'The author should have 150000000000000 balance.'
+    )
+
+    msg = await inkdropInstance.getMessage(2, { from: accounts[8] })
+    assert.equal(
+      msg[5].toNumber(),
+      4000000000000000,
+      'The message should have now 4000000000000000 wei.'
+    )
+
+    assert.equal(
+      web3.eth.getBalance(inkdropInstance.address).toNumber(),
+      6000000000000001,
+      'The contract should have 6000000000000001 wei in total.'
+    )
   })
 })

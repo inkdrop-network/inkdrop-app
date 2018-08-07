@@ -186,8 +186,8 @@ footer .list-inline {
   font-size: 0.9rem;
 }
 
+/*.card .drop-message-button,*/
 .card .like-message-button,
-.card .drop-message-button,
 .card .comment-message-button {
   width: 3rem;
 }

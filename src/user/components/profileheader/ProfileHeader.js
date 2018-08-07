@@ -57,15 +57,15 @@ class ProfileHeader extends PureComponent {
         </UncontrolledDropdown>
 
         <NavItem className="ml-3">
-          <img
+          {/* <img
             src={inkdropWhite}
             className="align-middle nav-icons"
             width="20"
             height="20"
             alt="drops"
-          />
+          /> */}
           <span id="profile-drop-number" className="nav-icon-nr font-white align-bottom ml-1">
-            {this.props.user.drops}
+            {this.props.user.drops} ETH
           </span>
         </NavItem>
       </Nav>

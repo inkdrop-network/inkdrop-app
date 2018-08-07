@@ -11,6 +11,12 @@ class MessageForm extends PureComponent {
       drops: 0, // TODO: add drop slider
       focus: false,
     }
+
+    this.onContentChange = this.onContentChange.bind(this)
+    this.onDropsChange = this.onDropsChange.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
+    this.onBlur = this.onBlur.bind(this)
+    this.onFocus = this.onFocus.bind(this)
   }
 
   onFocus() {
@@ -30,13 +36,17 @@ class MessageForm extends PureComponent {
     this.setState({ content: event.target.value })
   }
 
+  onDropsChange(event) {
+    this.setState({ drops: event.target.value })
+  }
+
   async handleSubmit(event) {
     event.preventDefault()
     if (this.state.content === '' && this.state.content.length < 2) {
       return alert('Please share something valuable.')
     }
 
-    if (this.state.drops < 0) {
+    if (!(this.state.drops >= 0)) {
       return alert('Please add some drops to your post.')
     }
 
@@ -57,7 +67,7 @@ class MessageForm extends PureComponent {
 
     this.props.onCreateMessage(newMsg)
     // TODO: delete content after TX_BROADCAST
-    this.setState({ content: '' })
+    this.setState({ content: '', drops: 0 })
   }
 
   render() {
@@ -81,7 +91,7 @@ class MessageForm extends PureComponent {
           </CardBody>
           <CardBody className="py-2">
             <div id="send-area">
-              <Form onSubmit={this.handleSubmit.bind(this)}>
+              <Form onSubmit={this.handleSubmit}>
                 <FormGroup>
                   <Input
                     type="textarea"
@@ -90,9 +100,21 @@ class MessageForm extends PureComponent {
                     id="content"
                     placeholder="Share something valuable"
                     value={this.state.content}
-                    onChange={this.onContentChange.bind(this)}
-                    onBlur={this.onBlur.bind(this)}
-                    onFocus={this.onFocus.bind(this)}
+                    onChange={this.onContentChange}
+                    onBlur={this.onBlur}
+                    onFocus={this.onFocus}
+                  />
+                  <Input
+                    type="range"
+                    name="range"
+                    className="form-control-range"
+                    id="range"
+                    min="1000000000000000"
+                    max="10000000000000000"
+                    value={this.state.drops}
+                    onChange={this.onDropsChange}
+                    onBlur={this.onBlur}
+                    onFocus={this.onFocus}
                   />
                 </FormGroup>
                 <Button color="green">Send</Button>

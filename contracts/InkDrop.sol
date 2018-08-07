@@ -220,7 +220,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
   }
   
 
-  function createMessage(string _content, int _dropAmount) whenNotPaused public payable returns(uint256 index) {
+  function createMessage(string _content) whenNotPaused public payable returns(uint256 index) {
     require(isUser(msg.sender));
     require(bytes(_content).length > 0);
     // require(_dropAmount >= 0);
