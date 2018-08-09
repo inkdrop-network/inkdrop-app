@@ -80,7 +80,8 @@ function* loginRequested({ user }) {
       let newUser = {
         name: drizzle.web3.utils.toUtf8(tmpUser.username),
         bio: tmpUser.bio,
-        drops: parseFloat(drizzle.web3.utils.fromWei(tmpUser.drops, 'ether')).toFixed(3),
+        drops:
+          Math.round(parseFloat(drizzle.web3.utils.fromWei(tmpUser.drops, 'ether')) * 1e3) / 1e3,
         address: user.address,
         ipfsHash: tmpUser.ipfsHash,
         imgUrl: `https://gateway.ipfs.io/ipfs/${tmpUser.ipfsHash}`,

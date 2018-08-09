@@ -35,8 +35,7 @@ class MessageItem extends PureComponent {
   }
 
   onDropsChange(event) {
-    console.log(event.target.value)
-    this.setState({ drops: event.target.value })
+    this.setState({ drops: parseFloat(event.target.value) })
   }
 
   async dropMessage() {
@@ -47,6 +46,7 @@ class MessageItem extends PureComponent {
       //   alert('You have not enough funds for this transaction.')
       // } else {
       this.props.onMessageDrop(this.props.message, newDrops)
+      this.setState({ drops: 0.001 })
       // }
     }
   }
@@ -152,7 +152,7 @@ class MessageItem extends PureComponent {
               </div>
             </div>
 
-            <div className="col">
+            <div className="col-4">
               <InputGroup size="sm">
                 <Input
                   type="number"
@@ -164,7 +164,8 @@ class MessageItem extends PureComponent {
                 />
                 <InputGroupAddon addonType="append" onClick={this.dropMessage}>
                   <InputGroupText>
-                    <img src={inkdropGreen} width="20" height="20" className="drops" alt="" />
+                    ETH
+                    <img src={inkdropGreen} width="20" height="20" className="drops ml-3" alt="" />
                   </InputGroupText>
                 </InputGroupAddon>
               </InputGroup>

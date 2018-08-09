@@ -56,7 +56,7 @@ const userReducer = (state = initialState, action) => {
     return Object.assign({}, state, {
       data: {
         ...state.data,
-        drops: (parseFloat(state.data.drops) + parseFloat(action.payload)).toFixed(3),
+        drops: state.data.drops + action.payload,
       },
     })
   }
