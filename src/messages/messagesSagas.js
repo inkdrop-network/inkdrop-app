@@ -1,5 +1,5 @@
 import { take, put, call, all, fork, takeEvery, select, getContext } from 'redux-saga/effects'
-import { eventChannel, END, delay } from 'redux-saga'
+import { eventChannel, END } from 'redux-saga'
 import {
   MESSAGE_GOT,
   MESSAGE_POSTED,
@@ -38,12 +38,6 @@ const getMessagesLength = state => state.messages.data.length
 
 function createTxChannel({ txObject, contractName, sendArgs = {} }) {
   var persistTxHash
-
-  console.log(sendArgs)
-  // sendArgs = {
-  //   ...sendArgs,
-  //   // value: 1000000000000000,
-  // }
 
   return eventChannel(emit => {
     const txPromiEvent = txObject
@@ -187,18 +181,18 @@ function* messageDropRequested({ msg, drops }) {
   newMsg.sendingMessage = 'Transaction Pending - Confirm through Metamask'
   yield put({ type: UPDATE_MESSAGE, payload: newMsg })
   // update user & reduce his drops
-  // TODO: check if user is author of the message. If yes, give him 50% of the drops
+  // check if user is author of the message. If yes, give him 50% of the drops
   let userAdr = yield select(getUserAdr)
   let userShare = 0
   if (userAdr === msg.userAdr) {
     userShare = 0.5 * drops
+    yield put({ type: USER_DROPPED, payload: userShare })
   }
-  yield put({ type: USER_DROPPED, payload: drops - userShare })
 
   const contractName = 'InkDrop'
-  const args = { id: msg.id, drops: drops }
-  const txObject = yield call(drizzle.contracts.InkDrop.methods.dropMessage, msg.id, drops)
-  const txChannel = yield call(createTxChannel, { txObject, contractName, args })
+  const sendArgs = { value: drizzle.web3.utils.toWei(drops, 'ether') }
+  const txObject = yield call(drizzle.contracts.InkDrop.methods.dropMessage, msg.id)
+  const txChannel = yield call(createTxChannel, { txObject, contractName, sendArgs })
 
   try {
     while (true) {
@@ -223,8 +217,10 @@ function* messageDropRequested({ msg, drops }) {
         msg.error = 'Transaction failed'
         msg.sendingMessage = ''
         yield put({ type: UPDATE_MESSAGE, payload: msg })
-        // update user & give back drops used
-        yield put({ type: USER_DROPPED, payload: -(drops - userShare) })
+        // update user & give back drops used in case of author == dropper
+        if (userAdr === msg.userAdr) {
+          yield put({ type: USER_DROPPED, payload: -userShare })
+        }
       }
     }
   } finally {

@@ -1,12 +1,21 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router'
-import { Card, CardBody, CardFooter } from 'reactstrap'
+import {
+  Card,
+  CardBody,
+  CardFooter,
+  Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+} from 'reactstrap'
 import Moment from 'react-moment'
 import CommentList from '../commentlist/CommentList'
 
 // icons
 import inkdropDark from '../../../../public/icons/icon-inkdrop-dark.svg'
+import inkdropGreen from '../../../../public/icons/inkdrop_logo.svg'
 import iconLike from '../../../../public/icons/icon-like.svg'
 import iconComment from '../../../../public/icons/icon-comments.svg'
 import loadingSpinner from '../../../../public/icons/loading-spinner.svg'
@@ -17,21 +26,28 @@ class MessageItem extends PureComponent {
 
     this.state = {
       showComments: false,
+      drops: 0.001,
     }
 
     this.toggleComments = this.toggleComments.bind(this)
+    this.onDropsChange = this.onDropsChange.bind(this)
     this.dropMessage = this.dropMessage.bind(this)
+  }
+
+  onDropsChange(event) {
+    console.log(event.target.value)
+    this.setState({ drops: event.target.value })
   }
 
   async dropMessage() {
     if (!this.props.message.cached) {
       // TODO: add slider for amount of drops to be submitted
-      let newDrops = 1
-      if (this.props.user.drops - newDrops < 0) {
-        alert('You have not enough funds for this transaction.')
-      } else {
-        this.props.onMessageDrop(this.props.message, newDrops)
-      }
+      let newDrops = this.state.drops
+      // if (this.props.user.drops - newDrops < 0) {
+      //   alert('You have not enough funds for this transaction.')
+      // } else {
+      this.props.onMessageDrop(this.props.message, newDrops)
+      // }
     }
   }
 
@@ -123,19 +139,38 @@ class MessageItem extends PureComponent {
         <CardBody className="pt-2">
           <div className="row">
             <div className="col">
-              <div className="drop-message-button float-left" onClick={this.dropMessage}>
-                {/* <img src={inkdropDark} width="20" height="20" className="drops" alt="" /> */}
-                <span className="drop-number icon-number ml-1">{msg.drops} ETH</span>
-              </div>
-            </div>
-
-            <div className="col">
-              <div className="comment-message-button float-right" onClick={this.toggleComments}>
+              <div className="comment-message-button float-left" onClick={this.toggleComments}>
                 <img src={iconComment} width="20" height="20" className="" alt="comments" />
                 <span className={`comment-number icon-number ml-1 ${commentsNrClass}`}>
                   {msg.commentIds.length}
                 </span>
               </div>
+
+              <div className="drop-message-button float-left ml-3">
+                <img src={inkdropDark} width="20" height="20" className="drops" alt="" />
+                <span className="drop-number icon-number ml-1">{msg.drops} ETH</span>
+              </div>
+            </div>
+
+            <div className="col">
+              <InputGroup size="sm">
+                <Input
+                  type="number"
+                  value={this.state.drops}
+                  min="0.001"
+                  max="100"
+                  step="0.001"
+                  onChange={this.onDropsChange}
+                />
+                <InputGroupAddon addonType="append" onClick={this.dropMessage}>
+                  <InputGroupText>
+                    <img src={inkdropGreen} width="20" height="20" className="drops" alt="" />
+                  </InputGroupText>
+                </InputGroupAddon>
+              </InputGroup>
+              {/* <div className="drop-message-button float-right" onClick={this.dropMessage}>
+                <img src={inkdropGreen} width="20" height="20" className="drops" alt="" />
+              </div> */}
             </div>
           </div>
         </CardBody>

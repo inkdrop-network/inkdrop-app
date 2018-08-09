@@ -76,11 +76,11 @@ function* loginRequested({ user }) {
   if (userTest) {
     try {
       let tmpUser = yield call(drizzle.contracts.InkDrop.methods.getUser(user.address).call)
-      let userDrops = parseInt(tmpUser.drops, 10) >= 0 ? parseInt(tmpUser.drops, 10) / 100 : 0
+      // let userDrops = parseInt(tmpUser.drops, 10) >= 0 ? parseInt(tmpUser.drops, 10) / 100 : 0
       let newUser = {
         name: drizzle.web3.utils.toUtf8(tmpUser.username),
         bio: tmpUser.bio,
-        drops: userDrops,
+        drops: parseFloat(drizzle.web3.utils.fromWei(tmpUser.drops, 'ether')).toFixed(3),
         address: user.address,
         ipfsHash: tmpUser.ipfsHash,
         imgUrl: `https://gateway.ipfs.io/ipfs/${tmpUser.ipfsHash}`,
@@ -181,8 +181,7 @@ function* signupRequested({ user, buffer }) {
           let newUser = {
             name: user.name,
             bio: user.bio,
-            // the initial 10 drops
-            drops: 10,
+            drops: 0,
             address: user.address,
             ipfsHash: ipfsHash,
             imgUrl: `https://gateway.ipfs.io/ipfs/${ipfsHash}`,

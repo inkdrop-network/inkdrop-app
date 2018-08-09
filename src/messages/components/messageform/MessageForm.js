@@ -104,10 +104,10 @@ class MessageForm extends PureComponent {
                     onBlur={this.onBlur}
                     onFocus={this.onFocus}
                   />
-                  <Input
+                  <input
                     type="range"
                     name="range"
-                    className="form-control-range"
+                    className="custom-range"
                     id="range"
                     min="1000000000000000"
                     max="10000000000000000"
