@@ -11,8 +11,8 @@ contract('InkDrop (comment functions)', async accounts => {
 
   it('...create message with initially 0 comments', async () => {
     let inkdropInstance = await InkDrop.deployed()
-    await inkdropInstance.createMessage('Hello world1', 0, { from: accounts[9] })
-    await inkdropInstance.createMessage('Hello world2', 0, { from: accounts[9] })
+    await inkdropInstance.createMessage('Hello world1', { from: accounts[9] })
+    await inkdropInstance.createMessage('Hello world2', { from: accounts[9] })
     let count = await inkdropInstance.getMessageCount()
     assert.equal(count.toNumber(), 2, 'There should be now 2 messages.')
   })

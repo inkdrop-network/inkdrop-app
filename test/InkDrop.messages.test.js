@@ -19,7 +19,7 @@ contract('InkDrop (message functions)', async accounts => {
 
   it('...create message', async () => {
     let inkdropInstance = await InkDrop.deployed()
-    await inkdropInstance.createMessage('Hello world', 0, { from: accounts[9] })
+    await inkdropInstance.createMessage('Hello world', { from: accounts[9] })
     let count = await inkdropInstance.getMessageCount()
     assert.equal(count.toNumber(), 1, 'There should me now 1 message.')
     let user = await inkdropInstance.getUser(accounts[9])
@@ -30,7 +30,7 @@ contract('InkDrop (message functions)', async accounts => {
   it('...create message with negative drops', async () => {
     let inkdropInstance = await InkDrop.deployed()
     try {
-      await inkdropInstance.createMessage('Hello world2', -1, { from: accounts[9] })
+      await inkdropInstance.createMessage('Hello world2', { from: accounts[9], value: -1 })
       assert.fail('Should throw error.')
     } catch (error) {
       const revertFound = error.message.search('revert') >= 0
@@ -41,7 +41,7 @@ contract('InkDrop (message functions)', async accounts => {
   it('...create message with emtpy content', async () => {
     let inkdropInstance = await InkDrop.deployed()
     try {
-      await inkdropInstance.createMessage('', 0, { from: accounts[9] })
+      await inkdropInstance.createMessage('', { from: accounts[9] })
       assert.fail('Should throw error.')
     } catch (error) {
       const revertFound = error.message.search('revert') >= 0
@@ -52,7 +52,7 @@ contract('InkDrop (message functions)', async accounts => {
   it('...create message from a non user', async () => {
     let inkdropInstance = await InkDrop.deployed()
     try {
-      await inkdropInstance.createMessage('Hello', 0, { from: accounts[2] })
+      await inkdropInstance.createMessage('Hello', { from: accounts[2] })
       assert.fail('Should throw error.')
     } catch (error) {
       const revertFound = error.message.search('revert') >= 0
@@ -224,7 +224,7 @@ contract('InkDrop (message functions)', async accounts => {
 
   it('...drop message', async () => {
     let inkdropInstance = await InkDrop.deployed()
-    await inkdropInstance.createMessage('Hello world2', 10, { from: accounts[9] })
+    await inkdropInstance.createMessage('Hello world2', { from: accounts[9], value: 10 })
     let count = await inkdropInstance.getMessageCount()
     assert.equal(count.toNumber(), 2, 'There should me now 2 message.')
     let user = await inkdropInstance.getUser(accounts[9])
@@ -242,7 +242,7 @@ contract('InkDrop (message functions)', async accounts => {
     let inkdropInstance = await InkDrop.deployed()
     let user = await inkdropInstance.getUser(accounts[8])
     assert.equal(user[2].toNumber() / MULTIPLIER, 5, 'The user should have now only 5 drops left.')
-    await inkdropInstance.createMessage('Hello world3', 4, { from: accounts[8] })
+    await inkdropInstance.createMessage('Hello world3', { from: accounts[8], value: 4 })
 
     let count = await inkdropInstance.getMessageCount()
     assert.equal(count.toNumber(), 3, 'There should me now 3 message.')
@@ -337,7 +337,7 @@ contract('InkDrop (message functions)', async accounts => {
     user = await inkdropInstance.getUser(accounts[8])
     assert.equal(user[2].toNumber() / MULTIPLIER, 5.5, 'The user should have 5.5 drops left.')
     try {
-      await inkdropInstance.createMessage('Hello world', 6, { from: accounts[8] })
+      await inkdropInstance.createMessage('Hello world', { from: accounts[8], value: 6 })
       assert.fail('Should throw error.')
     } catch (error) {
       const revertFound = error.message.search('revert') >= 0
@@ -347,14 +347,14 @@ contract('InkDrop (message functions)', async accounts => {
 
   it('...create message with drop amount', async () => {
     let inkdropInstance = await InkDrop.deployed()
-    await inkdropInstance.createMessage('Hello world2', 4, { from: accounts[8] })
+    await inkdropInstance.createMessage('Hello world2', { from: accounts[8], value: 4 })
     user = await inkdropInstance.getUser(accounts[8])
     assert.equal(user[2].toNumber() / MULTIPLIER, 1.5, 'The user should have 1.5 drops left.')
   })
 
   // it('...create message with decimal drop amount', async () => {
   //   let inkdropInstance = await InkDrop.deployed()
-  //   await inkdropInstance.createMessage('Hello world2', 0.5, { from: accounts[8] })
+  //   await inkdropInstance.createMessage('Hello world2', { from: accounts[8] })
   //   user = await inkdropInstance.getUser(accounts[8])
   //   assert.equal(user[2].toNumber() / MULTIPLIER, 1, 'The user should have 1 drops left.')
   // })

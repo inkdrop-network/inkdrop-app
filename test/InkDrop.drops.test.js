@@ -129,21 +129,21 @@ contract('InkDrop (drop functions)', async accounts => {
       authorBalance + 2000000000000000 / 2 + 1000000000000000 / 2,
       'The author should get 50% of the dropped tokens.'
     )
-
+    // check authors drops
     user = await inkdropInstance.getUser(accounts[8])
     assert.equal(
       user[2].toNumber(),
-      1500000000000000,
-      'The author should have 150000000000000 balance.'
+      2000000000000000 / 2 + 1000000000000000 / 2,
+      'The author should have earned 50% of the dropped tokens.'
     )
-
+    // check the message's drops
     msg = await inkdropInstance.getMessage(2, { from: accounts[8] })
     assert.equal(
       msg[5].toNumber(),
       4000000000000000,
       'The message should have now 4000000000000000 wei.'
     )
-
+    // check contract's balance
     assert.equal(
       web3.eth.getBalance(inkdropInstance.address).toNumber(),
       1000000000000000 / 2 +
