@@ -287,9 +287,10 @@ contract InkDrop is Migratable, Ownable, Pausable {
     messageList[_id].dropPointers[msg.sender].isSet = true;
     messageList[_id].dropAmount += msg.value;
     // payout share to author of the dropped message (50%)
-    // TODO: check how to cope with prime numbers 
     // LINK: https://ethereum.stackexchange.com/questions/3010/how-does-ethereum-cope-with-division-of-prime-numbers
     userStructs[messageList[_id].writtenBy].dropAmount += (msg.value/2);
+    messageList[_id].writtenBy.transfer(msg.value/2);
+
     // TODO: payout of drops to InkDrop and incentive pool
     // TODO: extend the timetolive
     return messageList[_id].dropAmount;
