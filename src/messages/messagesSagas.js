@@ -2,6 +2,7 @@ import { take, put, call, all, fork, takeEvery, select, getContext } from 'redux
 import { eventChannel, END, delay } from 'redux-saga'
 import {
   MESSAGE_GOT,
+  MESSAGES_GOT,
   MESSAGE_POSTED,
   COMMENT_POSTED,
   UPDATE_MESSAGE,
@@ -35,6 +36,7 @@ const PAGINATION_ITEMS = 10
 
 // selectors
 const getUserAdr = state => state.accounts[0]
+const getMessagesTotal = state => state.messages.total
 const getMessagesLength = state => state.messages.data.length
 
 function createTxChannel({ txObject, contractName, sendArgs = {} }) {
@@ -82,17 +84,21 @@ function* messageRequested({ msg }) {
     {
       ...msg,
       sendingMessage: 'Transaction Pending - Confirm through Metamask',
-      drops: roundFloat3(drizzle.web3.utils.fromWei(msg.drops, 'ether')),
+      drops: roundFloat3(drizzle.web3.utils.fromWei(`${msg.drops}`, 'ether')),
     }
   )
 
   yield put({ type: MESSAGE_POSTED, payload: newMsg })
+  let count = yield select(getMessagesTotal)
+  yield put({ type: MESSAGES_GOT, payload: ++count })
 
   const contractName = 'InkDrop'
 
+  console.log(msg.drops)
   const sendArgs = {
-    value: msg.drops,
+    value: `${msg.drops}`,
   }
+  console.log(sendArgs.value)
 
   const txObject = yield call(drizzle.contracts.InkDrop.methods.createMessage, msg.content)
   const txChannel = yield call(createTxChannel, { txObject, contractName, sendArgs })
@@ -121,6 +127,9 @@ function* messageRequested({ msg }) {
         // yield put({ type: DELETE_MESSAGE, payload: msg })
         newMsg.error = 'Transaction failed'
         newMsg.sendingMessage = ''
+        yield put({ type: UPDATE_MESSAGE, payload: newMsg })
+        yield delay(4000)
+        newMsg.error = ''
         yield put({ type: UPDATE_MESSAGE, payload: newMsg })
       }
     }
@@ -173,6 +182,9 @@ function* commentRequested({ comment }) {
         comment.error = 'Transaction failed'
         comment.sendingMessage = ''
         yield put({ type: UPDATE_COMMENT, payload: comment })
+        yield delay(4000)
+        comment.error = ''
+        yield put({ type: UPDATE_MESSAGE, payload: comment })
       }
     }
   } finally {
@@ -197,7 +209,7 @@ function* messageDropRequested({ msg, drops }) {
   let userShare = 0
   if (userAdr === msg.userAdr) {
     userShare = 0.5 * drops
-    yield put({ type: USER_DROPPED, payload: userShare })
+    yield put({ type: USER_DROPPED, payload: roundFloat3(userShare) })
   }
 
   const contractName = 'InkDrop'
@@ -232,6 +244,9 @@ function* messageDropRequested({ msg, drops }) {
         if (userAdr === msg.userAdr) {
           yield put({ type: USER_DROPPED, payload: -userShare })
         }
+        yield delay(4000)
+        msg.error = ''
+        yield put({ type: UPDATE_MESSAGE, payload: msg })
       }
     }
   } finally {
@@ -245,6 +260,8 @@ function* messagesFetchRequested({ items }) {
   const drizzle = yield getContext('drizzle')
   try {
     let count = yield call(drizzle.contracts.InkDrop.methods.getMessageCount().call)
+    // update store with total number of messages
+    yield put({ type: MESSAGES_GOT, payload: count })
     // get messages length from store
     let msgsLength = yield select(getMessagesLength)
     // do not procede if all messages are already loaded
@@ -262,6 +279,7 @@ function* messagesFetchRequested({ items }) {
       yield all(arr)
 
       yield delay(2000)
+
       yield put({
         type: MESSAGES_PAGINATION,
         payload: { items: newItems, hasMore: true },

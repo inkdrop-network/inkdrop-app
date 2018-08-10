@@ -1,6 +1,7 @@
 import { USER_LOGGED_OUT } from '../user/userReducer'
 const initialState = {
   data: [],
+  total: 0,
   userpage_user: null,
   userpage_messages: [],
   pagination: {
@@ -11,6 +12,7 @@ const initialState = {
 
 // actions
 export const MESSAGE_GOT = 'MESSAGE_GOT'
+export const MESSAGES_GOT = 'MESSAGES_GOT'
 export const USER_MESSAGE_GOT = 'USER_MESSAGE_GOT'
 export const USER_PAGE_GOT = 'USER_PAGE_GOT'
 
@@ -34,6 +36,12 @@ export const MESSAGES_PAGINATION = 'MESSAGES_PAGINATION'
 const messagesReducer = (state = initialState, action) => {
   if (action.type === USER_LOGGED_OUT) {
     return Object.assign({}, state, initialState)
+  }
+
+  if (action.type === MESSAGES_GOT) {
+    return Object.assign({}, state, {
+      total: action.payload,
+    })
   }
 
   if (action.type === MESSAGE_GOT) {

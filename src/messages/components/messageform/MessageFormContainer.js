@@ -1,4 +1,5 @@
-import { connect } from 'react-redux'
+// import { connect } from 'react-redux'
+import { drizzleConnect } from 'drizzle-react'
 import MessageForm from './MessageForm'
 import { MESSAGE_REQUESTED } from '../../messagesSagas'
 
@@ -7,6 +8,8 @@ const mapStateToProps = (state, ownProps) => {
     user: state.user.data,
     accounts: state.accounts,
     messages: state.messages.data,
+    messages_total: state.messages.total,
+    balance: state.accountBalances[state.accounts[0]],
   }
 }
 
@@ -18,9 +21,6 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-const MessageFormContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(MessageForm)
+const MessageFormContainer = drizzleConnect(MessageForm, mapStateToProps, mapDispatchToProps)
 
 export default MessageFormContainer

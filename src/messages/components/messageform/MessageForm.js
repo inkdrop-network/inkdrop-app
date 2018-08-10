@@ -1,10 +1,13 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Button, Form, FormGroup, Input, Card, CardBody } from 'reactstrap'
+import { roundFloat3 } from '../../../utils/rounder'
 
 class MessageForm extends PureComponent {
-  constructor(props) {
+  constructor(props, context) {
     super(props)
+
+    this.web3 = context.drizzle.web3
 
     this.state = {
       content: '',
@@ -37,11 +40,15 @@ class MessageForm extends PureComponent {
   }
 
   onDropsChange(event) {
-    this.setState({ drops: event.target.value })
+    this.setState({ drops: parseFloat(event.target.value) })
   }
 
   async handleSubmit(event) {
     event.preventDefault()
+    if (this.state.drops > this.props.balance) {
+      return alert("Yu don't have enough funds for this post.")
+    }
+
     if (this.state.content === '' && this.state.content.length < 2) {
       return alert('Please share something valuable.')
     }
@@ -58,7 +65,7 @@ class MessageForm extends PureComponent {
       drops: this.state.drops,
       userUrl: this.props.user.imgUrl,
       userAdr: this.props.accounts[0],
-      id: this.props.messages.length,
+      id: this.props.messages_total,
       commentIds: [],
       comments: [],
       fromBlockchain: false,
@@ -104,18 +111,23 @@ class MessageForm extends PureComponent {
                     onBlur={this.onBlur}
                     onFocus={this.onFocus}
                   />
+                  <label>Add ETHs to boost your post</label>
                   <input
                     type="range"
                     name="range"
                     className="custom-range"
-                    id="range"
-                    min="1000000000000000"
-                    max="10000000000000000"
+                    id="drop-range"
+                    min="0"
+                    max={this.props.balance}
+                    steps="1000000000000000"
                     value={this.state.drops}
                     onChange={this.onDropsChange}
                     onBlur={this.onBlur}
                     onFocus={this.onFocus}
                   />
+                  <label htmlFor="drop-range" className="float-right">
+                    {roundFloat3(this.web3.utils.fromWei(`${this.state.drops}`, 'ether'))} ETH
+                  </label>
                 </FormGroup>
                 <Button color="green">Send</Button>
               </Form>
@@ -162,6 +174,10 @@ class MessageForm extends PureComponent {
       </div>
     )
   }
+}
+
+MessageForm.contextTypes = {
+  drizzle: PropTypes.object,
 }
 
 MessageForm.propTypes = {
