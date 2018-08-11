@@ -1,43 +1,23 @@
-# TODOs Smart Contract
+# InkDrop
 
-- Upgradeable smart contracts
+This is the repository of the InkDrop platform. InkDrop is a microblogging platform everyday people can use to help spread their message. In return, people can earn crypto currency tokens by giving something back to the network in the form of appreciated content or care (by fighting platform abuse).
 
-  - https://blog.zeppelinos.org/upgradeability-using-unstructured-storage/
-  - https://blog.zeppelinos.org/proxy-patterns/
-  - https://docs.zeppelinos.org/docs/building.html
-  - https://blog.indorse.io/ethereum-upgradeable-smart-contract-strategies-456350d0557c
+Our goal is to develop a fully decentralized platform based on ethereum and IPFS with no (or as little as possible) centralized entities involved. The project is based arround a set of smart contracts (you find them in the `contracts` folder) and a React frontend (check the `src` folder) with an optimistic UI apporach (we do not want to bother the user about the transaction speed or throughput issues).
 
-- Halbwertszeit
+## Smart Contracts
 
-  - https://medium.com/@dappbridge/settimeout-for-ethereum-77005840bee8
-  - https://ethereum.stackexchange.com/questions/42/how-can-a-contract-run-itself-at-a-later-time/252#252
-  - https://docs.oraclize.it/#ethereum
-  - http://www.ethereum-alarm-clock.com/
+All of the platform's logic is embedded in the smart contract `InkDrop.sol`. We use `ZeppelinOS` for the implementation of a fully upgradeably smart contract using a proxy system: for each deployed contract implementation (the logic contract), another, user-facing contract is deployed as well (the proxy). The proxy will be the one in charge of the contract's storage, but will forward all function calls to the backing logic contract.
 
-- Payout of drops at every transaction. Share distribution: 50% author (DONE), 25% InkDrop, 25% incentive pool
+Please see the `DEPLOY_GUIDE.md` for further instructions how to deploy our upgradeable smart contract.
 
-# TODOs Front-end
+Feel free to deploy the smart contract to your local testnet. **But: A deployment or update of the contract on the rinkeby testnet is only allowed by the admin (Michael Kaserer)!**
 
-- Trigger messagelist re-render if message gets drops (ranking should be changed according to the messages' drops)
-- Trigger comments # update in case of new comment
-- Improved error handling (see https://github.com/NFhbar/Token-Deployer/blob/master/src/layouts/home/Home.js)
-- Image resizing on ipfs upload
-- React on metamask changes (https://medium.com/@sebinatx/building-an-ethereum-firebase-user-profile-dapp-part-2-226bcc11ae62)
+## React Frontend
 
-# TODOs system architecture
+## Setup Guide
 
-### Prospectives
-
-- Node.js server
-- Batch transactions with drizzle-react (https://medium.com/@robertgreenfieldiv/any-simple-way-to-infuse-this-with-the-drizzle-framework-ef5419fc4b3a)
-- Simulation with 1k+ users and messages/likes/drops/followers
-- Return structs from smart contract functions
-- Stateless smart contracts (https://medium.com/@childsmaidment/stateless-smart-contracts-21830b0cd1b6) or zero data storage (https://medium.com/@tjayrush/zero-storage-data-publishing-on-ethereum-1e0610d846d)
-
-# Instructions
-
-1.  Clone this repository
-2.  Run `npm install`
-3.  Get the [Ganache app](http://truffleframework.com/ganache/) and start it
+1.  Get the [Ganache app](http://truffleframework.com/ganache/) and start it
+2.  Clone this repository
+3.  Run `npm install`
 4.  Compile and deploy the smart contracts to the testnet (see `DEPLOY_GUIDE.md`)
-5.  Run `npm run start` 
+5.  Run `npm run start`

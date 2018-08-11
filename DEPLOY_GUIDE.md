@@ -1,6 +1,6 @@
 # Deploying smart contracts
 
-This guide intends to describe the process for deploying our smart contrancts to the ethereum networks (mainnet, rinkeby, local testnet) using zeppelinOS.
+This guide intends to describe the process for deploying our smart contrancts to the ethereum networks (mainnet, rinkeby, local testnet) using ZeppelinOS.
 
 ## Local Testnet (Ganache)
 
