@@ -94,11 +94,9 @@ function* messageRequested({ msg }) {
 
   const contractName = 'InkDrop'
 
-  console.log(msg.drops)
   const sendArgs = {
     value: `${msg.drops}`,
   }
-  console.log(sendArgs.value)
 
   const txObject = yield call(drizzle.contracts.InkDrop.methods.createMessage, msg.content)
   const txChannel = yield call(createTxChannel, { txObject, contractName, sendArgs })
