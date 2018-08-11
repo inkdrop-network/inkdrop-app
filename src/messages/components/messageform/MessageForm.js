@@ -111,7 +111,7 @@ class MessageForm extends PureComponent {
                     onBlur={this.onBlur}
                     onFocus={this.onFocus}
                   />
-                  <label>Add ETHs to boost your post</label>
+                  <label>Add ETH to boost your post</label>
                   <input
                     type="range"
                     name="range"

@@ -63,12 +63,17 @@ contract('InkDrop (drop functions)', async accounts => {
     await inkdropInstance.dropMessage(1, { from: accounts[9], value: 1000000000000001 })
 
     user = await inkdropInstance.getUser(accounts[7])
-    // check payout to author
-    assert.equal(
-      web3.eth.getBalance(accounts[7]).toNumber(),
-      authorBalance + Math.floor(1000000000000001 / 2),
-      'The author should get 50% of the dropped tokens.'
+    // check payout to author. Be aware of tx cost
+    assert.isTrue(
+      web3.eth.getBalance(accounts[7]).toNumber() > authorBalance,
+      'The author should get 50% of the dropped tokens (be aware of tx cost).'
     )
+    assert.isTrue(
+      web3.eth.getBalance(accounts[7]).toNumber() <
+        authorBalance + Math.floor(1000000000000001 / 2),
+      'The author should get 50% of the dropped tokens (be aware of tx cost).'
+    )
+
     // check the authors earned drops
     assert.equal(
       user[2].toNumber(),
@@ -88,6 +93,40 @@ contract('InkDrop (drop functions)', async accounts => {
 
     try {
       await inkdropInstance.dropMessage(0, { from: accounts[7], value: 100000000000000 })
+      assert.fail('Should throw error.')
+    } catch (error) {
+      const revertFound = error.message.search('revert') >= 0
+      assert.equal(revertFound, true, `Expected "revert", got ${error} instead`)
+    }
+  })
+
+  it('...drop message with 0 amount', async () => {
+    let inkdropInstance = await InkDrop.deployed()
+
+    try {
+      await inkdropInstance.dropMessage(0, { from: accounts[7], value: 0 })
+      assert.fail('Should throw error.')
+    } catch (error) {
+      const revertFound = error.message.search('revert') >= 0
+      assert.equal(revertFound, true, `Expected "revert", got ${error} instead`)
+    }
+  })
+
+  it('...drop message out of bounce', async () => {
+    let inkdropInstance = await InkDrop.deployed()
+    try {
+      await inkdropInstance.dropMessage(10, { from: accounts[8], value: 100000000000000 })
+      assert.fail('Should throw error.')
+    } catch (error) {
+      const revertFound = error.message.search('revert') >= 0
+      assert.equal(revertFound, true, `Expected "revert", got ${error} instead`)
+    }
+  })
+
+  it('...drop message from a non user', async () => {
+    let inkdropInstance = await InkDrop.deployed()
+    try {
+      await inkdropInstance.dropMessage(1, { from: accounts[3], value: 100000000000000 })
       assert.fail('Should throw error.')
     } catch (error) {
       const revertFound = error.message.search('revert') >= 0
@@ -153,5 +192,22 @@ contract('InkDrop (drop functions)', async accounts => {
         1000000000000000 / 2,
       'The contract should have the 50% of the remaining drops.'
     )
+  })
+
+  it('...drop message from a user with insufficient funds', async () => {
+    let inkdropInstance = await InkDrop.deployed()
+
+    try {
+      // try to drop message with 200eth
+      await inkdropInstance.dropMessage(1, { from: accounts[8], value: 200000000000000000000 })
+      assert.fail('Should throw error.')
+    } catch (error) {
+      const errorFound = error.message.search("sender doesn't have enough funds to send tx") >= 0
+      assert.equal(
+        errorFound,
+        true,
+        `Expected "sender doesn't have enough funds to send tx", got ${error} instead`
+      )
+    }
   })
 })

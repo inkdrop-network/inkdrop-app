@@ -196,8 +196,6 @@ function* commentRequested({ comment }) {
 function* messageDropRequested({ msg, drops }) {
   const drizzle = yield getContext('drizzle')
   console.log('DROP SAGA Here')
-  console.log(msg.drops)
-  console.log(drops)
   let newMsg = Object.assign({}, msg, {
     drops: roundFloat3(msg.drops + drops),
   })

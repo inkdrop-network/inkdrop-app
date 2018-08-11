@@ -19,7 +19,7 @@ import LogoutButtonContainer from '../logoutbutton/LogoutButtonContainer'
 class ProfileHeader extends PureComponent {
   // constructor(props) {
   //   super(props)
-  //   // TODO: Check why ProfileHeady in initiated after every account snyc
+  //   // TODO: Check why ProfileHeader in initiated after every account snyc
   //   console.log('Profile header created')
   // }
 
