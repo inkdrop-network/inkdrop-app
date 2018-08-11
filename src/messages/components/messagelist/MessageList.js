@@ -39,11 +39,11 @@ class MessageList extends PureComponent {
         loader={loader}>
         <div id="messages">
           <FlipMove
-            disableAllAnimations={this.props.messages.length < 10} //this.props.messages.length <= 0}
+            disableAllAnimations={false} //this.props.messages.length <= 0}
             appearAnimation="none"
             enterAnimation="none"
             leaveAnimation="none"
-            duration={500}
+            duration={750}
             staggerDurationBy={30}>
             {items.map(msg => <MessageItemContainer message={msg} key={msg.id} />)}
           </FlipMove>

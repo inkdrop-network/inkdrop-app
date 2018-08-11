@@ -14,7 +14,7 @@ import LogoutButtonContainer from '../logoutbutton/LogoutButtonContainer'
 // Images
 // import iconAlarm from '../../../../public/icons/icon-alarm.svg'
 // import iconMessage from '../../../../public/icons/icon-message.svg'
-import inkdropWhite from '../../../../public/icons/icon-inkdrop-white.svg'
+// import inkdropWhite from '../../../../public/icons/icon-inkdrop-white.svg'
 
 class ProfileHeader extends PureComponent {
   // constructor(props) {

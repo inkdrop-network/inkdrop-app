@@ -46,7 +46,7 @@ class MessageForm extends PureComponent {
   async handleSubmit(event) {
     event.preventDefault()
     if (this.state.drops > this.props.balance) {
-      return alert("Yu don't have enough funds for this post.")
+      return alert("You don't have enough funds for this post.")
     }
 
     if (this.state.content === '' && this.state.content.length < 2) {

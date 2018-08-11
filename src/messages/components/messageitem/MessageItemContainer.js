@@ -5,6 +5,7 @@ import { MESSAGE_DROP_REQUESTED, MESSAGE_LIKE_REQUESTED } from '../../messagesSa
 const mapStateToProps = (state, ownProps) => {
   return {
     user: state.user.data,
+    balance: state.accountBalances[state.accounts[0]],
   }
 }
 

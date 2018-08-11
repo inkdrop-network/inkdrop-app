@@ -14,8 +14,8 @@ import Moment from 'react-moment'
 import CommentList from '../commentlist/CommentList'
 
 // icons
-import inkdropDark from '../../../../public/icons/icon-inkdrop-dark.svg'
-import inkdropGreen from '../../../../public/icons/inkdrop_logo.svg'
+// import inkdropDark from '../../../../public/icons/icon-inkdrop-dark.svg'
+// import inkdropGreen from '../../../../public/icons/inkdrop_logo.svg'
 import iconLike from '../../../../public/icons/icon-like.svg'
 import iconComment from '../../../../public/icons/icon-comments.svg'
 import loadingSpinner from '../../../../public/icons/loading-spinner.svg'
@@ -42,12 +42,12 @@ class MessageItem extends PureComponent {
     if (!this.props.message.cached) {
       // TODO: add slider for amount of drops to be submitted
       let newDrops = this.state.drops
-      // if (this.props.user.drops - newDrops < 0) {
-      //   alert('You have not enough funds for this transaction.')
-      // } else {
-      this.props.onMessageDrop(this.props.message, newDrops)
-      this.setState({ drops: 0.001 })
-      // }
+      if (this.state.drops > this.props.balance) {
+        return alert("You don't have enough funds for this post.")
+      } else {
+        this.props.onMessageDrop(this.props.message, newDrops)
+        this.setState({ drops: 0.001 })
+      }
     }
   }
 
@@ -146,9 +146,9 @@ class MessageItem extends PureComponent {
                 </span>
               </div>
 
-              <div className="drop-message-button float-left ml-3">
-                <img src={inkdropDark} width="20" height="20" className="drops" alt="" />
-                <span className="drop-number icon-number ml-1">{msg.drops} ETH</span>
+              <div className="drop-message-button float-left ml-2">
+                {/* <img src={inkdropDark} width="20" height="20" className="drops" alt="" /> */}
+                <span className="drop-number icon-number">{msg.drops} ETH</span>
               </div>
             </div>
 
@@ -164,8 +164,8 @@ class MessageItem extends PureComponent {
                 />
                 <InputGroupAddon addonType="append" onClick={this.dropMessage}>
                   <InputGroupText>
-                    ETH
-                    <img src={inkdropGreen} width="20" height="20" className="drops ml-3" alt="" />
+                    Add ETH
+                    {/* <img src={inkdropGreen} width="20" height="20" className="drops ml-3" alt="" />*/}
                   </InputGroupText>
                 </InputGroupAddon>
               </InputGroup>
