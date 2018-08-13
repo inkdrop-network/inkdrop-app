@@ -8,11 +8,13 @@ Our goal is to develop a fully decentralized platform based on ethereum and IPFS
 
 All of the platform's logic is embedded in the smart contract `InkDrop.sol`. We use `ZeppelinOS` for the implementation of a fully upgradeably smart contract using a proxy system: for each deployed contract implementation (the logic contract), another, user-facing contract is deployed as well (the proxy). The proxy will be the one in charge of the contract's storage, but will forward all function calls to the backing logic contract.
 
-Please see the `DEPLOY_GUIDE.md` for further instructions how to deploy our upgradeable smart contract.
+Please see the `DEPLOY_GUIDE.md` for further instructions how to deploy our upgradeable smart contract. Feel free to deploy the smart contract to your local testnet. **But: A deployment or update of the contract on the rinkeby testnet is only allowed by the admin (Michael Kaserer)!**
 
-Feel free to deploy the smart contract to your local testnet. **But: A deployment or update of the contract on the rinkeby testnet is only allowed by the admin (Michael Kaserer)!**
+All unit tests for the smart contract can be found in the `test` folder. We write our test cases in Javascript based on [Mocha](https://mochajs.org/) testing framework and [Chai](http://chaijs.com/) for assertions. Tests can be run with `truffle test` or `truffle test ./test/InkDrop.user.test.js` in order to limit the tests being executed to a specific file. See the [truffle doc](https://truffleframework.com/docs/truffle/testing/writing-tests-in-javascript) for further explanations.
 
 ## React Frontend
+
+InkDrop's frontend is implemented in React with heavy usage of [Redux](https://redux.js.org/), [Redux-Saga](https://redux-saga.js.org/), [Drizzle](https://truffleframework.com/docs/drizzle/overview) and [ipfs-api](https://github.com/ipfs/js-ipfs-api). The project is set up via [create-react-app](https://github.com/facebook/create-react-app) and uses a feature centric file structure (see explanation [here](https://reactjs.org/docs/faq-structure.html#grouping-by-features-or-routes)).
 
 ## Setup Guide
 
