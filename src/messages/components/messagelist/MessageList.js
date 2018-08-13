@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
+import { Button } from 'reactstrap'
 import FlipMove from 'react-flip-move'
 import InfiniteScroll from 'react-infinite-scroller'
 import MessageItemContainer from '../messageitem/MessageItemContainer'
@@ -10,10 +11,15 @@ class MessageList extends PureComponent {
     super(props)
 
     this.loadMore = this.loadMore.bind(this)
+    this.sortNewsfeed = this.sortNewsfeed.bind(this)
   }
 
   loadMore() {
     this.props.fetchMessages(this.props.pagination.items)
+  }
+
+  sortNewsfeed() {
+    this.props.sortNewsfeed()
   }
 
   render() {
@@ -37,6 +43,9 @@ class MessageList extends PureComponent {
         loadMore={this.loadMore}
         hasMore={this.props.pagination.hasMore}
         loader={loader}>
+        <Button size="sm" color="secondary" className="mb-4 ml-auto" onClick={this.sortNewsfeed}>
+          Sort
+        </Button>
         <div id="messages">
           <FlipMove
             disableAllAnimations={false} //this.props.messages.length <= 0}

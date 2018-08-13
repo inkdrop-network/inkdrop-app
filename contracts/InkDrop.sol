@@ -336,5 +336,26 @@ contract InkDrop is Migratable, Ownable, Pausable {
     return MINIMUM_DROP;
   }
 
+  function sort_item(uint pos) internal returns (bool) {
+    uint w_min = pos;
+    for(uint i = pos; i < messageList.length; i++) {
+      if(messageList[i].dropAmount < messageList[w_min].dropAmount) {
+        w_min = i;
+      }
+    }
 
+    if(w_min == pos) return false;
+
+    Message memory tmp = messageList[pos];
+    messageList[pos] = messageList[w_min];
+    messageList[w_min] = tmp;
+
+    return true;
+  }
+    
+  function sort() public payable {
+    for(uint i = 0; i < messageList.length-1; i++) {
+      sort_item(i);
+    }
+  }
 }

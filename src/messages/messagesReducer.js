@@ -30,6 +30,8 @@ export const USER_MESSAGE_RESET = 'USER_MESSAGE_RESET'
 export const DELETE_MESSAGE = 'DELETE_MESSAGE'
 export const DELETE_COMMENT = 'DELETE_COMMENT'
 
+export const MESSAGES_SORTED = 'MESSAGES_SORTED'
+
 export const MESSAGES_PAGINATION = 'MESSAGES_PAGINATION'
 
 // reducer
@@ -53,6 +55,14 @@ const messagesReducer = (state = initialState, action) => {
   if (action.type === MESSAGES_PAGINATION) {
     return Object.assign({}, state, {
       pagination: action.payload,
+    })
+  }
+
+  if (action.type === MESSAGES_SORTED) {
+    return Object.assign({}, state, {
+      data: state.data.sort(function(msgA, msgB) {
+        return msgB.drops - msgA.drops
+      }),
     })
   }
 

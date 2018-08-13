@@ -14,6 +14,7 @@ import {
   UPDATE_USER_MESSAGE_COMMENTS,
   USER_MESSAGE_RESET,
   MESSAGES_PAGINATION,
+  MESSAGES_SORTED,
 } from './messagesReducer'
 import { USER_DROPPED } from '../user/userReducer'
 import { roundFloat3 } from '../utils/rounder'
@@ -25,6 +26,8 @@ export const COMMENT_REQUESTED = 'COMMENT_REQUESTED'
 export const MESSAGE_DROP_REQUESTED = 'MESSAGE_DROP_REQUESTED'
 export const USER_MESSAGES_FETCH_REQUESTED = 'USER_MESSAGES_FETCH_REQUESTED'
 export const USER_MESSAGES_RESET_REQUESTED = 'USER_MESSAGES_RESET_REQUESTED'
+
+export const MESSAGES_SORT_REQUESTED = 'MESSAGES_SORT_REQUESTED'
 
 // drizzle's transactions events
 const TX_CONFIRMAITON = 'TX_CONFIRMAITON'
@@ -477,9 +480,17 @@ function* getUserComment(msgId, commentId) {
 
 function* userMessagesResetRequested() {
   console.log('RESET USER MESSAGES')
-  yield put({
-    type: USER_MESSAGE_RESET,
-  })
+  yield put({ type: USER_MESSAGE_RESET })
+}
+
+function* messagesSortRequested() {
+  const drizzle = yield getContext('drizzle')
+  try {
+    yield call(drizzle.contracts.InkDrop.methods.sort().send)
+    yield put({ type: MESSAGES_SORTED })
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 // register sagas
@@ -490,6 +501,7 @@ function* messagesSaga() {
   yield takeEvery(MESSAGE_DROP_REQUESTED, messageDropRequested)
   yield takeEvery(USER_MESSAGES_FETCH_REQUESTED, userMessagesFetchRequested)
   yield takeEvery(USER_MESSAGES_RESET_REQUESTED, userMessagesResetRequested)
+  yield takeEvery(MESSAGES_SORT_REQUESTED, messagesSortRequested)
 }
 
 export default messagesSaga
