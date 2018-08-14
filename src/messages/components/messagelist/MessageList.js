@@ -29,10 +29,10 @@ class MessageList extends PureComponent {
       </div>
     )
 
-    let items = []
-    items = this.props.messages.sort(function(msgA, msgB) {
-      return msgB.drops - msgA.drops
-    })
+    let items = this.props.messages //[]
+    // items = this.props.messages.sort(function(msgA, msgB) {
+    //   return msgB.drops - msgA.drops
+    // })
 
     // TODO: Show loader in the beginning and enable FlipMove only once the first posts are fetched and the array is sorted
     return (
@@ -48,7 +48,7 @@ class MessageList extends PureComponent {
         </Button>
         <div id="messages">
           <FlipMove
-            disableAllAnimations={false} //this.props.messages.length <= 0}
+            disableAllAnimations={true} //this.props.messages.length <= 0}
             appearAnimation="none"
             enterAnimation="none"
             leaveAnimation="none"

@@ -105,6 +105,7 @@ class MessageForm extends PureComponent {
                     name="text"
                     rows="2"
                     id="content"
+                    className="mb-3"
                     placeholder="Share something valuable"
                     value={this.state.content}
                     onChange={this.onContentChange}

@@ -348,6 +348,11 @@ contract InkDrop is Migratable, Ownable, Pausable {
 
     Message memory tmp = messageList[pos];
     messageList[pos] = messageList[w_min];
+    // TODO: continue here. Reset the user's messagePointers and messages array accordingly
+    // userStructs[messageList[pos].writtenBy].messagePointers
+
+    // userStructs[msg.sender].messagePointers[userStructs[msg.sender].messages.push(msgId)-1] = msgId;
+
     messageList[w_min] = tmp;
 
     return true;
