@@ -10,6 +10,7 @@ import {
   DropdownItem,
 } from 'reactstrap'
 import LogoutButtonContainer from '../logoutbutton/LogoutButtonContainer'
+import { roundFloat3 } from '../../../utils/rounder'
 
 // Images
 // import iconAlarm from '../../../../public/icons/icon-alarm.svg'
@@ -65,7 +66,7 @@ class ProfileHeader extends PureComponent {
             alt="drops"
           /> */}
           <span id="profile-drop-number" className="nav-icon-nr font-white">
-            {this.props.user.drops} ETH
+            {roundFloat3(this.props.user.drops)} ETH
           </span>
         </NavItem>
       </Nav>

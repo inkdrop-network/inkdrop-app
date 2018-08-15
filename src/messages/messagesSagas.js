@@ -121,7 +121,6 @@ function* messageRequested({ msg }) {
         console.log('3 - SUCCESS')
         newMsg.fromBlockchain = true
         newMsg.sendingMessage = ''
-        console.log(msg)
         yield put({ type: UPDATE_MESSAGE, payload: newMsg })
       } else if (event.type === TX_ERROR) {
         console.log('ERROR')
@@ -208,7 +207,7 @@ function* messageDropRequested({ msg, drops }) {
   let userShare = 0
   if (userAdr === msg.userAdr) {
     userShare = 0.5 * drops
-    yield put({ type: USER_DROPPED, payload: roundFloat3(userShare) })
+    yield put({ type: USER_DROPPED, payload: userShare })
   }
 
   const contractName = 'InkDrop'
