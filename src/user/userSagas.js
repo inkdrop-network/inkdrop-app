@@ -8,6 +8,7 @@ import {
   USER_ERR_TX_RESET,
   USER_TX_MSG,
   USER_ERROR,
+  USER_PAYOUT,
 } from './userReducer'
 import ipfs from '../ipfs'
 
@@ -19,6 +20,7 @@ export const SIGNUP_REQUESTED = 'SIGNUP_REQUESTED'
 export const USERUPDATE_REQUESTED = 'USERUPDATE_REQUESTED'
 export const USERFOLLOW_REQUESTED = 'USERFOLLOW_REQUESTED'
 export const USERUNFOLLOW_REQUESTED = 'USERFOLLOW_REQUESTED'
+export const USER_PAYOUT_REQUESTED = 'USER_PAYOUT_REQUESTED'
 
 // drizzle's transactions events
 export const TX_CONFIRMAITON = 'TX_CONFIRMAITON'
@@ -321,6 +323,16 @@ function* userUpdateRequested({ user, buffer }) {
   }
 }
 
+function* userPayoutRequested() {
+  const drizzle = yield getContext('drizzle')
+  try {
+    yield call(drizzle.contracts.InkDrop.methods.userPayout().send)
+    yield put({ type: USER_PAYOUT, payload: 0 })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 // register sagas
 function* userSagas() {
   yield takeEvery(LOGIN_REQUESTED, loginRequested)
@@ -328,6 +340,7 @@ function* userSagas() {
   yield takeEvery(SIGNUP_REQUESTED, signupRequested)
   // yield takeEvery(IPFS_UPLOAD_REQUESTED, ipfsUploadRequested)
   yield takeEvery(USERUPDATE_REQUESTED, userUpdateRequested)
+  yield takeEvery(USER_PAYOUT_REQUESTED, userPayoutRequested)
 }
 
 export default userSagas

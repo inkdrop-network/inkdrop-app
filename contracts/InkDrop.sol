@@ -289,11 +289,29 @@ contract InkDrop is Migratable, Ownable, Pausable {
     // payout share to author of the dropped message (50%)
     // LINK: https://ethereum.stackexchange.com/questions/3010/how-does-ethereum-cope-with-division-of-prime-numbers
     userStructs[messageList[_id].writtenBy].dropAmount += (msg.value/2);
-    messageList[_id].writtenBy.transfer(msg.value/2);
+    // messageList[_id].writtenBy.transfer(msg.value/2);
 
     // TODO: payout of drops to InkDrop and incentive pool
     // TODO: extend the timetolive
     return messageList[_id].dropAmount;
+  }
+
+  function userPayout() whenNotPaused public payable returns(uint256 payoutamount) {
+    require(isUser(msg.sender));
+    require(userStructs[msg.sender].dropAmount > 0);
+
+    uint256 payout = userStructs[msg.sender].dropAmount;
+    userStructs[msg.sender].dropAmount = 0;
+
+    if (!msg.sender.send(payout)) {
+      // reverting state because send failed
+      userStructs[msg.sender].dropAmount = payout; 
+    }
+
+    return payout;
+    // msg.sender.transfer(userStructs[msg.sender].dropAmount);
+    // userStructs[msg.sender].dropAmount = 0;
+    // return userStructs[msg.sender].dropAmount;
   }
 
     // Write a comment

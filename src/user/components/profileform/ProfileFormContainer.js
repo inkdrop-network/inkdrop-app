@@ -1,5 +1,6 @@
 import { connect } from 'react-redux'
 import ProfileForm from './ProfileForm'
+import { USERUPDATE_REQUESTED } from '../../userSagas'
 
 const mapStateToProps = state => {
   return {
@@ -15,7 +16,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     onUpdateUser: (user, buffer) => {
-      dispatch({ type: 'USERUPDATE_REQUESTED', user, buffer })
+      dispatch({ type: USERUPDATE_REQUESTED, user, buffer })
     },
   }
 }

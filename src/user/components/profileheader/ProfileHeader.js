@@ -52,6 +52,14 @@ class ProfileHeader extends PureComponent {
             </DropdownItem>
             <DropdownItem divider />
             <DropdownItem>
+              <li className="nav-item">
+                <a href="#" className="" onClick={this.props.onUserPayout}>
+                  Payout
+                </a>
+              </li>
+            </DropdownItem>
+            <DropdownItem divider />
+            <DropdownItem>
               <LogoutButtonContainer />
             </DropdownItem>
           </DropdownMenu>

@@ -1,22 +1,23 @@
 // import { drizzleConnect } from 'drizzle-react'
 import { connect } from 'react-redux'
 import LogoutButton from './LogoutButton'
+import { LOGOUT_REQUESTED } from '../../userSagas'
 
 const mapStateToProps = state => {
-  return {}
+	return {}
 }
 
 const mapDispatchToProps = dispatch => {
-  return {
-    onLogoutUser: () => {
-      dispatch({ type: 'LOGOUT_REQUESTED' })
-    },
-  }
+	return {
+		onLogoutUser: () => {
+			dispatch({ type: LOGOUT_REQUESTED })
+		},
+	}
 }
 
 const LogoutButtonContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
+	mapStateToProps,
+	mapDispatchToProps
 )(LogoutButton)
 
 export default LogoutButtonContainer

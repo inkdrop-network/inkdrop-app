@@ -14,6 +14,7 @@ export const USER_DROPPED = 'USER_DROPPED'
 export const USER_ERROR = 'USER_ERROR'
 export const USER_TX_MSG = 'USER_TX_MSG'
 export const USER_ERR_TX_RESET = 'USER_ERR_TX_RESET'
+export const USER_PAYOUT = 'USER_PAYOUT'
 
 // reducer
 const userReducer = (state = initialState, action) => {
@@ -57,6 +58,15 @@ const userReducer = (state = initialState, action) => {
       data: {
         ...state.data,
         drops: state.data.drops + action.payload,
+      },
+    })
+  }
+
+  if (action.type === USER_PAYOUT) {
+    return Object.assign({}, state, {
+      data: {
+        ...state.data,
+        drops: action.payload,
       },
     })
   }
