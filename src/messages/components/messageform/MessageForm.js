@@ -185,6 +185,7 @@ MessageForm.propTypes = {
   accounts: PropTypes.object,
   user: PropTypes.object,
   messages: PropTypes.array,
+  onCreateMessage: PropTypes.func,
 }
 
 export default MessageForm

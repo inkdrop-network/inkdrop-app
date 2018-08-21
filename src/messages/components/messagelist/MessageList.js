@@ -65,6 +65,8 @@ class MessageList extends PureComponent {
 MessageList.propTypes = {
   messages: PropTypes.array,
   pagination: PropTypes.object,
+  fetchMessages: PropTypes.func,
+  sortNewsfeed: PropTypes.func,
 }
 
 export default MessageList

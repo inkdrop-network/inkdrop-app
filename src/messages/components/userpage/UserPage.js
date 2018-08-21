@@ -93,6 +93,10 @@ UserPage.propTypes = {
   address: PropTypes.string,
   user: PropTypes.object,
   messages: PropTypes.array,
+  fetchUserMessages: PropTypes.func,
+  resetUserMessages: PropTypes.func,
+  followUser: PropTypes.func,
+  unfollowUser: PropTypes.func,
 }
 
 export default UserPage

@@ -330,7 +330,7 @@ function* userPayoutRequested() {
   try {
     // estimate gas because of 'out of gas' possibility with the standard estimation
     let gasAmount = yield call(drizzle.contracts.InkDrop.methods.userPayout().estimateGas)
-    let tx = yield call(drizzle.contracts.InkDrop.methods.userPayout().send, { gas: gasAmount * 2 })
+    yield call(drizzle.contracts.InkDrop.methods.userPayout().send, { gas: gasAmount * 2 })
     yield put({ type: USER_PAYOUT, payload: 0 })
   } catch (error) {
     console.log(error)

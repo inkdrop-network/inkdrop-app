@@ -187,6 +187,8 @@ class MessageItem extends PureComponent {
 MessageItem.propTypes = {
   message: PropTypes.object,
   user: PropTypes.object,
+  onMessageDrop: PropTypes.func,
+  onMessageLike: PropTypes.func,
 }
 
 export default MessageItem

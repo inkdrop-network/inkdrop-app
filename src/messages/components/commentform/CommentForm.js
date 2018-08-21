@@ -65,6 +65,7 @@ CommentForm.propTypes = {
   message: PropTypes.object,
   user: PropTypes.object,
   accounts: PropTypes.object,
+  onCommentMessage: PropTypes.func,
 }
 
 export default CommentForm

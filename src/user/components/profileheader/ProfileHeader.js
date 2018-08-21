@@ -18,11 +18,22 @@ import { roundFloat3 } from '../../../utils/rounder'
 // import inkdropWhite from '../../../../public/icons/icon-inkdrop-white.svg'
 
 class ProfileHeader extends PureComponent {
-  // constructor(props) {
-  //   super(props)
-  //   // TODO: Check why ProfileHeader in initiated after every account snyc
-  //   console.log('Profile header created')
-  // }
+  constructor(props) {
+    super(props)
+    // TODO: Check why ProfileHeader in initiated after every account snyc
+    // console.log('Profile header created')
+    this.userPayout = this.userPayout.bind(this)
+  }
+
+  userPayout(event) {
+    event.preventDefault()
+
+    if (this.props.user.drops <= 0) {
+      return alert('You have no earned amount for a payout.')
+    }
+
+    this.props.onUserPayout()
+  }
 
   render() {
     return (
@@ -53,7 +64,7 @@ class ProfileHeader extends PureComponent {
             <DropdownItem divider />
             <DropdownItem>
               <li className="nav-item">
-                <a href="#" className="" onClick={this.props.onUserPayout}>
+                <a href="" className="" onClick={this.userPayout}>
                   Payout
                 </a>
               </li>
@@ -84,6 +95,7 @@ class ProfileHeader extends PureComponent {
 
 ProfileHeader.propTypes = {
   user: PropTypes.object,
+  userPayout: PropTypes.func,
 }
 
 export default ProfileHeader

@@ -204,6 +204,7 @@ ProfileForm.propTypes = {
   errorMessage: PropTypes.string,
   loading: PropTypes.bool,
   txMessage: PropTypes.string,
+  onUpdateUser: PropTypes.func,
 }
 
 export default ProfileForm
