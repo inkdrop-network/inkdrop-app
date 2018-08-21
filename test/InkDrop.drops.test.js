@@ -56,8 +56,8 @@ contract('InkDrop (drop functions)', async accounts => {
     )
 
     authorBalance = web3.eth.getBalance(accounts[9]).toNumber()
-    await inkdropInstance.userPayout({ from: accounts[9] })
-
+    let gasAmount = await inkdropInstance.userPayout.estimateGas({ from: accounts[9] })
+    let tx = await inkdropInstance.userPayout({ from: accounts[9], gas: gasAmount * 2 })
     // check the contracts balance
     assert.equal(
       web3.eth.getBalance(inkdropInstance.address).toNumber(),
@@ -66,10 +66,14 @@ contract('InkDrop (drop functions)', async accounts => {
     )
     user = await inkdropInstance.getUser(accounts[9])
     assert.equal(0, 0, 'The author should now have 0 earned tokens left.')
-    // TODO: fix user balance check
+    // user balance check
+    assert.isTrue(
+      web3.eth.getBalance(accounts[9]).toNumber() > authorBalance,
+      'Auther should get his share of the dropped value.'
+    )
     // assert.equal(
     //   web3.eth.getBalance(accounts[9]).toNumber(),
-    //   authorBalance + 1000000000000000 / 2,
+    //   authorBalance + 1000000000000000 / 2 - tx.receipt.cumulativeGasUsed,
     //   'The author should now having got the payout of his 50% share.'
     // )
   })
@@ -296,23 +300,42 @@ contract('InkDrop (drop functions)', async accounts => {
       'The author should have 1500000000000000 earned drops.'
     )
 
-    await inkdropInstance.dropMessage(3, { from: accounts[7], value: 2000000000000000 })
-    await inkdropInstance.dropMessage(3, { from: accounts[9], value: 3000000000000000 })
-
+    await inkdropInstance.dropMessage(4, { from: accounts[7], value: 100000000000000000 })
+    await inkdropInstance.dropMessage(4, { from: accounts[9], value: 200000000000000000 })
     // check the message's drops
-    msg = await inkdropInstance.getMessage(3, { from: accounts[8] })
+    msg = await inkdropInstance.getMessage(4, { from: accounts[8] })
+
     assert.equal(
       msg[5].toNumber(),
-      5000000000000000,
-      'The message should have now 5000000000000000 wei.'
+      300000000000000000,
+      'The message should have now 300000000000000000 wei.'
     )
 
     // check authors drops
     let user = await inkdropInstance.getUser(accounts[8])
     assert.equal(
       user[2].toNumber(),
-      userInit[2].toNumber() + 2000000000000000 / 2 + 3000000000000000 / 2,
+      userInit[2].toNumber() + 100000000000000000 / 2 + 200000000000000000 / 2,
       'The author should have earned 50% of the dropped tokens.'
+    )
+
+    authorBalance = web3.eth.getBalance(accounts[8]).toNumber()
+    // console.log(authorBalance)
+    let gasAmount = await inkdropInstance.userPayout.estimateGas({ from: accounts[8] })
+    let tx = await inkdropInstance.userPayout({ from: accounts[8], gas: gasAmount * 2 })
+    // console.log(web3.eth.getBalance(accounts[8]).toNumber())
+    // console.log(tx.receipt.cumulativeGasUsed)
+    // assert.equal(
+    //   web3.eth.getBalance(accounts[9]).toNumber(),
+    //   authorBalance +
+    //     100000000000000000 / 2 +
+    //     200000000000000000 / 2 -
+    //     tx.receipt.cumulativeGasUsed,
+    //   'The author should now having got the payout of his 50% share.'
+    // )
+    assert.isTrue(
+      web3.eth.getBalance(accounts[8]).toNumber() > authorBalance,
+      'The author should now having got the payout of his 50% share.'
     )
   })
 })

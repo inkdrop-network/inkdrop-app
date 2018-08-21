@@ -30,6 +30,7 @@ export const TX_ERROR = 'TX_ERROR'
 
 // selectors
 const getUser = state => state.user.data
+const getUserDrops = state => state.user.data.drops
 
 function createTxChannel({ txObject, contractName, sendArgs = {} }) {
   var persistTxHash
@@ -325,11 +326,16 @@ function* userUpdateRequested({ user, buffer }) {
 
 function* userPayoutRequested() {
   const drizzle = yield getContext('drizzle')
+  let currentDrops = yield select(getUserDrops)
   try {
-    yield call(drizzle.contracts.InkDrop.methods.userPayout().send)
+    // estimate gas because of 'out of gas' possibility with the standard estimation
+    let gasAmount = yield call(drizzle.contracts.InkDrop.methods.userPayout().estimateGas)
+    let tx = yield call(drizzle.contracts.InkDrop.methods.userPayout().send, { gas: gasAmount * 2 })
     yield put({ type: USER_PAYOUT, payload: 0 })
   } catch (error) {
     console.log(error)
+    // reset the earned tokens to the initial value
+    yield put({ type: USER_PAYOUT, payload: currentDrops })
   }
 }
 

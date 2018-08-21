@@ -309,9 +309,6 @@ contract InkDrop is Migratable, Ownable, Pausable {
     }
 
     return payout;
-    // msg.sender.transfer(userStructs[msg.sender].dropAmount);
-    // userStructs[msg.sender].dropAmount = 0;
-    // return userStructs[msg.sender].dropAmount;
   }
 
     // Write a comment
