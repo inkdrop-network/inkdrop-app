@@ -11,6 +11,7 @@ import {
   Card,
   CardBody,
   CardFooter,
+  Label,
 } from 'reactstrap'
 
 import loadingSpinner from '../../../../public/icons/loading-spinner.svg'
@@ -25,6 +26,8 @@ class SignUpForm extends PureComponent {
       address: this.props.accounts[0],
       userUrl: '',
       buffer: '',
+      tos_accepted: false,
+      privacy_accepted: false,
     }
 
     this.renderTxStatus = this.renderTxStatus.bind(this)
@@ -32,8 +35,7 @@ class SignUpForm extends PureComponent {
     this.captureFile = this.captureFile.bind(this)
     this.onNameChange = this.onNameChange.bind(this)
     this.onBioChange = this.onBioChange.bind(this)
-
-    // TODO: Check https://github.com/NFhbar/Token-Deployer/blob/master/src/layouts/home/Home.js
+    this.handleCheckboxChange = this.handleCheckboxChange.bind(this)
   }
 
   onNameChange(event) {
@@ -49,6 +51,10 @@ class SignUpForm extends PureComponent {
 
     if (this.state.name.length < 2) {
       return alert('Please fill in your name.')
+    }
+
+    if (!(this.state.tos_accepted && this.state.privacy_accepted)) {
+      return alert('Please read and agree to our Terms of Service and Privacy Policy.')
     }
 
     let user = {
@@ -80,6 +86,16 @@ class SignUpForm extends PureComponent {
     //set this buffer
     this.setState({ buffer: buffer })
     // this.props.onIpfsUpload(buffer)
+  }
+
+  handleCheckboxChange(event) {
+    const target = event.target
+    const value = target.type === 'checkbox' ? target.checked : target.value
+    const name = target.name
+
+    this.setState({
+      [name]: value,
+    })
   }
 
   renderTxStatus() {
@@ -161,7 +177,37 @@ class SignUpForm extends PureComponent {
                 placeholder="Tell us something about yourself"
               />
             </FormGroup>
-            <Button color="green">Sign Up</Button>
+            <FormGroup check>
+              <Label check>
+                <Input
+                  type="checkbox"
+                  name="tos_accepted"
+                  checked={this.tos_accepted}
+                  onChange={this.handleCheckboxChange}
+                />
+                I have read and agree to the{' '}
+                <a href="https://inkdrop.tech/tos.html" target="_blank" className="text-green">
+                  Terms of Service
+                </a>
+              </Label>
+            </FormGroup>
+            <FormGroup check>
+              <Label check>
+                <Input
+                  type="checkbox"
+                  name="privacy_accepted"
+                  checked={this.privacy_accepted}
+                  onChange={this.handleCheckboxChange}
+                />
+                I have read and agree to the{' '}
+                <a href="https://inkdrop.tech/privacy.html" target="_blank" className="text-green">
+                  Privacy Policy
+                </a>
+              </Label>
+            </FormGroup>
+            <Button color="green" className="mt-3">
+              Sign Up
+            </Button>
           </Form>
         </CardBody>
         {this.renderTxStatus()}
