@@ -5,7 +5,7 @@ import "openzeppelin-zos/contracts/ownership/Ownable.sol";
 import "openzeppelin-zos/contracts/lifecycle/Pausable.sol";
 import "openzeppelin-zos/contracts/math/SafeMath.sol";
 
-contract InkDrop is Migratable, Ownable, Pausable {
+contract InkDropVO is Migratable, Ownable, Pausable {
 
   using SafeMath for uint256;
 
@@ -28,7 +28,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
     // messages of a user
     uint[] messages;
     mapping(uint256 => uint256) messagePointers;
-    // total drops in wei earned with likes, content, etc.
+    // total drop points
     uint256 dropAmount;
     // drops of a user
     // uint[] drops;
@@ -50,7 +50,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
     address[] likes;
     // mapping of message id to position in likes array
     mapping(address => data) likePointers;
-    // total drops in wei
+    // total drop points
     uint256 dropAmount;
     // addresses of users' drops
     address[] drops;
@@ -59,20 +59,9 @@ contract InkDrop is Migratable, Ownable, Pausable {
     uint[] comments;
   }
   
+  // mapping(uint256 => Message) private messageStructs;
   Message[] private messageList;
   Message[] private commentList;
-
-  // minimum drop amount in weis
-  // 0.001 eth
-  uint256 private MINIMUM_DROP = 1000000000000000;
-
-  // Store the id and the related message in the struct
-  // Example: { 1 --> msg1, 2 --> msg2, 3 --> msg3 }
-  mapping(uint256 => Message) private messageStructs;
-  // Store the newsfeed order of message ids in the array
-  // Example: [3, 1, 2]
-  uint256[] private messageOrder;
-  // TODO: perform the same changes to comments as well!!!
 
   event LogNewUser   (address indexed userAddress, uint256 index, bytes32 username, string bio, string ipfsHash);
   event LogUpdateUser(address indexed userAddress, uint256 index, bytes32 username, string bio, string ipfsHash);
@@ -94,9 +83,9 @@ contract InkDrop is Migratable, Ownable, Pausable {
 
   function isMessage(uint256 _parent) public view returns(bool isIndeed) {
      // if the list is empty, the requested message is not present
-    if(messageOrder.length == 0) return false;
+    if(messageList.length == 0) return false;
     // true = exists
-    return (messageOrder.length > _parent);
+    return (messageList.length > _parent);
   }
 
   function getUserCount() public constant returns(uint256 count) {
@@ -127,7 +116,8 @@ contract InkDrop is Migratable, Ownable, Pausable {
     userStructs[msg.sender].username = _username;
     userStructs[msg.sender].bio = _bio;
     userStructs[msg.sender].ipfsHash = _ipfsHash;
-    // userStructs[msg.sender].dropAmount = 10*MULTIPLIER;
+    // each new user gets 10 drops initially
+    userStructs[msg.sender].dropAmount = 10*MULTIPLIER;
     userStructs[msg.sender].index = userList.push(msg.sender) - 1;
     emit LogNewUser(msg.sender, userStructs[msg.sender].index, _username, _bio, _ipfsHash);
     return userList.length - 1;
@@ -216,102 +206,87 @@ contract InkDrop is Migratable, Ownable, Pausable {
   }
 
   function getMessageCount() public constant returns(uint256 count) {
-    return messageOrder.length;
+    return messageList.length;
   }
 
   // The stack can only be 7 steps deep - only 7 return values allowed
   function getMessage(uint256 _id) public constant returns(string content, address writtenBy, uint256 timestamp, uint256 timetolive, uint256 likes, uint256 drops, uint[] comments) {
-    require(_id < messageOrder.length);
-    return (messageStructs[_id].content, messageStructs[_id].writtenBy, messageStructs[_id].timestamp, messageStructs[_id].timetolive, 
-      messageStructs[_id].likes.length, messageStructs[_id].dropAmount, messageStructs[_id].comments);
+    require(_id < messageList.length);
+    return (messageList[_id].content, messageList[_id].writtenBy, messageList[_id].timestamp, messageList[_id].timetolive, 
+      messageList[_id].likes.length, messageList[_id].dropAmount, messageList[_id].comments);
   }
   
 
-  function createMessage(string _content) whenNotPaused public payable returns(uint256 index) {
+  function createMessage(string _content, int _dropAmount) whenNotPaused public payable returns(uint256 index) {
     require(isUser(msg.sender));
     require(bytes(_content).length > 0);
-    require(msg.value >= 0);
-    // require(userStructs[msg.sender].dropAmount >= uint256(_dropAmount)*MULTIPLIER);
+    require(_dropAmount >= 0);
+    require(userStructs[msg.sender].dropAmount >= uint256(_dropAmount)*MULTIPLIER);
 
-    // push returns the new length of the array
-    uint256 msgId = messageOrder.push(msgId) - 1;
-    messageStructs[msgId].content = _content;
-    messageStructs[msgId].writtenBy = msg.sender;
-    messageStructs[msgId].timestamp = now;
-    messageStructs[msgId].timetolive = now;
-    messageStructs[msgId].id = msgId;
-    messageStructs[msgId].dropAmount = msg.value;
-    messageStructs[msgId].dropPointers[msg.sender].value = messageStructs[msgId].drops.push(msg.sender) - 1;
-    messageStructs[msgId].dropPointers[msg.sender].isSet = true;
-
+    uint256 msgId = messageList.length;
+    Message memory message;
+    // = Message(_content, msg.sender, now, 0, 0, msgId, -1, comments);
+    message.content = _content;
+    message.writtenBy = msg.sender;
+    message.timestamp = now;
+    // Compute TTL according to function
+    message.timetolive = now;
+    message.id = msgId;
+    message.dropAmount = uint256(_dropAmount)*MULTIPLIER;
     userStructs[msg.sender].messagePointers[userStructs[msg.sender].messages.push(msgId)-1] = msgId;
-
-    return msgId;
+    messageList.push(message);
+    messageList[messageList.length-1].dropPointers[msg.sender].value = messageList[messageList.length-1].drops.push(msg.sender) - 1;
+    messageList[messageList.length-1].dropPointers[msg.sender].isSet = true;
+    // reduce the sender's dropAmount
+    userStructs[msg.sender].dropAmount -= (uint256(_dropAmount)*MULTIPLIER);
+    // emit MessageSend(msg.sender, userInfo[msg.sender].name, msgId);
+    return messageList.length;
   }
 
   function likeMessage(uint256 _id) whenNotPaused public payable returns(uint256 newlikes) {
     require(isUser(msg.sender));
-    require(_id < messageOrder.length);
+    require(_id < messageList.length);
     // require that a user can not like a message twice
-    require(!messageStructs[_id].likePointers[msg.sender].isSet);
+    require(!messageList[_id].likePointers[msg.sender].isSet);
 
-    messageStructs[_id].likePointers[msg.sender].value = messageStructs[_id].likes.push(msg.sender) - 1;
-    messageStructs[_id].likePointers[msg.sender].isSet = true;
+    messageList[_id].likePointers[msg.sender].value = messageList[_id].likes.push(msg.sender) - 1;
+    messageList[_id].likePointers[msg.sender].isSet = true;
     // TODO: prolongue timetolive
-    return messageStructs[_id].likes.length;
+    return messageList[_id].likes.length;
   }
 
   function unlikeMessage(uint256 _id) whenNotPaused public payable returns(uint256 newlikes) {
     require(isUser(msg.sender));
-    require(_id < messageOrder.length);
-    require(messageStructs[_id].likes.length > 0);
+    require(_id < messageList.length);
+    require(messageList[_id].likes.length > 0);
     // require that a user can not unlike a message twice
-    require(messageStructs[_id].likePointers[msg.sender].isSet);
+    require(messageList[_id].likePointers[msg.sender].isSet);
 
-    uint256 rowToDelete = messageStructs[_id].likePointers[msg.sender].value;
-    address keyToMove = messageStructs[_id].likes[messageStructs[_id].likes.length-1];
-    messageStructs[_id].likes[rowToDelete] = keyToMove;
-    messageStructs[_id].likePointers[keyToMove].value = rowToDelete; 
-    messageStructs[_id].likePointers[msg.sender].isSet = false;
-    return --messageStructs[_id].likes.length;
+    uint256 rowToDelete = messageList[_id].likePointers[msg.sender].value;
+    address keyToMove = messageList[_id].likes[messageList[_id].likes.length-1];
+    messageList[_id].likes[rowToDelete] = keyToMove;
+    messageList[_id].likePointers[keyToMove].value = rowToDelete; 
+    messageList[_id].likePointers[msg.sender].isSet = false;
+    return --messageList[_id].likes.length;
   }
 
-  function dropMessage(uint256 _id) whenNotPaused public payable returns(uint256 newdrops) {
+  function dropMessage(uint256 _id, int _dropAmount) whenNotPaused public payable returns(uint256 newdrops) {
     require(isUser(msg.sender));
-    require(_id < messageOrder.length);
-    // require(_dropAmount > 0);
-    // require(userStructs[msg.sender].dropAmount >= uint256(_dropAmount)*MULTIPLIER);
+    require(_id < messageList.length);
+    require(_dropAmount > 0);
+    require(userStructs[msg.sender].dropAmount >= uint256(_dropAmount)*MULTIPLIER);
 
-    // TODO: continue here
-    require(msg.value >= MINIMUM_DROP);
-
-    messageStructs[_id].drops.push(msg.sender);
-    messageStructs[_id].dropPointers[msg.sender].value += msg.value;
-    messageStructs[_id].dropPointers[msg.sender].isSet = true;
-    messageStructs[_id].dropAmount += msg.value;
+    messageList[_id].drops.push(msg.sender);
+    messageList[_id].dropPointers[msg.sender].value += (uint256(_dropAmount)*MULTIPLIER);
+    messageList[_id].dropPointers[msg.sender].isSet = true;
+    messageList[_id].dropAmount += (uint256(_dropAmount)*MULTIPLIER);
     // payout share to author of the dropped message (50%)
-    // LINK: https://ethereum.stackexchange.com/questions/3010/how-does-ethereum-cope-with-division-of-prime-numbers
-    userStructs[messageStructs[_id].writtenBy].dropAmount += (msg.value/2);
-    // messageList[_id].writtenBy.transfer(msg.value/2);
-
+    userStructs[messageList[_id].writtenBy].dropAmount += (uint256(_dropAmount)*50*MULTIPLIER/100);
+    // reduce the sender's dropAmount
+    userStructs[msg.sender].dropAmount -= (uint256(_dropAmount)*MULTIPLIER);
     // TODO: payout of drops to InkDrop and incentive pool
     // TODO: extend the timetolive
-    return messageStructs[_id].dropAmount;
-  }
-
-  function userPayout() whenNotPaused public payable returns(uint256 payoutamount) {
-    require(isUser(msg.sender));
-    require(userStructs[msg.sender].dropAmount > 0);
-
-    uint256 payout = userStructs[msg.sender].dropAmount;
-    userStructs[msg.sender].dropAmount = 0;
-
-    if (!msg.sender.send(payout)) {
-      // reverting state because send failed
-      userStructs[msg.sender].dropAmount = payout; 
-    }
-
-    return payout;
+    return messageList[_id].dropAmount;
   }
 
     // Write a comment
@@ -330,7 +305,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
     comment.parent = _parent;
     comment.dropAmount = 0;
     commentList.push(comment);
-    messageStructs[_parent].comments.push(commentId);
+    messageList[_parent].comments.push(commentId);
     return commentId;
   }
 
@@ -342,46 +317,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
 
   function getStats() onlyOwner public constant returns(uint256 users, uint256 messages, uint256 comments) {
     // return (9, 6, 7);
-    return (userList.length, messageOrder.length, commentList.length);
+    return (userList.length, messageList.length, commentList.length);
   }
 
-  function getMinimumDrop() public constant returns(uint256 min_drop) {
-    return MINIMUM_DROP;
-  }
-
-  function setMinimumDrop(uint256 _min_drop) onlyOwner public payable returns(uint256 min_drop) {
-    MINIMUM_DROP = _min_drop;
-    return MINIMUM_DROP;
-  }
-
-  function sort_item(uint pos) internal returns (bool) {
-    // Inspired by: https://github.com/alianse777/solidity-standard-library/blob/master/Array.sol#L130
-    uint w_min = pos;
-    for(uint i = pos; i < messageOrder.length; i++) {
-      if(messageStructs[messageOrder[i]].dropAmount < messageStructs[messageOrder[w_min]].dropAmount) {
-        w_min = i;
-      }
-    }
-
-    if(w_min == pos) return false;
-
-    // TODO: continue here!!!
-
-    uint256 tmp = messageOrder[pos];
-    messageOrder[pos] = messageOrder[w_min];
-    messageOrder[w_min] = tmp;
-
-    // TODO: continue here. Reset the user's messagePointers and messages array accordingly
-    // userStructs[messageList[pos].writtenBy].messagePointers
-
-    // userStructs[msg.sender].messagePointers[userStructs[msg.sender].messages.push(msgId)-1] = msgId;
-
-    return true;
-  }
-    
-  function sort() public payable {
-    for(uint i = 0; i < messageOrder.length - 1; i++) {
-      sort_item(i);
-    }
-  }
 }
