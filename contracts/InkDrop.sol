@@ -59,7 +59,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
     uint[] comments;
   }
   
-  Message[] private messageList;
+  // Message[] private messageList;
   Message[] private commentList;
 
   // minimum drop amount in weis
@@ -71,7 +71,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
   mapping(uint256 => Message) private messageStructs;
   // Store the newsfeed order of message ids in the array
   // Example: [3, 1, 2]
-  uint256[] private messageOrder;
+  uint256[] public messageOrder;
   // TODO: perform the same changes to comments as well!!!
 
   event LogNewUser   (address indexed userAddress, uint256 index, bytes32 username, string bio, string ipfsHash);
@@ -219,6 +219,11 @@ contract InkDrop is Migratable, Ownable, Pausable {
     return messageOrder.length;
   }
 
+  function getMessageIdAtIndex(uint256 _index) public constant returns(uint256 msgId) {
+    require(_index < messageOrder.length);
+    return messageOrder[_index];
+  }
+
   // The stack can only be 7 steps deep - only 7 return values allowed
   function getMessage(uint256 _id) public constant returns(string content, address writtenBy, uint256 timestamp, uint256 timetolive, uint256 likes, uint256 drops, uint[] comments) {
     require(_id < messageOrder.length);
@@ -234,7 +239,8 @@ contract InkDrop is Migratable, Ownable, Pausable {
     // require(userStructs[msg.sender].dropAmount >= uint256(_dropAmount)*MULTIPLIER);
 
     // push returns the new length of the array
-    uint256 msgId = messageOrder.push(msgId) - 1;
+    // uint256 msgId = messageOrder.push(msgId) - 1;
+    uint256 msgId = messageOrder.length;
     messageStructs[msgId].content = _content;
     messageStructs[msgId].writtenBy = msg.sender;
     messageStructs[msgId].timestamp = now;
@@ -243,6 +249,8 @@ contract InkDrop is Migratable, Ownable, Pausable {
     messageStructs[msgId].dropAmount = msg.value;
     messageStructs[msgId].dropPointers[msg.sender].value = messageStructs[msgId].drops.push(msg.sender) - 1;
     messageStructs[msgId].dropPointers[msg.sender].isSet = true;
+
+    messageOrder.push(msgId);
 
     userStructs[msg.sender].messagePointers[userStructs[msg.sender].messages.push(msgId)-1] = msgId;
 
@@ -354,22 +362,22 @@ contract InkDrop is Migratable, Ownable, Pausable {
     return MINIMUM_DROP;
   }
 
-  function sort_item(uint pos) internal returns (bool) {
+  function sort_item(uint256 pos) internal returns (bool) {
     // Inspired by: https://github.com/alianse777/solidity-standard-library/blob/master/Array.sol#L130
-    uint w_min = pos;
-    for(uint i = pos; i < messageOrder.length; i++) {
-      if(messageStructs[messageOrder[i]].dropAmount < messageStructs[messageOrder[w_min]].dropAmount) {
-        w_min = i;
+    uint256 min_pos = pos;
+    for(uint256 i = pos; i < messageOrder.length; i++) {
+      if(messageStructs[messageOrder[i]].dropAmount < messageStructs[messageOrder[min_pos]].dropAmount) {
+        min_pos = i;
       }
     }
 
-    if(w_min == pos) return false;
+    if(min_pos == pos) return false;
 
     // TODO: continue here!!!
 
     uint256 tmp = messageOrder[pos];
-    messageOrder[pos] = messageOrder[w_min];
-    messageOrder[w_min] = tmp;
+    messageOrder[pos] = messageOrder[min_pos];
+    messageOrder[min_pos] = tmp;
 
     // TODO: continue here. Reset the user's messagePointers and messages array accordingly
     // userStructs[messageList[pos].writtenBy].messagePointers
@@ -380,8 +388,9 @@ contract InkDrop is Migratable, Ownable, Pausable {
   }
     
   function sort() public payable {
-    for(uint i = 0; i < messageOrder.length - 1; i++) {
+    for(uint256 i = 0; i < messageOrder.length - 1; i++) {
       sort_item(i);
     }
   }
+
 }
