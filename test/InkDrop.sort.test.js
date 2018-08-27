@@ -23,12 +23,14 @@ contract('InkDrop (newsfeed sort function)', async accounts => {
     let inkdropInstance = await InkDrop.deployed()
     let count = await inkdropInstance.getMessageCount()
     assert.equal(count.toNumber(), 3, 'There should me now 3 message.')
+
     let msgId0 = await inkdropInstance.getMessageIdAtIndex(0, { from: accounts[8] })
     assert.equal(msgId0.toNumber(), 0, 'The message #1 should be on pos. 0.')
     let msgId1 = await inkdropInstance.getMessageIdAtIndex(1, { from: accounts[8] })
     assert.equal(msgId1.toNumber(), 1, 'The message #2 should be on pos. 1.')
     let msgId2 = await inkdropInstance.getMessageIdAtIndex(2, { from: accounts[8] })
     assert.equal(msgId2.toNumber(), 2, 'The message #3 should be on pos. 2.')
+
     // let msg0 = await inkdropInstance.getMessage(0, { from: accounts[8] })
     // assert.equal(msg0[0], '#1', 'The message`s content should be `#1`.')
     // assert.equal(
@@ -56,12 +58,12 @@ contract('InkDrop (newsfeed sort function)', async accounts => {
     let inkdropInstance = await InkDrop.deployed()
     await inkdropInstance.sort({ from: accounts[9] })
     // reordered to last place
-    let msgId0 = await inkdropInstance.getMessageIdAtIndex(2, { from: accounts[8] })
-    assert.equal(msgId0.toNumber(), 2, 'The message #1 should be on pos. 2.')
-    let msgId1 = await inkdropInstance.getMessageIdAtIndex(0, { from: accounts[8] })
-    assert.equal(msgId1.toNumber(), 0, 'The message #2 should be on pos. 0.')
-    let msgId2 = await inkdropInstance.getMessageIdAtIndex(1, { from: accounts[8] })
-    assert.equal(msgId2.toNumber(), 1, 'The message #3 should be on pos. 1.')
+    let msgId0 = await inkdropInstance.getMessageIdAtIndex(0, { from: accounts[8] })
+    assert.equal(msgId0.toNumber(), 1, 'The message #2 should be on pos. 0.')
+    let msgId1 = await inkdropInstance.getMessageIdAtIndex(1, { from: accounts[8] })
+    assert.equal(msgId1.toNumber(), 2, 'The message #3 should be on pos. 1.')
+    let msgId2 = await inkdropInstance.getMessageIdAtIndex(2, { from: accounts[8] })
+    assert.equal(msgId2.toNumber(), 0, 'The message #2 should be on pos. 2.')
     // let msg0 = await inkdropInstance.getMessage(2, { from: accounts[8] })
     // assert.equal(msg0[0], '#1', 'The message`s content should be `#1`.')
     // assert.equal(
