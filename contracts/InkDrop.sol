@@ -348,7 +348,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
     return MINIMUM_DROP;
   }
 
-  function setMinimumDrop(uint256 _min_drop) onlyOwner public payable returns(uint256 min_drop) {
+  function setMinimumDrop(uint256 _min_drop) onlyOwner whenNotPaused public payable returns(uint256 min_drop) {
     MINIMUM_DROP = _min_drop;
     return MINIMUM_DROP;
   }
@@ -372,7 +372,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
     return true;
   }
     
-  function sort() public payable {
+  function sort() whenNotPaused public payable {
     for(uint256 i = 0; i < messageOrder.length - 1; i++) {
       sort_item(i);
     }
