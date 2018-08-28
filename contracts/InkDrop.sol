@@ -236,10 +236,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
     require(isUser(msg.sender));
     require(bytes(_content).length > 0);
     require(msg.value >= 0);
-    // require(userStructs[msg.sender].dropAmount >= uint256(_dropAmount)*MULTIPLIER);
 
-    // push returns the new length of the array
-    // uint256 msgId = messageOrder.push(msgId) - 1;
     uint256 msgId = messageOrder.length;
     messageStructs[msgId].content = _content;
     messageStructs[msgId].writtenBy = msg.sender;
@@ -287,20 +284,16 @@ contract InkDrop is Migratable, Ownable, Pausable {
   function dropMessage(uint256 _id) whenNotPaused public payable returns(uint256 newdrops) {
     require(isUser(msg.sender));
     require(_id < messageOrder.length);
-    // require(_dropAmount > 0);
-    // require(userStructs[msg.sender].dropAmount >= uint256(_dropAmount)*MULTIPLIER);
-
-    // TODO: continue here
+    // check if the minimum drop amount is reached
     require(msg.value >= MINIMUM_DROP);
 
     messageStructs[_id].drops.push(msg.sender);
     messageStructs[_id].dropPointers[msg.sender].value += msg.value;
     messageStructs[_id].dropPointers[msg.sender].isSet = true;
     messageStructs[_id].dropAmount += msg.value;
-    // payout share to author of the dropped message (50%)
     // LINK: https://ethereum.stackexchange.com/questions/3010/how-does-ethereum-cope-with-division-of-prime-numbers
     userStructs[messageStructs[_id].writtenBy].dropAmount += (msg.value/2);
-    // messageList[_id].writtenBy.transfer(msg.value/2);
+    // Let the users retrieve their earned drops with a payout (see userPayout function below)
 
     // TODO: payout of drops to InkDrop and incentive pool
     // TODO: extend the timetolive
@@ -330,7 +323,6 @@ contract InkDrop is Migratable, Ownable, Pausable {
 
     uint256 commentId = commentList.length;
     Message memory comment;
-    // = Message(_content, msg.sender, now, 0, 0, msgId, -1, comments);
     comment.content = _content;
     comment.writtenBy = msg.sender;
     comment.timestamp = now;
@@ -349,7 +341,6 @@ contract InkDrop is Migratable, Ownable, Pausable {
   }
 
   function getStats() onlyOwner public constant returns(uint256 users, uint256 messages, uint256 comments) {
-    // return (9, 6, 7);
     return (userList.length, messageOrder.length, commentList.length);
   }
 
@@ -366,23 +357,17 @@ contract InkDrop is Migratable, Ownable, Pausable {
     // Inspired by: https://github.com/alianse777/solidity-standard-library/blob/master/Array.sol#L130
     uint256 min_pos = pos;
     for(uint256 i = pos; i < messageOrder.length; i++) {
+      // compare according to messages' drop amounts
       if(messageStructs[messageOrder[i]].dropAmount < messageStructs[messageOrder[min_pos]].dropAmount) {
         min_pos = i;
       }
     }
 
     if(min_pos == pos) return false;
-
-    // TODO: continue here!!!
-
+    // reorder the message ids
     uint256 tmp = messageOrder[pos];
     messageOrder[pos] = messageOrder[min_pos];
     messageOrder[min_pos] = tmp;
-
-    // TODO: continue here. Reset the user's messagePointers and messages array accordingly
-    // userStructs[messageList[pos].writtenBy].messagePointers
-
-    // userStructs[msg.sender].messagePointers[userStructs[msg.sender].messages.push(msgId)-1] = msgId;
 
     return true;
   }

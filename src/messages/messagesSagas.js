@@ -293,9 +293,12 @@ function* messagesFetchRequested({ items }) {
   }
 }
 
-function* getMessageCall(msgId) {
+function* getMessageCall(msgIndex) {
   const drizzle = yield getContext('drizzle')
   try {
+    // get the msgId for the msgIndex first
+    let msgId = yield call(drizzle.contracts.InkDrop.methods.getMessageIdAtIndex(msgIndex).call)
+    // get the message by its id
     let tmpMsg = yield call(drizzle.contracts.InkDrop.methods.getMessage(msgId).call)
     let msg = yield parseMessage(msgId, tmpMsg)
     // update the store so the UI get updated
