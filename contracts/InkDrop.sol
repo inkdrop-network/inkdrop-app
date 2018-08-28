@@ -71,7 +71,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
   mapping(uint256 => Message) private messageStructs;
   // Store the newsfeed order of message ids in the array
   // Example: [3, 1, 2]
-  uint256[] public messageOrder;
+  uint256[] private messageOrder;
   // TODO: perform the same changes to comments as well!!!
 
   event LogNewUser   (address indexed userAddress, uint256 index, bytes32 username, string bio, string ipfsHash);
