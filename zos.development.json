@@ -1,7 +1,7 @@
 {
   "contracts": {
     "InkDrop": {
-      "address": "0x33ef1812255cda2ed665340e952fba8792d74982",
+      "address": "0x249091de9024544b4b04113369563885c65c52bd",
       "constructorCode": "60806040526000600160146101000a81548160ff02191690831515021790555034801561002b57600080fd5b50615770806200003c6000396000f300",
       "bodyBytecodeHash": "aaa16062d7b05a35285a2e0af3e570221d5213b117758d5dc38186a503bf9284",
       "bytecodeHash": "eb14b8dc33cc57623103ff2f6a60b63c141446c268a7a57feb1123381cfaaf5d"
@@ -10,26 +10,26 @@
   "proxies": {
     "InkDrop": [
       {
-        "address": "0xe8c782799db0d6e740527b8a46d95105725dec45",
+        "address": "0x6132289838bfd2c9410ef4ea64985f2e00162e13",
         "version": "1.0",
-        "implementation": "0x33ef1812255cda2ed665340e952fba8792d74982"
+        "implementation": "0x249091de9024544b4b04113369563885c65c52bd"
       }
     ]
   },
   "stdlib": {
-    "address": "0xaaa12abe22f5e611db3c7ab2e5e128c931dc9287",
+    "address": "0x0a943f04a1fa6876e6536ef642522b598af21b51",
     "customDeploy": true,
     "name": "openzeppelin-zos",
     "version": "^1.9.1"
   },
   "app": {
-    "address": "0x5d1afbb99de531b53d2c65fcced927f632bc3aae"
+    "address": "0xc07d4770f8aaab6819b4a1e0bb4c3effdc6ad71f"
   },
   "version": "1.0",
   "package": {
-    "address": "0x9d623d4c7960bffb77e0b298967bfca48d932b2a"
+    "address": "0x047774040bd70e0f194feccc78d2bffebda7020c"
   },
   "provider": {
-    "address": "0x0a943f04a1fa6876e6536ef642522b598af21b51"
+    "address": "0x2431d27c4c4712a2c5263143127357abb2236b29"
   }
 }
