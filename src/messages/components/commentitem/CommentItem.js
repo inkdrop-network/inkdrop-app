@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router'
+import Linkify from 'react-linkify'
 import { Card, CardBody, CardFooter } from 'reactstrap'
 import Moment from 'react-moment'
 
@@ -44,7 +45,7 @@ class CommentItem extends PureComponent {
         key={this.props.comment.id}
         className={`comment-card mb-2 ${this.props.comment.fromBlockchain ? '' : 'muted'}`}>
         <CardBody>
-          <div className="d-flex flex-row">
+          <div className="card-user d-flex flex-row">
             <img
               className="mr-2 profile-img"
               src={this.props.comment.userUrl || 'https://via.placeholder.com/50/85bd3e/85bd3e'}
@@ -61,7 +62,9 @@ class CommentItem extends PureComponent {
               </span>
             </div>
           </div>
-          <div className="pt-2">{this.props.comment.content}</div>
+          <div className="card-content pt-2">
+            <Linkify properties={{ target: '_blank' }}>{this.props.comment.content}</Linkify>
+          </div>
         </CardBody>
         {this.renderTxStatus()}
       </Card>

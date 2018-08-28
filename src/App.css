@@ -21,6 +21,7 @@ a {
 
 a:hover {
   color: var(--green-dark);
+  text-decoration: none;
 }
 
 .font-green,
@@ -144,16 +145,12 @@ footer .list-inline {
   opacity: 0.5;
 }
 
-.card .card-user {
-  display: flex;
-}
-
-.card a {
+.card-user a {
   color: var(--dark);
 }
 
-.card a:hover {
-  color: var(--green);
+.card-user a:hover {
+  color: var(--green-dark);
   text-decoration: none;
 }
 

@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
+import Linkify from 'react-linkify'
 import MessageItemContainer from '../messageitem/MessageItemContainer'
 
 // icons
@@ -58,7 +59,9 @@ class UserPage extends PureComponent {
               <h3 id="profile-page-username" className="mt-4 mb-1">
                 @{user.username}
               </h3>
-              <div id="profile-page-occupation">{user.bio}</div>
+              <div id="profile-page-occupation">
+                <Linkify properties={{ target: '_blank' }}>{user.bio}</Linkify>
+              </div>
 
               <div id="profile-page-userstats" className="my-4">
                 <img src={iconDrop} width="35" height="35" className="" alt="" />

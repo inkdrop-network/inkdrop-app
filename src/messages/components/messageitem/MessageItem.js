@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router'
+import Linkify from 'react-linkify'
 import { Card, CardBody, CardFooter } from 'reactstrap'
 import Moment from 'react-moment'
 import CommentList from '../commentlist/CommentList'
@@ -104,7 +105,7 @@ class MessageItem extends PureComponent {
 
     return (
       <Card className={`message-card mb-4 ${msg.fromBlockchain ? '' : 'muted'}`}>
-        <CardBody className="d-flex flex-row pb-2">
+        <CardBody className="card-user d-flex flex-row pb-2">
           <img
             className="mr-2 profile-img"
             src={msg.userUrl || 'https://via.placeholder.com/50/85bd3e/85bd3e'}
@@ -119,7 +120,9 @@ class MessageItem extends PureComponent {
             </span>
           </div>
         </CardBody>
-        <CardBody className="py-2">{msg.content}</CardBody>
+        <CardBody className="card-content py-2">
+          <Linkify properties={{ target: '_blank' }}>{msg.content}</Linkify>
+        </CardBody>
         <CardBody className="pt-2">
           <div className="row">
             <div className="col">
