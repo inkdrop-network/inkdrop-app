@@ -5,7 +5,7 @@ import "openzeppelin-zos/contracts/ownership/Ownable.sol";
 import "openzeppelin-zos/contracts/lifecycle/Pausable.sol";
 import "openzeppelin-zos/contracts/math/SafeMath.sol";
 
-contract InkDrop is Migratable, Ownable, Pausable {
+contract InkDropV3 is Migratable, Ownable, Pausable {
 
   using SafeMath for uint256;
 
@@ -381,6 +381,26 @@ contract InkDrop is Migratable, Ownable, Pausable {
 
   function upgradeToMessageOrder() onlyOwner whenNotPaused public payable {
     require(messageOrder.length == 0);
+    // struct Message {
+    // uint256 id;
+    // uint256 parent;
+    // string content;
+    // address writtenBy;
+    // uint256 timestamp;
+    // uint256 timetolive;
+    // // addresses of users' likes
+    // address[] likes;
+    // // mapping of message id to position in likes array
+    // mapping(address => data) likePointers;
+    // // total drops in wei
+    // uint256 dropAmount;
+    // // addresses of users' drops
+    // address[] drops;
+    // // mapping of message id to position in drops array
+    // mapping(address => data) dropPointers;
+    // uint[] comments;
+    // }
+    // Message[] private messageList;
 
     for(uint256 i = 0; i < messageList.length; i++) {
       messageStructs[i] = messageList[i];
@@ -397,7 +417,9 @@ contract InkDrop is Migratable, Ownable, Pausable {
       // messageStructs[msgId].comments = messageList[msgId].comments;
 
       messageOrder.push(i);
+
     }
+
   }
 
 }

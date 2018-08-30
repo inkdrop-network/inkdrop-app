@@ -212,6 +212,7 @@ function* messageDropRequested({ msg, drops }) {
 
   const contractName = 'InkDrop'
   const sendArgs = { value: drizzle.web3.utils.toWei(`${drops}`, 'ether') }
+
   const txObject = yield call(drizzle.contracts.InkDrop.methods.dropMessage, msg.id)
   const txChannel = yield call(createTxChannel, { txObject, contractName, sendArgs })
 
@@ -293,6 +294,7 @@ function* messagesFetchRequested({ items }) {
   }
 }
 
+// NEW NEW NEW
 function* getMessageCall(msgIndex) {
   const drizzle = yield getContext('drizzle')
   try {
@@ -308,6 +310,21 @@ function* getMessageCall(msgIndex) {
     console.log(error)
   }
 }
+
+// OLD
+// function* getMessageCall(msgId) {
+//   const drizzle = yield getContext('drizzle')
+//   try {
+//     // get the message by its id
+//     let tmpMsg = yield call(drizzle.contracts.InkDrop.methods.getMessage(msgId).call)
+//     let msg = yield parseMessage(msgId, tmpMsg)
+//     // update the store so the UI get updated
+//     yield put({ type: MESSAGE_GOT, payload: msg })
+//     yield all([fork(getUser, msg), fork(getComments, msg)])
+//   } catch (error) {
+//     console.log(error)
+//   }
+// }
 
 function* getComments(msg) {
   let arr = []

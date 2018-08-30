@@ -5,7 +5,7 @@ import "openzeppelin-zos/contracts/ownership/Ownable.sol";
 import "openzeppelin-zos/contracts/lifecycle/Pausable.sol";
 import "openzeppelin-zos/contracts/math/SafeMath.sol";
 
-contract InkDrop is Migratable, Ownable, Pausable {
+contract InkDropV2 is Migratable, Ownable, Pausable {
 
   using SafeMath for uint256;
 
@@ -376,27 +376,6 @@ contract InkDrop is Migratable, Ownable, Pausable {
   function sort() whenNotPaused public payable {
     for(uint256 i = 0; i < messageOrder.length - 1; i++) {
       sort_item(i);
-    }
-  }
-
-  function upgradeToMessageOrder() onlyOwner whenNotPaused public payable {
-    require(messageOrder.length == 0);
-
-    for(uint256 i = 0; i < messageList.length; i++) {
-      messageStructs[i] = messageList[i];
-      // messageStructs[msgId].id = msgId;
-      // messageStructs[msgId].parent = messageList[msgId].parent;
-      // messageStructs[msgId].content = messageList[msgId].content;
-      // messageStructs[msgId].writtenBy = messageList[msgId].writtenBy;
-      // messageStructs[msgId].timestamp = messageList[msgId].timestamp;
-      // messageStructs[msgId].timetolive = messageList[msgId].timetolive;
-      // messageStructs[msgId].likes = messageList[msgId].likes;
-      // messageStructs[msgId].likePointers = messageList[msgId].likePointers;
-      // messageStructs[msgId].dropAmount = messageList[msgId].dropAmount;
-      // messageStructs[msgId].dropPointers = messageList[msgId].dropPointers;
-      // messageStructs[msgId].comments = messageList[msgId].comments;
-
-      messageOrder.push(i);
     }
   }
 
