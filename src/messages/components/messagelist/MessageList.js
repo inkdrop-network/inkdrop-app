@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Button } from 'reactstrap'
 import FlipMove from 'react-flip-move'
+import MasonryInfiniteScroller from 'react-masonry-infinite'
 import InfiniteScroll from 'react-infinite-scroller'
 import MessageItemContainer from '../messageitem/MessageItemContainer'
 import loadingSpinner from '../../../../public/icons/loading-spinner.svg'
@@ -29,14 +30,15 @@ class MessageList extends PureComponent {
       </div>
     )
 
-    // let items = this.props.messages
+    let items = this.props.messages
     // sort messages descending according to their drops
-    let items = this.props.messages.sort(function(msgA, msgB) {
-      return msgB.drops - msgA.drops
-    })
+    // let items = this.props.messages.sort(function(msgA, msgB) {
+    //   return msgB.drops - msgA.drops
+    // })
 
     // TODO: Show loader in the beginning and enable FlipMove only once the first posts are fetched and the array is sorted
     return (
+      /*
       <InfiniteScroll
         pageStart={0}
         threshold={1}
@@ -58,6 +60,13 @@ class MessageList extends PureComponent {
             {items.map(msg => <MessageItemContainer message={msg} key={msg.id} />)}
           </FlipMove>
         </div>
+      </InfiniteScroll> */
+      <InfiniteScroll
+        className="masonry"
+        loadMore={this.loadMore}
+        hasMore={this.props.pagination.hasMore}
+        loader={loader}>
+        {items.map(msg => <MessageItemContainer message={msg} key={msg.id} />)}
       </InfiniteScroll>
     )
   }
