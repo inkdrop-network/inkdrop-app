@@ -14,8 +14,6 @@ import CustomDrizzleProvider from './utils/drizzle/CustomDrizzleProvider'
 import App from './App'
 import Home from './layouts/home/Home'
 import Newsfeed from './messages/layouts/Newsfeed'
-import NewsfeedBricks from './messages/layouts/NewsfeedBricks'
-import NewsfeedMasonry from './messages/layouts/NewsfeedMasonry'
 import UserSignup from './user/layouts/UserSignup'
 import UserUpdate from './user/layouts/UserUpdate'
 import UserPageContainer from './messages/components/userpage/UserPageContainer'
@@ -45,8 +43,6 @@ ReactDOM.render(
           <Route path="/" component={App}>
             <IndexRoute component={Home} />
             <Route path="newsfeed" component={UserIsAuthenticated(Newsfeed)} />
-            <Route path="newsfeed-bricks" component={UserIsAuthenticated(NewsfeedBricks)} />
-            <Route path="newsfeed-masonry" component={UserIsAuthenticated(NewsfeedMasonry)} />
             <Route path="signup" component={UserIsNotAuthenticated(UserSignup)} />
             <Route path="profile" component={UserIsAuthenticated(UserUpdate)} />
             <Route path="user/:id" component={UserIsAuthenticated(UserPageContainer)} />

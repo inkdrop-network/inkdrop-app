@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import Masonry from 'react-masonry-component'
 
-var MasonryR = require('masonry-layout')
+import MessageFormContainer from '../components/messageform/MessageFormContainer'
+import loadingSpinner from '../../../public/icons/loading-spinner.svg'
 
 class NewsfeedMasonry extends Component {
 	constructor(props) {
@@ -229,82 +230,44 @@ class NewsfeedMasonry extends Component {
 				},
 			],
 			masonryOptions: {
-				// columnWidth: 270,
 				transitionDuration: 0,
+				horizontalOrder: false,
 				columnWidth: '.grid-sizer',
 				itemSelector: '.grid-item',
-				// gutter: 10,
+				// stamp elements
+				stamp: '.grid-stamp',
 				percentPosition: true,
 			},
 		}
 	}
 
-	componentDidMount() {
-		var msnry = new MasonryR('.grid', this.state.masonryOptions)
-	}
-
 	render() {
+		const loader = (
+			<div className="text-center" key={-1}>
+				<img src={loadingSpinner} alt="loading" width="20" height="20" />
+			</div>
+		)
+
 		let items = this.state.messages.map(msg => (
-			<div
-				key={msg.id}
-				className="card grid-item mb-2"
-				style={{ height: `${msg.height}px`, width: '270px' }}>
-				<h2>{msg.content}</h2>
+			<div key={msg.id} className="grid-item col-12 col-md-4 col-lg-3 mb-3 px-2">
+				<div className="card" style={{ height: `${msg.height}px` }}>
+					<h2>{msg.content}</h2>
+				</div>
 			</div>
 		))
 
-		/* <Masonry
-						className={'my-gallery-class'} // default ''
-						elementType={'div'} // default 'div'
-						options={this.state.masonryOptions} // default {}
-						disableImagesLoaded={false} // default false
-						updateOnEachImageLoad={false} // default false and works only if disableImagesLoaded is false
-						imagesLoadedOptions={''} // default {}
-					>
-						<div class="grid-sizer" />
-						{items}
-					</Masonry>
-					*/
+		items.unshift(
+			<div key={-1} className="grid-stamp col-12 col-md-4 col-lg-3 mb-3 px-2">
+				<MessageFormContainer />
+			</div>
+		)
 
 		return (
-			<div className="container">
-				<div className="row" />
-				<div class="grid my-4">
-					<div class="grid-sizer col-12 col-md-4 col-lg-3" />
-					<div class="card grid-item col-12 col-md-4 col-lg-3 mb-2" style={{ height: '250px' }}>
-						#1
-					</div>
-					<div class="card grid-item col-12 col-md-4 col-lg-3 mb-2" style={{ height: '100px' }}>
-						#2
-					</div>
-					<div class="card grid-item col-12 col-md-4 col-lg-3 mb-2" style={{ height: '200px' }}>
-						#3
-					</div>
-					<div class="card grid-item col-12 col-md-4 col-lg-3 mb-2" style={{ height: '150px' }}>
-						#4
-					</div>
-					<div class="card grid-item col-12 col-md-4 col-lg-3 mb-2" style={{ height: '250px' }}>
-						#5
-					</div>
-					<div
-						class="card grid-item col-12 col-md-4 col-lg-3 mb-2"
-						mb-2
-						style={{ height: '200px' }}>
-						#6
-					</div>
-					<div class="card grid-item col-12 col-md-4 col-lg-3 mb-2" style={{ height: '250px' }}>
-						#7
-					</div>
-					<div class="card grid-item col-12 col-md-4 col-lg-3 mb-2" style={{ height: '200px' }}>
-						#8
-					</div>
-					<div class="card grid-item col-12 col-md-4 col-lg-3 mb-2" style={{ height: '200px' }}>
-						#9
-					</div>
-					<div class="card grid-item col-12 col-md-4 col-lg-3 mb-2" style={{ height: '200px' }}>
-						#10
-					</div>
-				</div>
+			<div className="container my-4">
+				<Masonry className={'newsfeed'} options={this.state.masonryOptions}>
+					<div className="grid-sizer col-12 col-md-4 col-lg-3" />
+					{items}
+				</Masonry>
 			</div>
 		)
 	}

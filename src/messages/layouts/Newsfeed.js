@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
-import MessageFormContainer from '../components/messageform/MessageFormContainer'
-import MessageListContainer from '../components/messagelist/MessageListContainer'
+import MessageListMasonryContainer from '../components/messagelist/MessageListMasonryContainer'
 
 class Newsfeed extends Component {
   constructor(props, { authData }) {
@@ -11,14 +10,7 @@ class Newsfeed extends Component {
   render() {
     return (
       <main className="container">
-        <div className="row justify-content-center my-4">
-          <MessageFormContainer />
-        </div>
-        <div className="row my-4">
-          <div /*className=col-sm-7*/>
-            <MessageListContainer />
-          </div>
-        </div>
+        <MessageListMasonryContainer />
       </main>
     )
   }

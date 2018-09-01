@@ -119,7 +119,7 @@ class MessageItem extends PureComponent {
     let msg = this.props.message
 
     return (
-      <Card className={`message-card mb-4 ${msg.fromBlockchain ? '' : 'muted'}`}>
+      <Card className={`message-card ${msg.fromBlockchain ? '' : 'muted'}`}>
         <CardBody className="d-flex flex-row pb-2">
           <img
             className="mr-2 profile-img"
