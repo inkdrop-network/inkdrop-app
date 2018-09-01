@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Masonry from 'react-masonry-infinite'
 
-import MessageFormContainer from '../components/messageform/MessageFormContainer'
+// import MessageFormContainer from '../components/messageform/MessageFormContainer'
 import loadingSpinner from '../../../public/icons/loading-spinner.svg'
 
 class NewsfeedBricks extends Component {
