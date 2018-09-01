@@ -36,14 +36,6 @@ class MessageListMasonry extends Component {
 			</div>
 		)
 
-		// let items = this.state.messages.map(msg => (
-		// 	<div key={msg.id} className="grid-item col-12 col-md-4 col-lg-3 mb-3 px-2">
-		// 		<div className="card" style={{ height: `${msg.height}px` }}>
-		// 			<h2>{msg.content}</h2>
-		// 		</div>
-		// 	</div>
-		// ))
-
 		let items = this.props.messages.map(msg => (
 			<div key={msg.id} className="grid-item col-12 col-md-4 col-lg-3 mb-3 px-2">
 				<MessageItemContainer message={msg} />
