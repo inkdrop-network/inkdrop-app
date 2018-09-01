@@ -161,6 +161,10 @@ footer .list-inline {
   border-left: 3px solid var(--green);
 }
 
+.card-columns {
+  column-count: 4;
+}
+
 .profile-img {
   border-radius: 100%;
   width: 50px;

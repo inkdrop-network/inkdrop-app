@@ -40,6 +40,7 @@
         "promise": "7.1.1",
         "react-dev-utils": "^0.4.2",
         "react-flip-move": "^3.0.2",
+        "react-masonry-component": "^6.2.1",
         "react-masonry-infinite": "^1.2.2",
         "recursive-readdir": "2.1.0",
         "strip-ansi": "3.0.1",

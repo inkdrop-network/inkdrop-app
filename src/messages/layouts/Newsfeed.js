@@ -14,11 +14,9 @@ class Newsfeed extends Component {
         <div className="row justify-content-center my-4">
           <MessageFormContainer />
         </div>
-        <div>
-          <div className="row my-4">
-            <div className="">
-              <MessageListContainer />
-            </div>
+        <div className="row my-4">
+          <div /*className=col-sm-7*/>
+            <MessageListContainer />
           </div>
         </div>
       </main>

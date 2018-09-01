@@ -1,9 +1,11 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import { Button } from 'reactstrap'
-import FlipMove from 'react-flip-move'
-import MasonryInfiniteScroller from 'react-masonry-infinite'
+import { CardColumns, Button } from 'reactstrap'
 import InfiniteScroll from 'react-infinite-scroller'
+import FlipMove from 'react-flip-move'
+// import MasonryInfiniteScroller from 'react-masonry-infinite'
+// import Masonry from 'react-masonry-component'
+
 import MessageItemContainer from '../messageitem/MessageItemContainer'
 import loadingSpinner from '../../../../public/icons/loading-spinner.svg'
 
@@ -11,11 +13,21 @@ class MessageList extends PureComponent {
   constructor(props) {
     super(props)
 
+    this.masonryOptions = {
+      itemSelector: '.grid-item', // use a separate class for itemSelector, other than .col-
+      columnWidth: '.grid-sizer',
+      percentPosition: true,
+    }
+
     this.loadMore = this.loadMore.bind(this)
     this.sortNewsfeed = this.sortNewsfeed.bind(this)
   }
 
   loadMore() {
+    // this.props.fetchMessages(this.props.pagination.items)
+  }
+
+  componentDidMount() {
     this.props.fetchMessages(this.props.pagination.items)
   }
 
@@ -35,10 +47,14 @@ class MessageList extends PureComponent {
     // let items = this.props.messages.sort(function(msgA, msgB) {
     //   return msgB.drops - msgA.drops
     // })
+    // let childElements = this.props.messages.map(msg => (
+    //   <div className="grid-item col-3" key={msg.id}>
+    //     {msg.content}
+    //   </div>
+    // ))
 
     // TODO: Show loader in the beginning and enable FlipMove only once the first posts are fetched and the array is sorted
     return (
-      /*
       <InfiniteScroll
         pageStart={0}
         threshold={1}
@@ -49,9 +65,9 @@ class MessageList extends PureComponent {
         <Button size="sm" color="secondary" className="mb-4 ml-auto" onClick={this.sortNewsfeed}>
           Sort
         </Button>
-        <div id="messages">
+        <CardColumns>
           <FlipMove
-            disableAllAnimations={false} //this.props.messages.length <= 0}
+            disableAllAnimations={true} //this.props.messages.length <= 0}
             appearAnimation="none"
             enterAnimation="none"
             leaveAnimation="none"
@@ -59,15 +75,25 @@ class MessageList extends PureComponent {
             staggerDurationBy={30}>
             {items.map(msg => <MessageItemContainer message={msg} key={msg.id} />)}
           </FlipMove>
-        </div>
-      </InfiniteScroll> */
-      <InfiniteScroll
-        className="masonry"
-        loadMore={this.loadMore}
-        hasMore={this.props.pagination.hasMore}
+        </CardColumns>
+      </InfiniteScroll>
+      /*<MasonryInfiniteScroller
+        className="messages"
+        sizes={this.props.sizes}
+        position={false}
+        initialLoad={false}
+        loadMore={() => console.log(1)}
+        hasMore={false}
         loader={loader}>
         {items.map(msg => <MessageItemContainer message={msg} key={msg.id} />)}
-      </InfiniteScroll>
+      </MasonryInfiniteScroller>*/
+      /*<Masonry className="grid" options={this.masonryOptions}>
+        <div className="grid-sizer col-3" />
+        {childElements}
+      </Masonry>*/
+      /*<CardColumns>
+        {items.map(msg => <MessageItemContainer message={msg} key={msg.id} />)}
+      </CardColumns>*/
     )
   }
 }
