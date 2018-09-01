@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import Masonry from 'react-masonry-component'
 
-import './Newsfeed.css'
 var MasonryR = require('masonry-layout')
 
 class NewsfeedMasonry extends Component {
