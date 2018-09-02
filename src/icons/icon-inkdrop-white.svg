@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49 (51002) - http://www.bohemiancoding.com/sketch -->
+    <title>Logo Signet</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M9.9894791,3.98171061 L3.98169775,3.98171061 L3.98169775,9.98949196 C3.98169775,13.3021608 6.67681029,15.9972733 9.9894791,15.9972733 C13.3021479,15.9972733 15.9972605,13.3021608 15.9972605,9.98949196 C15.9972605,6.67688746 13.3021479,3.98171061 9.9894791,3.98171061 M9.9894791,3.21543408e-05 L2.57234727e-05,3.21543408e-05 L2.57234727e-05,9.98948553 C2.57234727e-05,15.5065916 4.4724373,19.9790032 9.9894791,19.9790032 C15.5065852,19.9790032 19.9789325,15.5065916 19.9789325,9.98948553 C19.9789325,4.47250804 15.5065852,3.21543408e-05 9.9894791,3.21543408e-05 M9.9894791,1.49315113 C14.6743666,1.49315113 18.4858135,5.30459807 18.4858135,9.98948553 C18.4858135,14.6744373 14.6743666,18.4858199 9.9894791,18.4858199 C5.30459164,18.4858199 1.49314469,14.6744373 1.49314469,9.98948553 L1.49314469,1.49315113 L9.9894791,1.49315113" id="path-1"></path>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Desktop-HD-–-GTL" transform="translate(-1118.000000, -26.000000)">
+            <g id="Navigation">
+                <g id="Profile-Section" transform="translate(922.000000, 17.000000)">
+                    <g id="icon-/-inks" transform="translate(196.000000, 8.000000)">
+                        <g id="Logo-Signet" transform="translate(0.000000, 1.000000)">
+                            <mask id="mask-2" fill="white">
+                                <use xlink:href="#path-1"></use>
+                            </mask>
+                            <use id="Fill-3" fill="#85BD3E" fill-rule="evenodd" xlink:href="#path-1"></use>
+                            <g id="color/weiss" mask="url(#mask-2)" fill="#FFFFFF" fill-rule="evenodd">
+                                <rect id="Rectangle" x="0" y="0" width="20" height="20"></rect>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

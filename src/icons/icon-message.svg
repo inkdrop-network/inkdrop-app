@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="22px" height="16px" viewBox="0 0 22 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49 (51002) - http://www.bohemiancoding.com/sketch -->
+    <title>icon / message</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Desktop-HD-–-GTL" transform="translate(-1034.000000, -28.000000)" fill="#FFFFFF">
+            <g id="Navigation">
+                <g id="Profile-Section" transform="translate(922.000000, 17.000000)">
+                    <g id="icon-/-message" transform="translate(112.000000, 10.000000)">
+                        <path d="M20.0942,15.4375 L1.3402,15.4375 L1.3402,3.6245 L10.7172,12.8125 L20.0942,3.6245 L20.0942,15.4375 Z M19.4252,2.3125 L10.7172,10.8435 L2.0092,2.3125 L19.4252,2.3125 Z M20.0942,0.9995 L1.3402,0.9995 C0.6002,0.9995 0.0002,1.5875 0.0002,2.3125 L0.0002,15.4375 C0.0002,16.1625 0.6002,16.7495 1.3402,16.7495 L20.0942,16.7495 C20.8342,16.7495 21.4342,16.1625 21.4342,15.4375 L21.4342,2.3125 C21.4342,1.5875 20.8342,0.9995 20.0942,0.9995 Z" id="Fill-1"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

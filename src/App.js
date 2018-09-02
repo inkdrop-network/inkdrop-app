@@ -13,7 +13,7 @@ import './css/Overpass.css'
 import './App.css'
 
 // Images
-import inkdropLogo from '../public/icons/inkdrop_logo.svg'
+import inkdropLogo from './icons/inkdrop_logo.svg'
 
 class App extends PureComponent {
   render() {

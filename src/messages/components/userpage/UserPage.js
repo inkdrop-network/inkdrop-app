@@ -4,8 +4,8 @@ import Linkify from 'react-linkify'
 import MessageItemContainer from '../messageitem/MessageItemContainer'
 
 // icons
-import iconDrop from '../../../../public/icons/icon-profile-drop.svg'
-import iconSubs from '../../../../public/icons/icon-profile-subs.svg'
+import iconDrop from '../../../icons/icon-profile-drop.svg'
+import iconSubs from '../../../icons/icon-profile-subs.svg'
 
 class UserPage extends PureComponent {
   // constructor(props) {

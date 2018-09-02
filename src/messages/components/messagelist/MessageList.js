@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import InfiniteScroll from 'react-infinite-scroller'
 import MessageItemContainer from '../messageitem/MessageItemContainer'
-import loadingSpinner from '../../../../public/icons/loading-spinner.svg'
+import loadingSpinner from '../../../icons/loading-spinner.svg'
 
 class MessageList extends PureComponent {
   constructor(props) {

@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 import MessageItem from './MessageItem'
-import { MESSAGE_DROP_REQUESTED, MESSAGE_LIKE_REQUESTED } from '../../messagesSagas'
+import { MESSAGE_DROP_REQUESTED } from '../../messagesSagas'
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -13,9 +13,9 @@ const mapDispatchToProps = dispatch => {
     onMessageDrop: (msg, drops) => {
       dispatch({ type: MESSAGE_DROP_REQUESTED, msg, drops })
     },
-    onMessageLike: msg => {
-      dispatch({ type: MESSAGE_LIKE_REQUESTED, msg })
-    },
+    // onMessageLike: msg => {
+    //   dispatch({ type: MESSAGE_LIKE_REQUESTED, msg })
+    // },
   }
 }
 

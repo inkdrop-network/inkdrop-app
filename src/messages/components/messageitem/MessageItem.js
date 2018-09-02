@@ -7,10 +7,10 @@ import Moment from 'react-moment'
 import CommentList from '../commentlist/CommentList'
 
 // icons
-import inkdropDark from '../../../../public/icons/icon-inkdrop-dark.svg'
-import iconLike from '../../../../public/icons/icon-like.svg'
-import iconComment from '../../../../public/icons/icon-comments.svg'
-import loadingSpinner from '../../../../public/icons/loading-spinner.svg'
+import inkdropDark from '../../../icons/icon-inkdrop-dark.svg'
+import iconLike from '../../../icons/icon-like.svg'
+import iconComment from '../../../icons/icon-comments.svg'
+import loadingSpinner from '../../../icons/loading-spinner.svg'
 
 class MessageItem extends PureComponent {
   constructor(props) {
