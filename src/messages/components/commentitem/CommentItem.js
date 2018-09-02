@@ -5,7 +5,7 @@ import Linkify from 'react-linkify'
 import { Card, CardBody, CardFooter } from 'reactstrap'
 import Moment from 'react-moment'
 
-import loadingSpinner from '../../../../public/icons/loading-spinner.svg'
+import loadingSpinner from '../../../icons/loading-spinner.svg'
 
 class CommentItem extends PureComponent {
   renderTxStatus() {

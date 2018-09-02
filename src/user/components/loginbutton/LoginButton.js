@@ -20,7 +20,7 @@ class LoginButton extends PureComponent {
   render() {
     return (
       <NavItem className="mr-4">
-        <a href="#" onClick={this.handleLogin}>
+        <a href="" onClick={this.handleLogin}>
           Login
         </a>
       </NavItem>

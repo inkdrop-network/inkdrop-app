@@ -15,7 +15,7 @@ class LogoutButton extends PureComponent {
   render() {
     return (
       <li className="nav-item">
-        <a href="#" className="" onClick={this.handleLogout}>
+        <a href="" className="" onClick={this.handleLogout}>
           Logout
         </a>
       </li>

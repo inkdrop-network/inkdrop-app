@@ -12,7 +12,7 @@ import {
   CardFooter,
 } from 'reactstrap'
 
-import loadingSpinner from '../../../../public/icons/loading-spinner.svg'
+import loadingSpinner from '../../../icons/loading-spinner.svg'
 
 class ProfileForm extends PureComponent {
   constructor(props) {

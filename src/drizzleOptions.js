@@ -1,4 +1,4 @@
-import InkDrop from './../build/contracts/InkDrop.json'
+import InkDrop from './contracts/InkDrop.json'
 
 const drizzleOptions = {
   web3: {

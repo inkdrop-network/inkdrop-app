@@ -14,7 +14,7 @@ import {
   Label,
 } from 'reactstrap'
 
-import loadingSpinner from '../../../../public/icons/loading-spinner.svg'
+import loadingSpinner from '../../../icons/loading-spinner.svg'
 
 class SignUpForm extends PureComponent {
   constructor(props) {
@@ -186,7 +186,11 @@ class SignUpForm extends PureComponent {
                   onChange={this.handleCheckboxChange}
                 />
                 I have read and agree to the{' '}
-                <a href="https://inkdrop.tech/tos.html" target="_blank" className="text-green">
+                <a
+                  href="https://inkdrop.tech/tos.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-green">
                   Terms of Service
                 </a>
               </Label>
@@ -200,7 +204,11 @@ class SignUpForm extends PureComponent {
                   onChange={this.handleCheckboxChange}
                 />
                 I have read and agree to the{' '}
-                <a href="https://inkdrop.tech/privacy.html" target="_blank" className="text-green">
+                <a
+                  href="https://inkdrop.tech/privacy.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-green">
                   Privacy Policy
                 </a>
               </Label>
