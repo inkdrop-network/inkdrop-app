@@ -10,6 +10,8 @@ class MessageListMasonry extends Component {
 	constructor(props) {
 		super(props)
 
+		// TODO: Expand bootstrap's container width
+
 		this.state = {
 			masonryOptions: {
 				transitionDuration: 0,
