@@ -46,22 +46,7 @@
         "chain":
             "geth --datadir=\"/tmp/eth/60/01\" --nodiscover --maxpeers 0 --port 30301 --rpc --rpcapi \"db,eth,net,web3\" --rpcport 8101 --verbosity 6 console"
     },
-    "jest": {
-        "collectCoverageFrom": ["src/**/*.{js,jsx}"],
-        "setupFiles": ["<rootDir>\\config\\polyfills.js"],
-        "testPathIgnorePatterns": ["<rootDir>[/\\\\](build|docs|node_modules)[/\\\\]"],
-        "testEnvironment": "node",
-        "testURL": "http://localhost",
-        "transform": {
-            "^.+\\.(js|jsx)$": "<rootDir>/node_modules/babel-jest",
-            "^.+\\.css$": "<rootDir>\\config\\jest\\cssTransform.js",
-            "^(?!.*\\.(js|jsx|css|json)$)": "<rootDir>\\config\\jest\\fileTransform.js"
-        },
-        "transformIgnorePatterns": ["[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"],
-        "moduleNameMapper": {
-            "^react-native$": "react-native-web"
-        }
-    },
+
     "babel": {
         "presets": ["react-app"]
     },
