@@ -67,18 +67,33 @@ class LoadingContainer extends Component {
                     things:
                   </p>
                   <ol>
-                    <li>Install MetaMask {this.props.web3.status === 'failed' ? '❌' : '👍'}</li>
                     <li>
-                      Choose the Rinkeby network {this.getNetworkName() !== 'Rinkeby' ? '📛' : '💪'}
+                      Install MetaMask{' '}
+                      <span role="img" aria-label="emoji">
+                        {this.props.web3.status === 'failed' ? '⭕️' : '✅'}
+                      </span>
+                    </li>
+                    <li>
+                      Choose the Rinkeby network{' '}
+                      <span role="img" aria-label="emoji">
+                        {this.getNetworkName() !== 'Rinkeby' ? '⭕️' : '✅'}
+                      </span>
                     </li>
                     <li>
                       Log in to MetaMask{' '}
-                      {this.props.web3.status === 'initialized' &&
-                      Object.keys(this.props.accounts).length === 0
-                        ? '🆘'
-                        : '👌'}
+                      <span role="img" aria-label="emoji">
+                        {this.props.web3.status === 'initialized' &&
+                        Object.keys(this.props.accounts).length === 0
+                          ? '⭕️'
+                          : '✅'}
+                      </span>
                     </li>
-                    <li>Get some Ether {this.getBalance() <= 0 ? '🚫' : '💸'}</li>
+                    <li>
+                      Get some Ether{' '}
+                      <span role="img" aria-label="emoji">
+                        {this.getBalance() <= 0 ? '⭕️' : '✅'}
+                      </span>
+                    </li>
                   </ol>
                 </CardBody>
                 <CardFooter className="py-4">
@@ -86,7 +101,7 @@ class LoadingContainer extends Component {
                   <ol>
                     <li>
                       We recommend to use the Chrome/FireFox extension{' '}
-                      <a href="https://metamask.io/" target="_blank">
+                      <a href="https://metamask.io/" target="_blank" rel="noopener noreferrer">
                         MetaMask
                       </a>, or dedicated Ethereum browsers like Mist or Parity.
                     </li>
@@ -97,7 +112,10 @@ class LoadingContainer extends Component {
                     <li>Please log in to MetaMask and then refresh the page.</li>
                     <li>
                       Get some Ether with the{' '}
-                      <a href="https://faucet.rinkeby.io/" target="_blank">
+                      <a
+                        href="https://faucet.rinkeby.io/"
+                        target="_blank"
+                        rel="noopener noreferrer">
                         Rinkeby Ether Faucet
                       </a>.
                     </li>
@@ -118,7 +136,11 @@ class LoadingContainer extends Component {
         <div className="container h-100">
           <div className="row justify-content-center pt-5">
             <div className="col-sm-7">
-              <h1>⚙️</h1>
+              <h1>
+                <span role="img" aria-label="emoji">
+                  ⚙️
+                </span>
+              </h1>
               <p>Loading dapp...</p>
             </div>
           </div>
