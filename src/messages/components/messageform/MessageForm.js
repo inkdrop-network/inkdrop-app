@@ -80,7 +80,7 @@ class MessageForm extends PureComponent {
   render() {
     var inputClass = this.getClass()
     return (
-      <div id="post-message" className={`col-sm-7 ${inputClass}`}>
+      <div id="post-message" className={inputClass}>
         <Card className="message-card">
           <CardBody className="d-flex flex-row pb-2">
             <img
