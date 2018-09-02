@@ -2,6 +2,10 @@ import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Button, Form, FormGroup, Input, Card, CardBody } from 'reactstrap'
 
+import iconPhoto from '../../../icons/icon-photo.svg'
+import iconVideo from '../../../icons/icon-video.svg'
+import iconPlace from '../../../icons/icon-place.svg'
+
 class MessageForm extends PureComponent {
   constructor(props) {
     super(props)
@@ -103,35 +107,17 @@ class MessageForm extends PureComponent {
             <div className="row">
               <div className="col">
                 <div id="write-message-photo" className="float-left">
-                  <img
-                    src="icons/icon-photo.svg"
-                    width="20"
-                    height="20"
-                    className=""
-                    alt="add snapshot"
-                  />
+                  <img src={iconPhoto} width="20" height="20" className="" alt="add snapshot" />
                 </div>
               </div>
               <div className="col">
                 <div id="write-message-video" className="mx-auto">
-                  <img
-                    src="icons/icon-video.svg"
-                    width="20"
-                    height="20"
-                    className=""
-                    alt="add video"
-                  />
+                  <img src={iconVideo} width="20" height="20" className="" alt="add video" />
                 </div>
               </div>
               <div className="col text-right">
                 <div id="write-message-place" className="float-right mr-3">
-                  <img
-                    src="icons/icon-place.svg"
-                    width="20"
-                    height="20"
-                    className=""
-                    alt="add location"
-                  />
+                  <img src={iconPlace} width="20" height="20" className="" alt="add location" />
                 </div>
               </div>
             </div>
