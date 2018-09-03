@@ -57,7 +57,7 @@ class MessageListMasonry extends Component {
 		)
 
 		return (
-			<div className="container-fluid my-4">
+			<div className="container-fluid container-fluid-xxl my-4">
 				<InfiniteScroll
 					pageStart={0}
 					threshold={1}

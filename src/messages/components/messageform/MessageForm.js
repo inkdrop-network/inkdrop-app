@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Button, Form, FormGroup, Input, Card, CardBody } from 'reactstrap'
+import InputRangeSlider from '../rangeslider/InputRangeSlider'
 import { roundFloat3 } from '../../../utils/rounder'
 
 class MessageForm extends PureComponent {
@@ -39,8 +40,8 @@ class MessageForm extends PureComponent {
     this.setState({ content: event.target.value })
   }
 
-  onDropsChange(event) {
-    this.setState({ drops: parseFloat(event.target.value) })
+  onDropsChange(value) {
+    this.setState({ drops: parseFloat(value) })
   }
 
   async handleSubmit(event) {
@@ -113,22 +114,16 @@ class MessageForm extends PureComponent {
                     onFocus={this.onFocus}
                   />
                   <label>Add ETH to boost your post</label>
-                  <input
-                    type="range"
-                    name="range"
-                    className="custom-range"
-                    id="drop-range"
-                    min="0"
-                    max={this.props.balance}
-                    steps="1000000000000000"
-                    value={this.state.drops}
-                    onChange={this.onDropsChange}
-                    onBlur={this.onBlur}
-                    onFocus={this.onFocus}
-                  />
+
                   <label htmlFor="drop-range" className="float-right">
                     {roundFloat3(this.web3.utils.fromWei(`${this.state.drops}`, 'ether'))} ETH
                   </label>
+                  <InputRangeSlider
+                    minValue={0}
+                    maxValue={parseFloat(this.props.balance)}
+                    value={this.state.drops}
+                    onChange={this.onDropsChange}
+                  />
                 </FormGroup>
                 <Button color="green">Send</Button>
               </Form>

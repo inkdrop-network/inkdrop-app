@@ -23,6 +23,12 @@ a:hover {
   color: var(--green-dark);
 }
 
+@media (min-width: 1600px) {
+  .container-fluid-xxl {
+    width: 1570px;
+  }
+}
+
 .font-green,
 .text-green {
   color: var(--green);
