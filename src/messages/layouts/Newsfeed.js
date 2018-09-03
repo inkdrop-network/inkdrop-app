@@ -8,11 +8,7 @@ class Newsfeed extends Component {
   }
 
   render() {
-    return (
-      <main className="container">
-        <MessageListMasonryContainer />
-      </main>
-    )
+    return <MessageListMasonryContainer />
   }
 }
 

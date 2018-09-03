@@ -15,6 +15,7 @@ class MessageListMasonry extends Component {
 		this.state = {
 			masonryOptions: {
 				transitionDuration: 0,
+				stagger: 0,
 				horizontalOrder: false,
 				columnWidth: '.grid-sizer',
 				itemSelector: '.grid-item',
@@ -38,11 +39,15 @@ class MessageListMasonry extends Component {
 			</div>
 		)
 
-		let items = this.props.messages.map(msg => (
-			<div key={msg.id} className="grid-item col-12 col-md-4 col-lg-3 mb-3 px-2">
-				<MessageItemContainer message={msg} />
-			</div>
-		))
+		let items = this.props.messages
+			.sort(function(msgA, msgB) {
+				return msgB.drops - msgA.drops
+			})
+			.map(msg => (
+				<div key={msg.id} className="grid-item col-12 col-md-4 col-lg-3 mb-3 px-2">
+					<MessageItemContainer message={msg} />
+				</div>
+			))
 
 		// add message for to the first position of the array
 		items.unshift(
@@ -52,7 +57,7 @@ class MessageListMasonry extends Component {
 		)
 
 		return (
-			<div className="container my-4">
+			<div className="container-fluid my-4">
 				<InfiniteScroll
 					pageStart={0}
 					threshold={1}
