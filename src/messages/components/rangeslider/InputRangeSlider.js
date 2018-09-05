@@ -19,7 +19,7 @@ const InputRangeSlider = ({ minValue, maxValue, value, onChange }) => (
 
 InputRangeSlider.propTypes = {
 	minValue: PropTypes.number.isRequired,
-	minValue: PropTypes.number.isRequired,
+	maxValue: PropTypes.number.isRequired,
 	value: PropTypes.number.isRequired,
 	onChange: PropTypes.func.isRequired,
 }

@@ -22,7 +22,7 @@ contract('InkDrop (newsfeed sort function)', async accounts => {
   it('...check initial messages order', async () => {
     let inkdropInstance = await InkDrop.deployed()
     let count = await inkdropInstance.getMessageCount()
-    assert.equal(count.toNumber(), 3, 'There should me now 3 message.')
+    assert.equal(count.toNumber(), 3, 'There should be now 3 message.')
 
     // get message id at index
     let msgId0 = await inkdropInstance.getMessageIdAtIndex(0, { from: accounts[8] })

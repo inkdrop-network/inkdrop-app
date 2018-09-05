@@ -384,20 +384,13 @@ contract InkDrop is Migratable, Ownable, Pausable {
 
     for(uint256 i = 0; i < messageList.length; i++) {
       messageStructs[i] = messageList[i];
-      // messageStructs[msgId].id = msgId;
-      // messageStructs[msgId].parent = messageList[msgId].parent;
-      // messageStructs[msgId].content = messageList[msgId].content;
-      // messageStructs[msgId].writtenBy = messageList[msgId].writtenBy;
-      // messageStructs[msgId].timestamp = messageList[msgId].timestamp;
-      // messageStructs[msgId].timetolive = messageList[msgId].timetolive;
-      // messageStructs[msgId].likes = messageList[msgId].likes;
-      // messageStructs[msgId].likePointers = messageList[msgId].likePointers;
-      // messageStructs[msgId].dropAmount = messageList[msgId].dropAmount;
-      // messageStructs[msgId].dropPointers = messageList[msgId].dropPointers;
-      // messageStructs[msgId].comments = messageList[msgId].comments;
-
       messageOrder.push(i);
     }
+  }
+
+  function reduceDrops(uint256 _id) onlyOwner whenNotPaused public payable {
+    // reduce dropAmount by 20% (i.e. multiply by 80% or 4/5)
+    messageStructs[_id].dropAmount = messageStructs[_id].dropAmount / 5 * 4;
   }
 
 }

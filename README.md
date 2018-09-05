@@ -1,3 +1,15 @@
+<h1 align="center">InkDrop</h1> <br>
+<p align="center">
+  <img alt="comet" src="https://inkdrop.tech/images/icon_drop.svg" width="120">
+</p>
+<p align="center">Decentralized microblogging beyond Twitter</p>
+
+<p align="center">
+  <img alt="made for ethereum" src="https://img.shields.io/badge/made_for-ethereum-771ea5.svg">
+  <img alt="to the moon" src="https://img.shields.io/badge/to_the-moon-fab127.svg">
+  <!-- <img alt="MIT license" src="https://img.shields.io/badge/license-MIT-blue.svg"> -->
+</p>
+
 # TODOs Smart Contract
 
 - Upgradeable smart contracts
