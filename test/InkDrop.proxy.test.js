@@ -1,20 +1,26 @@
 // import { TestApp } from 'zos'
+let TestApp = require('../node_modules/zos').TestApp
 
-// const InkDrop = artifacts.require('InkDrop')
+const InkDrop = artifacts.require('InkDrop')
 
-// contract('InkDrop proxy pattern', function([_, owner]) {
-// 	beforeEach(async function() {
-// 		this.app = await TestApp({ from: owner })
-// 	})
+contract('InkDrop proxy pattern', function([_, owner]) {
+	beforeEach(async function() {
+		console.log('Before each')
+		this.app = await TestApp({ from: owner }, 'zos.development.json')
+	})
 
-// 	it('should create a proxy', async function() {
-// 		// Check description here: https://github.com/zeppelinos/zos/issues/60#issuecomment-419140273
-// 		const proxy = await this.app.createProxy(InkDrop, 'InkDrop', 'initialize') // , [recipient])
-// 	})
+	describe('via proxy', function() {
+		it('should create a proxy', async function() {
+			// Check description here: https://github.com/zeppelinos/zos/issues/60#issuecomment-419140273
+			const proxy = await this.app.createProxy(InkDrop, 'InkDrop', 'initialize', [owner])
+		})
+	})
 
-// 	it('should create a proxy for the stdlib', async function() {
-// 		const proxy = await this.app.createProxy(InkDrop)
-// 		const result = await proxy.totalSupply()
-// 		assert.equal(result.toNumber(), 0, 'Should have 0 supply.')
-// 	})
-// })
+	describe('via proxy, total supply', function() {
+		it('should create a proxy for the stdlib', async function() {
+			const proxy = await this.app.createProxy(InkDrop, 'InkDrop', 'initialize', [owner])
+			const result = await proxy.totalSupply()
+			assert.equal(result.toNumber(), 0, 'Should have 0 supply.')
+		})
+	})
+})

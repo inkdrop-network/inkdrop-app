@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 import SignUpForm from './SignUpForm'
-import { SIGNUP_REQUESTED, IPFS_UPLOAD_REQUESTED } from '../../userSagas'
+import { SIGNUP_REQUESTED } from '../../userSagas'
 
 const mapStateToProps = state => {
   return {
@@ -18,9 +18,9 @@ const mapDispatchToProps = dispatch => {
     onSignupUser: (user, buffer) => {
       dispatch({ type: SIGNUP_REQUESTED, user, buffer })
     },
-    onIpfsUpload: buffer => {
-      dispatch({ type: IPFS_UPLOAD_REQUESTED, buffer })
-    },
+    // onIpfsUpload: buffer => {
+    //   dispatch({ type: IPFS_UPLOAD_REQUESTED, buffer })
+    // },
   }
 }
 

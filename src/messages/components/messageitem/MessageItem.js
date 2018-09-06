@@ -1,23 +1,16 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import { Link } from 'react-router'
-import {
-  Card,
-  CardBody,
-  CardFooter,
-  Input,
-  InputGroup,
-  InputGroupAddon,
-  InputGroupText,
-} from 'reactstrap'
-import Moment from 'react-moment'
+import { Card, CardFooter } from 'reactstrap'
+import MessageHeader from './MessageHeader'
+import MessageContent from './MessageContent'
+import MessageActions from './MessageActions'
 import CommentList from '../commentlist/CommentList'
 
 // icons
 // import inkdropDark from '../../../../public/icons/icon-inkdrop-dark.svg'
 // import inkdropGreen from '../../../../public/icons/inkdrop_logo.svg'
-import iconLike from '../../../../public/icons/icon-like.svg'
-import iconComment from '../../../../public/icons/icon-comments.svg'
+// import iconLike from '../../../../public/icons/icon-like.svg'
+
 import loadingSpinner from '../../../../public/icons/loading-spinner.svg'
 
 class MessageItem extends PureComponent {
@@ -102,79 +95,23 @@ class MessageItem extends PureComponent {
     }
   }
 
-  renderDonations(msg) {
-    return (
-      <div className="col text-center">
-        <div className="like-message-button mx-auto">
-          <img src={iconLike} width="20" height="20" className="" alt="likes" />
-          <span className="like-number icon-number ml-1">{msg.likes}</span>
-        </div>
-      </div>
-    )
-  }
-
   render() {
     let commentsClass = this.getClass()
-    let commentsNrClass = this.getNrClass()
     let msg = this.props.message
 
     return (
       <Card className={`message-card ${msg.fromBlockchain ? '' : 'muted'}`}>
-        <CardBody className="d-flex flex-row pb-2">
-          <img
-            className="mr-2 profile-img"
-            src={msg.userUrl || 'https://via.placeholder.com/50/85bd3e/85bd3e'}
-            alt="profile"
-          />
-          <div>
-            <Link to={`/user/${msg.userAdr}`} className="">
-              <strong className="align-top d-block card-username">@{msg.username}</strong>
-            </Link>
-            <span className="card-message-time">
-              <Moment fromNow>{msg.timestamp}</Moment>
-            </span>
-          </div>
-        </CardBody>
-        <CardBody className="py-2">{msg.content}</CardBody>
-        <CardBody className="pt-2">
-          <div className="row">
-            <div className="col">
-              <div className="comment-message-button float-left" onClick={this.toggleComments}>
-                <img src={iconComment} width="20" height="20" className="" alt="comments" />
-                <span className={`comment-number icon-number ml-1 ${commentsNrClass}`}>
-                  {msg.commentIds.length}
-                </span>
-              </div>
+        <MessageHeader msg={msg} />
+        <MessageContent msg={msg} />
+        <MessageActions
+          msg={msg}
+          toggleComments={this.toggleComments}
+          onDropsChange={this.onDropsChange}
+          dropMessage={this.dropMessage}
+          drops={this.state.drops}
+          commentsNrClass={this.getNrClass()}
+        />
 
-              <div className="drop-message-button float-left ml-2">
-                {/* <img src={inkdropDark} width="20" height="20" className="drops" alt="" /> */}
-                <span className="drop-number icon-number">{msg.drops} ETH</span>
-              </div>
-            </div>
-
-            <div className="col-4">
-              <InputGroup size="sm">
-                <Input
-                  type="number"
-                  value={this.state.drops}
-                  min="0.001"
-                  max="100"
-                  step="0.001"
-                  onChange={this.onDropsChange}
-                />
-                <InputGroupAddon addonType="append" onClick={this.dropMessage}>
-                  <InputGroupText>
-                    Add ETH
-                    {/* <img src={inkdropGreen} width="20" height="20" className="drops ml-3" alt="" />*/}
-                  </InputGroupText>
-                </InputGroupAddon>
-              </InputGroup>
-              {/* <div className="drop-message-button float-right" onClick={this.dropMessage}>
-                <img src={inkdropGreen} width="20" height="20" className="drops" alt="" />
-              </div> */}
-            </div>
-          </div>
-        </CardBody>
         {this.renderTxStatus()}
         <CardFooter className={`comments-card ${commentsClass}`}>
           {msg.fromBlockchain && <CommentList message={msg} />}
@@ -185,10 +122,9 @@ class MessageItem extends PureComponent {
 }
 
 MessageItem.propTypes = {
-  message: PropTypes.object,
-  user: PropTypes.object,
-  onMessageDrop: PropTypes.func,
-  onMessageLike: PropTypes.func,
+  message: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
+  onMessageDrop: PropTypes.func.isRequired,
 }
 
 export default MessageItem
