@@ -4,6 +4,7 @@ import { Card, CardFooter } from 'reactstrap'
 import MessageHeader from './MessageHeader'
 import MessageContent from './MessageContent'
 import MessageActions from './MessageActions'
+import MessageActionsExtend from './MessageActionsExtend'
 import CommentList from '../commentlist/CommentList'
 
 // icons
@@ -27,8 +28,8 @@ class MessageItem extends PureComponent {
     this.dropMessage = this.dropMessage.bind(this)
   }
 
-  onDropsChange(event) {
-    this.setState({ drops: parseFloat(event.target.value) })
+  onDropsChange(value) {
+    this.setState({ drops: parseFloat(value) })
   }
 
   async dropMessage() {
@@ -110,6 +111,11 @@ class MessageItem extends PureComponent {
           dropMessage={this.dropMessage}
           drops={this.state.drops}
           commentsNrClass={this.getNrClass()}
+        />
+        <MessageActionsExtend
+          balance={parseFloat(this.props.balance)}
+          drops={this.state.drops}
+          onDropsChange={this.onDropsChange}
         />
 
         {this.renderTxStatus()}
