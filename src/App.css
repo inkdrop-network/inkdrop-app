@@ -144,12 +144,20 @@ footer .list-inline {
 
 .card.message-card,
 .card.profile-card,
-.card-body.comment-card {
+.card-body.comment-card,
+.modal-content {
   opacity: 1;
   /*box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.15);*/
   box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   background-color: var(--white);
+}
+
+.modal-footer {
+  background-color: var(--dark-light);
+  border-bottom-right-radius: 8px;
+  border-bottom-left-radius: 8px;
+  justify-content: normal;
 }
 
 .card.message-card.muted,
@@ -161,11 +169,11 @@ footer .list-inline {
   display: flex;
 }
 
-.card a {
+a.message-header-link {
   color: var(--dark);
 }
 
-.card a:hover {
+a.message-header-link:hover {
   color: var(--green);
   text-decoration: none;
 }

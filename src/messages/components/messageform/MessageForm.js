@@ -14,7 +14,7 @@ class MessageForm extends PureComponent {
 
     this.state = {
       content: '',
-      drops: 0, // TODO: add drop slider
+      drops: 0,
       focus: true,
     }
 

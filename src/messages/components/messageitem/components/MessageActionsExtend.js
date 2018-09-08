@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { CardBody, Button } from 'reactstrap'
-import InputRangeSlider from '../rangeslider/InputRangeSlider'
+import InputRangeSlider from '../../rangeslider/InputRangeSlider'
 
 const MessageActionsExtend = ({
 	className,

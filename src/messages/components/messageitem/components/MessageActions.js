@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { CardBody } from 'reactstrap'
 
-import iconComment from '../../../../public/icons/icon-comments.svg'
+import iconComment from '../../../../../public/icons/icon-comments.svg'
 
 const MessageActions = ({ msg, toggleComments, toggleActions, drops, commentsNrClass }) => (
 	<CardBody className="pt-2 pb-4">

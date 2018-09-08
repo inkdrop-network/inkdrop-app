@@ -1,10 +1,10 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import { Card, CardFooter } from 'reactstrap'
-import MessageHeader from './MessageHeader'
-import MessageContent from './MessageContent'
-import MessageActions from './MessageActions'
-import MessageActionsExtend from './MessageActionsExtend'
+import { Card, CardBody, CardFooter } from 'reactstrap'
+import MessageHeader from './components/MessageHeader'
+import MessageActions from './components/MessageActions'
+import MessageActionsExtend from './components/MessageActionsExtend'
+import MessageModal from './MessageModal'
 import CommentList from '../commentlist/CommentList'
 import { roundFloat3 } from '../../../utils/rounder'
 
@@ -24,11 +24,13 @@ class MessageItem extends PureComponent {
     this.state = {
       showComments: false,
       showActions: false,
+      showModal: false,
       drops: 0.001, // 0.001 ETH
     }
 
     this.toggleComments = this.toggleComments.bind(this)
     this.toggleActions = this.toggleActions.bind(this)
+    this.toggleModal = this.toggleModal.bind(this)
     this.onDropsChange = this.onDropsChange.bind(this)
     this.dropMessage = this.dropMessage.bind(this)
   }
@@ -77,6 +79,12 @@ class MessageItem extends PureComponent {
     })
   }
 
+  toggleModal() {
+    this.setState(prevState => {
+      return { showModal: !prevState.showModal }
+    })
+  }
+
   renderTxStatus() {
     if (
       !this.props.message.fromBlockchain ||
@@ -119,8 +127,12 @@ class MessageItem extends PureComponent {
 
     return (
       <Card className={`message-card ${msg.fromBlockchain ? '' : 'muted'}`}>
-        <MessageHeader msg={msg} />
-        <MessageContent msg={msg} />
+        <CardBody>
+          <MessageHeader msg={msg} />
+        </CardBody>
+        <CardBody className="py-2" onClick={this.toggleModal}>
+          {msg.content}
+        </CardBody>
         <MessageActions
           msg={msg}
           toggleComments={this.toggleComments}
@@ -142,6 +154,7 @@ class MessageItem extends PureComponent {
         <CardFooter className={`comments-card ${commentsClass}`}>
           {msg.fromBlockchain && <CommentList message={msg} />}
         </CardFooter>
+        <MessageModal msg={msg} isOpen={this.state.showModal} toggle={this.toggleModal} />
       </Card>
     )
   }
