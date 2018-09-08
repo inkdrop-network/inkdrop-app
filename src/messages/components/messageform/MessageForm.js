@@ -10,10 +10,12 @@ class MessageForm extends PureComponent {
 
     this.web3 = context.drizzle.web3
 
+    // TODO: Remove focus from state. Always show MessageForm with no opacitiy!
+
     this.state = {
       content: '',
       drops: 0, // TODO: add drop slider
-      focus: false,
+      focus: true,
     }
 
     this.onContentChange = this.onContentChange.bind(this)
@@ -28,7 +30,7 @@ class MessageForm extends PureComponent {
   }
 
   onBlur() {
-    this.setState({ focus: false })
+    this.setState({ focus: true })
   }
 
   getClass() {
