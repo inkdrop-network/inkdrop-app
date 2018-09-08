@@ -1,8 +1,14 @@
+.input-range {
+	margin-left: 0.5rem;
+	margin-right: 0.5rem;
+}
+
 .input-range__slider {
 	background: var(--green);
 	border: 1px solid var(--green);
 	height: 1rem;
 	width: 1rem;
+	/*margin-left: 0;*/
 }
 
 .input-range__slider:active {

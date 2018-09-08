@@ -7,15 +7,16 @@ import iconComment from '../../../../public/icons/icon-comments.svg'
 const MessageActions = ({
 	msg,
 	toggleComments,
+	toggleActions,
 	onDropsChange,
 	dropMessage,
 	drops,
 	commentsNrClass,
 }) => (
-	<CardBody className="pt-2">
+	<CardBody className="pt-2 pb-4">
 		<div className="row">
 			<div className="col">
-				<div className="drop-message-button float-left">
+				<div className="drop-message-button float-left" onClick={toggleActions}>
 					{/* <img src={inkdropDark} width="20" height="20" className="drops" alt="" /> */}
 					<span className="drop-number icon-number">{msg.drops} ETH</span>
 				</div>
@@ -60,6 +61,7 @@ MessageActions.propTypes = {
 		commentIds: PropTypes.array.isRequired,
 	}).isRequired,
 	toggleComments: PropTypes.func.isRequired,
+	toggleActions: PropTypes.func.isRequired,
 	onDropsChange: PropTypes.func.isRequired,
 	dropMessage: PropTypes.func.isRequired,
 	drops: PropTypes.number.isRequired,

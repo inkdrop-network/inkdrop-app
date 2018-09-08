@@ -4,25 +4,33 @@ import { CardBody, Button } from 'reactstrap'
 import { roundFloat3 } from '../../../utils/rounder'
 import InputRangeSlider from '../rangeslider/InputRangeSlider'
 
-const MessageActionsExtend = ({ balance, drops, onDropsChange, web3 }) => (
-	<CardBody className="py-2">
-		<div className="d-flex flex-row">
+const MessageActionsExtend = ({ className, minValue, maxValue, value, onDropsChange, web3 }) => (
+	<CardBody className={`pt-0 ${className}`}>
+		<hr className="m-0" />
+		<div className="d-flex flex-row mt-4">
 			<div className="flex-grow-1 mr-3">
-				<InputRangeSlider minValue={0} maxValue={balance} value={drops} onChange={onDropsChange} />
+				<InputRangeSlider
+					minValue={minValue}
+					maxValue={maxValue}
+					value={value}
+					onChange={onDropsChange}
+				/>
 			</div>
 			<div className="text-right" style={{ width: '90px' }}>
-				{roundFloat3(web3.utils.fromWei(`${drops}`, 'ether'))} ETH
+				{roundFloat3(web3.utils.fromWei(`${value}`, 'ether'))} ETH
 			</div>
 		</div>
-		<Button color="green" className="my-3" block>
+		<Button color="green" className="mt-3" block>
 			Upvote
 		</Button>
 	</CardBody>
 )
 
 MessageActionsExtend.propTypes = {
-	balance: PropTypes.number.isRequired,
-	drops: PropTypes.number.isRequired,
+	className: PropTypes.string.isRequired,
+	minValue: PropTypes.number.isRequired,
+	maxValue: PropTypes.number.isRequired,
+	value: PropTypes.number.isRequired,
 	onDropsChange: PropTypes.func.isRequired,
 }
 

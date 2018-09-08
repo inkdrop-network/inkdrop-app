@@ -22,10 +22,12 @@ class MessageItem extends PureComponent {
 
     this.state = {
       showComments: false,
+      showActions: false,
       drops: 1000000000000000, // 0.001 ETH
     }
 
     this.toggleComments = this.toggleComments.bind(this)
+    this.toggleActions = this.toggleActions.bind(this)
     this.onDropsChange = this.onDropsChange.bind(this)
     this.dropMessage = this.dropMessage.bind(this)
   }
@@ -47,8 +49,13 @@ class MessageItem extends PureComponent {
     }
   }
 
-  getClass() {
+  getCommentClass() {
     if (this.state.showComments === false) return 'd-none'
+    else return ''
+  }
+
+  getActionsClass() {
+    if (this.state.showActions === false) return 'd-none'
     else return ''
   }
 
@@ -60,6 +67,12 @@ class MessageItem extends PureComponent {
   toggleComments() {
     this.setState(prevState => {
       return { showComments: !prevState.showComments }
+    })
+  }
+
+  toggleActions() {
+    this.setState(prevState => {
+      return { showActions: !prevState.showActions }
     })
   }
 
@@ -99,7 +112,8 @@ class MessageItem extends PureComponent {
   }
 
   render() {
-    let commentsClass = this.getClass()
+    let commentsClass = this.getCommentClass()
+    let actionsClass = this.getActionsClass()
     let msg = this.props.message
 
     return (
@@ -109,14 +123,17 @@ class MessageItem extends PureComponent {
         <MessageActions
           msg={msg}
           toggleComments={this.toggleComments}
+          toggleActions={this.toggleActions}
           onDropsChange={this.onDropsChange}
           dropMessage={this.dropMessage}
           drops={this.state.drops}
           commentsNrClass={this.getNrClass()}
         />
         <MessageActionsExtend
-          balance={parseFloat(this.props.balance)}
-          drops={this.state.drops}
+          className={actionsClass}
+          minValue={1000000000000000}
+          maxValue={parseFloat(this.props.balance)}
+          value={this.state.drops}
           onDropsChange={this.onDropsChange}
           web3={this.web3}
         />

@@ -100,7 +100,7 @@ class MessageForm extends PureComponent {
           <CardBody className="py-2">
             <div id="send-area">
               <Form onSubmit={this.handleSubmit}>
-                <FormGroup>
+                <FormGroup className="mb-0">
                   <Input
                     type="textarea"
                     name="text"
@@ -125,7 +125,9 @@ class MessageForm extends PureComponent {
                     onChange={this.onDropsChange}
                   />
                 </FormGroup>
-                <Button color="green">Send</Button>
+                <Button color="green" block className="mt-3">
+                  Send
+                </Button>
               </Form>
             </div>
           </CardBody>
