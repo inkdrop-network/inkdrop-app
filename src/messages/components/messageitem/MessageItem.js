@@ -15,12 +15,14 @@ import CommentList from '../commentlist/CommentList'
 import loadingSpinner from '../../../../public/icons/loading-spinner.svg'
 
 class MessageItem extends PureComponent {
-  constructor(props) {
+  constructor(props, context) {
     super(props)
+
+    this.web3 = context.drizzle.web3
 
     this.state = {
       showComments: false,
-      drops: 0.001,
+      drops: 1000000000000000, // 0.001 ETH
     }
 
     this.toggleComments = this.toggleComments.bind(this)
@@ -40,7 +42,7 @@ class MessageItem extends PureComponent {
         return alert("You don't have enough funds for this post.")
       } else {
         this.props.onMessageDrop(this.props.message, newDrops)
-        this.setState({ drops: 0.001 })
+        this.setState({ drops: 1000000000000000 })
       }
     }
   }
@@ -116,6 +118,7 @@ class MessageItem extends PureComponent {
           balance={parseFloat(this.props.balance)}
           drops={this.state.drops}
           onDropsChange={this.onDropsChange}
+          web3={this.web3}
         />
 
         {this.renderTxStatus()}
@@ -125,6 +128,10 @@ class MessageItem extends PureComponent {
       </Card>
     )
   }
+}
+
+MessageItem.contextTypes = {
+  drizzle: PropTypes.object,
 }
 
 MessageItem.propTypes = {
