@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap'
 import MessageHeader from './components/MessageHeader'
+import CommentList from '../commentlist/CommentList'
 
 const MessageModal = ({ msg, isOpen, toggle }) => (
 	<Modal isOpen={isOpen} toggle={toggle} size="lg" className="">
@@ -13,7 +14,7 @@ const MessageModal = ({ msg, isOpen, toggle }) => (
 			<hr className="m-0 mb-4" />
 			message actions come in here
 		</ModalBody>
-		<ModalFooter>comments come in here</ModalFooter>
+		<ModalFooter>{msg.fromBlockchain && <CommentList message={msg} />}</ModalFooter>
 	</Modal>
 )
 

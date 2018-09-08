@@ -5,7 +5,6 @@ import MessageHeader from './components/MessageHeader'
 import MessageActions from './components/MessageActions'
 import MessageActionsExtend from './components/MessageActionsExtend'
 import MessageModal from './MessageModal'
-import CommentList from '../commentlist/CommentList'
 import { roundFloat3 } from '../../../utils/rounder'
 
 // icons
@@ -135,7 +134,7 @@ class MessageItem extends PureComponent {
         </CardBody>
         <MessageActions
           msg={msg}
-          toggleComments={this.toggleComments}
+          toggleComments={this.toggleModal}
           toggleActions={this.toggleActions}
           drops={this.state.drops}
           commentsNrClass={this.getNrClass()}
@@ -151,9 +150,6 @@ class MessageItem extends PureComponent {
         />
 
         {this.renderTxStatus()}
-        <CardFooter className={`comments-card ${commentsClass}`}>
-          {msg.fromBlockchain && <CommentList message={msg} />}
-        </CardFooter>
         <MessageModal msg={msg} isOpen={this.state.showModal} toggle={this.toggleModal} />
       </Card>
     )
