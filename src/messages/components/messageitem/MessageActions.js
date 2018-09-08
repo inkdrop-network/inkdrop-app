@@ -1,18 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { CardBody, Input, InputGroup, InputGroupAddon, InputGroupText } from 'reactstrap'
+import { CardBody } from 'reactstrap'
 
 import iconComment from '../../../../public/icons/icon-comments.svg'
 
-const MessageActions = ({
-	msg,
-	toggleComments,
-	toggleActions,
-	onDropsChange,
-	dropMessage,
-	drops,
-	commentsNrClass,
-}) => (
+const MessageActions = ({ msg, toggleComments, toggleActions, drops, commentsNrClass }) => (
 	<CardBody className="pt-2 pb-4">
 		<div className="row">
 			<div className="col">
@@ -28,30 +20,6 @@ const MessageActions = ({
 				</div>
 			</div>
 		</div>
-
-		<div className="d-none">
-			<div className="col-4">
-				<InputGroup size="sm">
-					<Input
-						type="number"
-						value={drops}
-						min="0.001"
-						max="100"
-						step="0.001"
-						onChange={onDropsChange}
-					/>
-					<InputGroupAddon addonType="append" onClick={dropMessage}>
-						<InputGroupText>
-							Add ETH
-							{/* <img src={inkdropGreen} width="20" height="20" className="drops ml-3" alt="" />*/}
-						</InputGroupText>
-					</InputGroupAddon>
-				</InputGroup>
-				{/* <div className="drop-message-button float-right" onClick={this.dropMessage}>
-                <img src={inkdropGreen} width="20" height="20" className="drops" alt="" />
-              </div> */}
-			</div>
-		</div>
 	</CardBody>
 )
 
@@ -62,8 +30,6 @@ MessageActions.propTypes = {
 	}).isRequired,
 	toggleComments: PropTypes.func.isRequired,
 	toggleActions: PropTypes.func.isRequired,
-	onDropsChange: PropTypes.func.isRequired,
-	dropMessage: PropTypes.func.isRequired,
 	drops: PropTypes.number.isRequired,
 }
 

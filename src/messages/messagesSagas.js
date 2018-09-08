@@ -87,7 +87,7 @@ function* messageRequested({ msg }) {
     {
       ...msg,
       sendingMessage: 'Transaction Pending - Confirm through Metamask',
-      drops: roundFloat3(drizzle.web3.utils.fromWei(`${msg.drops}`, 'ether')),
+      drops: roundFloat3(msg.drops),
     }
   )
 
@@ -98,7 +98,7 @@ function* messageRequested({ msg }) {
   const contractName = 'InkDrop'
 
   const sendArgs = {
-    value: `${msg.drops}`,
+    value: drizzle.web3.utils.toWei(`${msg.drops}`, 'ether'),
   }
 
   const txObject = yield call(drizzle.contracts.InkDrop.methods.createMessage, msg.content)

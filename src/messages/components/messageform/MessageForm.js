@@ -115,12 +115,11 @@ class MessageForm extends PureComponent {
                   />
                   <label>Add ETH to boost your post</label>
 
-                  <label htmlFor="drop-range" className="float-right">
-                    {roundFloat3(this.web3.utils.fromWei(`${this.state.drops}`, 'ether'))} ETH
-                  </label>
                   <InputRangeSlider
                     minValue={0}
-                    maxValue={parseFloat(this.props.balance)}
+                    maxValue={roundFloat3(
+                      this.web3.utils.fromWei(`${this.props.balance}`, 'ether')
+                    )}
                     value={this.state.drops}
                     onChange={this.onDropsChange}
                   />

@@ -65,7 +65,10 @@ class MessageListMasonry extends Component {
 					loadMore={this.loadMore}
 					hasMore={this.props.pagination.hasMore}
 					loader={loader}>
-					<Masonry className={'newsfeed'} options={this.state.masonryOptions}>
+					<Masonry
+						className={'newsfeed'}
+						options={this.state.masonryOptions}
+						enableResizableChildren={true}>
 						<div className="grid-sizer col-12 col-md-4 col-lg-3" />
 						{items}
 					</Masonry>

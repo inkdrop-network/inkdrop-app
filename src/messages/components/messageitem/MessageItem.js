@@ -6,6 +6,7 @@ import MessageContent from './MessageContent'
 import MessageActions from './MessageActions'
 import MessageActionsExtend from './MessageActionsExtend'
 import CommentList from '../commentlist/CommentList'
+import { roundFloat3 } from '../../../utils/rounder'
 
 // icons
 // import inkdropDark from '../../../../public/icons/icon-inkdrop-dark.svg'
@@ -23,7 +24,7 @@ class MessageItem extends PureComponent {
     this.state = {
       showComments: false,
       showActions: false,
-      drops: 1000000000000000, // 0.001 ETH
+      drops: 0.001, // 0.001 ETH
     }
 
     this.toggleComments = this.toggleComments.bind(this)
@@ -44,7 +45,7 @@ class MessageItem extends PureComponent {
         return alert("You don't have enough funds for this post.")
       } else {
         this.props.onMessageDrop(this.props.message, newDrops)
-        this.setState({ drops: 1000000000000000 })
+        this.setState({ drops: 0.001 })
       }
     }
   }
@@ -124,17 +125,16 @@ class MessageItem extends PureComponent {
           msg={msg}
           toggleComments={this.toggleComments}
           toggleActions={this.toggleActions}
-          onDropsChange={this.onDropsChange}
-          dropMessage={this.dropMessage}
           drops={this.state.drops}
           commentsNrClass={this.getNrClass()}
         />
         <MessageActionsExtend
           className={actionsClass}
-          minValue={1000000000000000}
-          maxValue={parseFloat(this.props.balance)}
+          minValue={0.001}
+          maxValue={roundFloat3(this.web3.utils.fromWei(`${this.props.balance}`, 'ether'))}
           value={this.state.drops}
           onDropsChange={this.onDropsChange}
+          dropMessage={this.dropMessage}
           web3={this.web3}
         />
 
