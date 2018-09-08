@@ -61,7 +61,7 @@ class MessageForm extends PureComponent {
     let newMsg = {
       content: this.state.content,
       username: this.props.user.name,
-      timestamp: Date.now(),
+      timestamp: new Date(),
       likes: 0,
       drops: this.state.drops,
       userUrl: this.props.user.imgUrl,
