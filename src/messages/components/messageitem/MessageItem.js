@@ -27,7 +27,6 @@ class MessageItem extends PureComponent {
       drops: 0.001, // 0.001 ETH
     }
 
-    this.toggleComments = this.toggleComments.bind(this)
     this.toggleActions = this.toggleActions.bind(this)
     this.toggleModal = this.toggleModal.bind(this)
     this.onDropsChange = this.onDropsChange.bind(this)
@@ -51,11 +50,6 @@ class MessageItem extends PureComponent {
     }
   }
 
-  getCommentClass() {
-    if (this.state.showComments === false) return 'd-none'
-    else return ''
-  }
-
   getActionsClass() {
     if (this.state.showActions === false) return 'd-none'
     else return ''
@@ -64,12 +58,6 @@ class MessageItem extends PureComponent {
   getNrClass() {
     if (this.state.showComments === true) return 'open'
     else return ''
-  }
-
-  toggleComments() {
-    this.setState(prevState => {
-      return { showComments: !prevState.showComments }
-    })
   }
 
   toggleActions() {
@@ -120,7 +108,6 @@ class MessageItem extends PureComponent {
   }
 
   render() {
-    let commentsClass = this.getCommentClass()
     let actionsClass = this.getActionsClass()
     let msg = this.props.message
 
@@ -137,7 +124,6 @@ class MessageItem extends PureComponent {
           toggleComments={this.toggleModal}
           toggleActions={this.toggleActions}
           drops={this.state.drops}
-          commentsNrClass={this.getNrClass()}
         />
         <MessageActionsExtend
           className={actionsClass}

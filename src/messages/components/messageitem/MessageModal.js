@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap'
+import { Modal, ModalBody, ModalFooter } from 'reactstrap'
 import MessageHeader from './components/MessageHeader'
 import CommentList from '../commentlist/CommentList'
 

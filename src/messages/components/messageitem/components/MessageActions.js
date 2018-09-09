@@ -4,7 +4,7 @@ import { CardBody } from 'reactstrap'
 
 import iconComment from '../../../../../public/icons/icon-comments.svg'
 
-const MessageActions = ({ msg, toggleComments, toggleActions, drops, commentsNrClass }) => (
+const MessageActions = ({ msg, toggleComments, toggleActions, drops }) => (
 	<CardBody className="pt-2 pb-4">
 		<div className="row">
 			<div className="col">
@@ -12,11 +12,9 @@ const MessageActions = ({ msg, toggleComments, toggleActions, drops, commentsNrC
 					{/* <img src={inkdropDark} width="20" height="20" className="drops" alt="" /> */}
 					<span className="drop-number icon-number">{msg.drops} ETH</span>
 				</div>
-				<div className="comment-message-button float-right" onClick={toggleComments}>
+				<div className="comment-message-button float-right text-right" onClick={toggleComments}>
 					<img src={iconComment} width="20" height="20" className="" alt="comments" />
-					<span className={`comment-number icon-number ml-1 ${commentsNrClass}`}>
-						{msg.commentIds.length}
-					</span>
+					<span className="comment-number icon-number ml-1">{msg.commentIds.length}</span>
 				</div>
 			</div>
 		</div>
