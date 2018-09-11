@@ -114,13 +114,14 @@ class MessageItem extends PureComponent {
     return (
       <Card className={`message-card ${msg.fromBlockchain ? '' : 'muted'}`}>
         <CardBody>
-          <MessageHeader msg={msg} />
+          <MessageHeader msg={msg} extended={false} />
         </CardBody>
         <CardBody className="py-2" onClick={this.toggleModal}>
           {msg.content}
         </CardBody>
         <MessageActions
           msg={msg}
+          active={this.state.showActions}
           toggleComments={this.toggleModal}
           toggleActions={this.toggleActions}
           drops={this.state.drops}

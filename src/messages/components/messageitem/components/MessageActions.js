@@ -1,21 +1,22 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { CardBody } from 'reactstrap'
+import SVG from 'react-inlinesvg'
 
-import iconComment from '../../../../../public/icons/icon-comments.svg'
+import iconComments from '../../../../../public/icons/icon-comments.svg'
+import iconEther from '../../../../../public/icons/icon-ether.svg'
 
-const MessageActions = ({ msg, toggleComments, toggleActions, drops }) => (
-	<CardBody className="pt-2 pb-4">
+const MessageActions = ({ msg, toggleComments, toggleActions, drops, active }) => (
+	<CardBody className="pt-2">
 		<div className="row">
-			<div className="col">
-				<div className="drop-message-button float-left" onClick={toggleActions}>
-					{/* <img src={inkdropDark} width="20" height="20" className="drops" alt="" /> */}
-					<span className="drop-number icon-number">{msg.drops} ETH</span>
-				</div>
-				<div className="comment-message-button float-right text-right" onClick={toggleComments}>
-					<img src={iconComment} width="20" height="20" className="" alt="comments" />
-					<span className="comment-number icon-number ml-1">{msg.commentIds.length}</span>
-				</div>
+			<div className={`col icon-actions ${active ? 'active' : ''}`} onClick={toggleActions}>
+				<SVG src={iconEther} wrapper={React.createFactory('div')} className="icon d-inline" />
+				<div className="icon-number d-inline ml-1">{msg.drops}</div>
+			</div>
+
+			<div className="col icon-actions text-right" onClick={toggleComments}>
+				<SVG src={iconComments} wrapper={React.createFactory('div')} className="icon d-inline" />
+				<div className="icon-number d-inline ml-1">{msg.commentIds.length}</div>
 			</div>
 		</div>
 	</CardBody>
@@ -29,6 +30,7 @@ MessageActions.propTypes = {
 	toggleComments: PropTypes.func.isRequired,
 	toggleActions: PropTypes.func.isRequired,
 	drops: PropTypes.number.isRequired,
+	active: PropTypes.bool.isRequired,
 }
 
 export default MessageActions

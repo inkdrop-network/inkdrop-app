@@ -3,6 +3,10 @@
 	margin-right: 0.5rem;
 }
 
+.input-range .slider-value {
+	font-size: 0.9rem;
+}
+
 .input-range__slider {
 	background: var(--green);
 	border: 1px solid var(--green);
