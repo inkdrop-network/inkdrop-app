@@ -44,19 +44,21 @@ class CommentForm extends PureComponent {
   render() {
     // render only comments that are fully fetched from the blockchain and not only initial comments' ids
     return (
-      <Form onSubmit={this.handleSubmit}>
-        <FormGroup>
-          <Input
-            value={this.state.comment}
-            onChange={this.handleComment}
-            type="textarea"
-            name="comment"
-            rows="2"
-            placeholder="Your comment"
-          />
-        </FormGroup>
-        <Button color="green">Comment</Button>
-      </Form>
+      <div className="w-100">
+        <Form onSubmit={this.handleSubmit}>
+          <FormGroup>
+            <Input
+              value={this.state.comment}
+              onChange={this.handleComment}
+              type="textarea"
+              name="comment"
+              rows="2"
+              placeholder="Your comment"
+            />
+          </FormGroup>
+          <Button color="green">Comment</Button>
+        </Form>
+      </div>
     )
   }
 }

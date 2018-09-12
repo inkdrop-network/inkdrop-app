@@ -17,8 +17,8 @@ const MessageModal = ({ msg, isOpen, toggle }) => (
 		<ModalBody>{msg.content}</ModalBody>
 		<ModalBody>
 			<hr className="m-0 mb-3" />
-			<div class="container-fluid">
-				<div class="row">
+			<div className="container-fluid">
+				<div className="row">
 					<div className="col icon-actions text-left">
 						<SVG src={iconEther} wrapper={React.createFactory('div')} className="icon d-inline" />
 						<div className="icon-number d-inline ml-1">{msg.drops}</div>

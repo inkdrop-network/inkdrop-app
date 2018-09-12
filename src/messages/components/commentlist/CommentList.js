@@ -6,12 +6,18 @@ import CommentFormContainer from '../commentform/CommentFormContainer'
 class CommentList extends PureComponent {
   render() {
     return (
-      <div className="comments">
-        {this.props.message.comments.map((comment, index) => (
-          <CommentItem comment={comment} key={index} />
-        ))}
-
-        <CommentFormContainer message={this.props.message} />
+      <div className="container-fluid">
+        <div className="row mt-3 mb-5">
+          <CommentFormContainer message={this.props.message} />
+        </div>
+        <div className="comments row">
+          {this.props.message.comments.map((comment, index) => (
+            <div className="w-100" key={index}>
+              <CommentItem comment={comment} />
+              {this.props.message.comments.length - 1 > index && <hr className="w-100 mb-4" />}
+            </div>
+          ))}
+        </div>
       </div>
     )
   }

@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router'
-import { Card, CardBody, CardFooter } from 'reactstrap'
+import { CardFooter } from 'reactstrap'
 import Moment from 'react-moment'
 
 import loadingSpinner from '../../../../public/icons/loading-spinner.svg'
@@ -40,10 +40,10 @@ class CommentItem extends PureComponent {
 
   render() {
     return (
-      <Card
+      <div
         key={this.props.comment.id}
-        className={`comment-card mb-2 ${this.props.comment.fromBlockchain ? '' : 'muted'}`}>
-        <CardBody>
+        className={`comment-card mb-4 ${this.props.comment.fromBlockchain ? '' : 'muted'}`}>
+        <div>
           <div className="d-flex flex-row">
             <img
               className="mr-2 profile-img"
@@ -51,7 +51,7 @@ class CommentItem extends PureComponent {
               alt="profile"
             />
             <div>
-              <Link to={`/user/${this.props.comment.userAdr}`} className="">
+              <Link to={`/user/${this.props.comment.userAdr}`} className="message-header-link">
                 <strong className="align-top d-block card-username">
                   @{this.props.comment.username}
                 </strong>
@@ -62,9 +62,9 @@ class CommentItem extends PureComponent {
             </div>
           </div>
           <div className="pt-2">{this.props.comment.content}</div>
-        </CardBody>
+        </div>
         {this.renderTxStatus()}
-      </Card>
+      </div>
     )
   }
 }
