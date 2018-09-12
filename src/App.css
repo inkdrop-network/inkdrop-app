@@ -2,12 +2,13 @@
   --dark: #29313e;
   /*--font: #1a1a1a;*/
   --green: #85bd3e;
+  --success: var(--green);
   --green-dark: #73a336;
   --white: #ffffff;
   /*--dark-light: #f0f0f0;*/
   --dark-light: #f1f1f1;
   --gray: #999999;
-  --success: var(--green);
+  --blue: #8999b6;
 }
 
 body {
@@ -202,7 +203,8 @@ footer .list-inline {
 }
 
 a.message-header-link {
-  color: var(--dark);
+  /*color: var(--dark);*/
+  color: var(--blue);
 }
 
 a.message-header-link:hover {

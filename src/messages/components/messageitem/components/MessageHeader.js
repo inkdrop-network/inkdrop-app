@@ -24,8 +24,7 @@ const MessageHeader = ({ msg, extended }) => (
 			</span>
 		</div>
 		{extended && (
-			<div className="icon-actions ml-auto">
-				Menu
+			<div className="icon-actions ml-auto" style={{ width: '30px', marginTop: '5px' }}>
 				<SVG src={iconDots} wrapper={React.createFactory('div')} className="icon" />
 			</div>
 		)}

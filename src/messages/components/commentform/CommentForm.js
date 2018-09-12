@@ -45,7 +45,21 @@ class CommentForm extends PureComponent {
     // render only comments that are fully fetched from the blockchain and not only initial comments' ids
     return (
       <div className="w-100">
-        <Form onSubmit={this.handleSubmit}>
+        <div className="d-flex flex-row pb-2">
+          <img
+            id="post-message-profile-picture"
+            className="mr-2 profile-img"
+            src={this.props.user.imgUrl || 'https://via.placeholder.com/50/85bd3e/85bd3e'}
+            alt="profile"
+          />
+          <div>
+            <strong id="post-message-username" className="align-top d-block card-username">
+              @{this.props.user.name}
+            </strong>
+            <span className="card-message-time">now</span>
+          </div>
+        </div>
+        <Form className="pt-2" onSubmit={this.handleSubmit}>
           <FormGroup>
             <Input
               value={this.state.comment}
