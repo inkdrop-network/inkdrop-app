@@ -74,7 +74,11 @@ class UserPage extends PureComponent {
             </div>
 
             <div id="profile-page-messages" className="col-sm-7 mt-2">
-              {this.props.messages.map(msg => <MessageItemContainer message={msg} key={msg.id} />)}
+              {this.props.messages.map(msg => (
+                <div className="mb-3" key={msg.id}>
+                  <MessageItemContainer message={msg} />
+                </div>
+              ))}
             </div>
           </div>
         </div>
