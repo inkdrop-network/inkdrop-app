@@ -21,7 +21,6 @@ class MessageItem extends PureComponent {
     this.web3 = context.drizzle.web3
 
     this.state = {
-      showComments: false,
       showActions: false,
       showModal: false,
       drops: 0.001, // 0.001 ETH
@@ -48,16 +47,6 @@ class MessageItem extends PureComponent {
         this.setState({ drops: 0.001 })
       }
     }
-  }
-
-  getActionsClass() {
-    if (this.state.showActions === false) return 'd-none'
-    else return ''
-  }
-
-  getNrClass() {
-    if (this.state.showComments === true) return 'open'
-    else return ''
   }
 
   toggleActions() {
@@ -108,7 +97,6 @@ class MessageItem extends PureComponent {
   }
 
   render() {
-    let actionsClass = this.getActionsClass()
     let msg = this.props.message
 
     return (
@@ -126,18 +114,25 @@ class MessageItem extends PureComponent {
           toggleActions={this.toggleActions}
           drops={this.state.drops}
         />
-        <MessageActionsExtend
-          className={actionsClass}
-          minValue={0.001}
+        {this.state.showActions && (
+          <MessageActionsExtend
+            maxValue={roundFloat3(this.web3.utils.fromWei(`${this.props.balance}`, 'ether'))}
+            value={this.state.drops}
+            onDropsChange={this.onDropsChange}
+            dropMessage={this.dropMessage}
+          />
+        )}
+
+        {this.renderTxStatus()}
+        <MessageModal
+          msg={msg}
+          isOpen={this.state.showModal}
+          toggle={this.toggleModal}
           maxValue={roundFloat3(this.web3.utils.fromWei(`${this.props.balance}`, 'ether'))}
           value={this.state.drops}
           onDropsChange={this.onDropsChange}
           dropMessage={this.dropMessage}
-          web3={this.web3}
         />
-
-        {this.renderTxStatus()}
-        <MessageModal msg={msg} isOpen={this.state.showModal} toggle={this.toggleModal} />
       </Card>
     )
   }

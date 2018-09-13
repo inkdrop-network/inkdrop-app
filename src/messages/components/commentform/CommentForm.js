@@ -70,7 +70,9 @@ class CommentForm extends PureComponent {
               placeholder="Your comment"
             />
           </FormGroup>
-          <Button color="green">Comment</Button>
+          <Button color="green" block>
+            Comment
+          </Button>
         </Form>
       </div>
     )

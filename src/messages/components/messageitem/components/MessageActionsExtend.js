@@ -3,24 +3,11 @@ import PropTypes from 'prop-types'
 import { CardBody, Button } from 'reactstrap'
 import InputRangeSlider from '../../rangeslider/InputRangeSlider'
 
-const MessageActionsExtend = ({
-	className,
-	minValue,
-	maxValue,
-	value,
-	onDropsChange,
-	dropMessage,
-	web3,
-}) => (
-	<CardBody className={`pt-0 ${className}`}>
+const MessageActionsExtend = ({ maxValue, value, onDropsChange, dropMessage }) => (
+	<CardBody className={`pt-0`}>
 		<hr className="m-0 mb-4" />
 
-		<InputRangeSlider
-			minValue={minValue}
-			maxValue={maxValue}
-			value={value}
-			onChange={onDropsChange}
-		/>
+		<InputRangeSlider minValue={0.001} maxValue={maxValue} value={value} onChange={onDropsChange} />
 		<Button color="green" className="mt-3" block onClick={dropMessage}>
 			Upvote
 		</Button>
@@ -28,8 +15,6 @@ const MessageActionsExtend = ({
 )
 
 MessageActionsExtend.propTypes = {
-	className: PropTypes.string.isRequired,
-	minValue: PropTypes.number.isRequired,
 	maxValue: PropTypes.number.isRequired,
 	value: PropTypes.number.isRequired,
 	onDropsChange: PropTypes.func.isRequired,
