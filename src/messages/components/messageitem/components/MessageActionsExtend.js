@@ -7,7 +7,12 @@ const MessageActionsExtend = ({ maxValue, value, onDropsChange, dropMessage }) =
 	<CardBody className={`pt-0`}>
 		<hr className="m-0 mb-4" />
 
-		<InputRangeSlider minValue={0.001} maxValue={maxValue} value={value} onChange={onDropsChange} />
+		<InputRangeSlider
+			minValue={0.001}
+			maxValue={maxValue - 0.001}
+			value={value}
+			onChange={onDropsChange}
+		/>
 		<Button color="green" className="mt-3" block onClick={dropMessage}>
 			Upvote
 		</Button>

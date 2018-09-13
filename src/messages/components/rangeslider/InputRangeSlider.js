@@ -22,7 +22,7 @@ const InputRangeSlider = ({ minValue, maxValue, value, onChange }) => (
 			/>
 		</div>
 		<div className="slider-value text-right" style={{ width: '90px' }}>
-			{roundFloat3(value)}{' '}
+			{Number(roundFloat3(value)).toFixed(3)}{' '}
 			<SVG src={iconEther} wrapper={React.createFactory('div')} className="icon d-inline" />
 		</div>
 	</div>

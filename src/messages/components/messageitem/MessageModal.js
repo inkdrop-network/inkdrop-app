@@ -52,7 +52,9 @@ class MessageModal extends PureComponent {
 									wrapper={React.createFactory('div')}
 									className="icon d-inline"
 								/>
-								<div className="icon-number d-inline ml-1">{this.props.msg.drops}</div>
+								<div className="icon-number d-inline ml-1">
+									{Number(this.props.msg.drops).toFixed(3)}
+								</div>
 							</div>
 
 							<div className="col icon-actions text-center" onClick={this.toggleComments}>

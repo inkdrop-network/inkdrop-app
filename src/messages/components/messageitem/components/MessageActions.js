@@ -11,7 +11,7 @@ const MessageActions = ({ msg, toggleComments, toggleActions, drops, active }) =
 		<div className="row">
 			<div className={`col icon-actions ${active ? 'active' : ''}`} onClick={toggleActions}>
 				<SVG src={iconEther} wrapper={React.createFactory('div')} className="icon d-inline" />
-				<div className="icon-number d-inline ml-1">{msg.drops}</div>
+				<div className="icon-number d-inline ml-1">{Number(msg.drops).toFixed(3)}</div>
 			</div>
 
 			<div className="col icon-actions text-right" onClick={toggleComments}>
