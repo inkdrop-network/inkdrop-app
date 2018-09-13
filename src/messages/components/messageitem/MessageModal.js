@@ -15,18 +15,10 @@ class MessageModal extends PureComponent {
 		super(props)
 
 		this.state = {
-			showComments: false,
 			showActions: false,
 		}
 
-		this.toggleComments = this.toggleComments.bind(this)
 		this.toggleActions = this.toggleActions.bind(this)
-	}
-
-	toggleComments() {
-		this.setState(prevState => {
-			return { showComments: !prevState.showComments }
-		})
 	}
 
 	toggleActions() {
@@ -57,7 +49,7 @@ class MessageModal extends PureComponent {
 								</div>
 							</div>
 
-							<div className="col icon-actions text-center" onClick={this.toggleComments}>
+							<div className="col icon-actions text-center" onClick={this.props.toggleComments}>
 								<SVG
 									src={iconComments}
 									wrapper={React.createFactory('div')}
@@ -86,7 +78,7 @@ class MessageModal extends PureComponent {
 					/>
 				)}
 
-				{this.state.showComments && (
+				{this.props.showComments && (
 					<ModalFooter>
 						{this.props.msg.fromBlockchain && <CommentList message={this.props.msg} />}
 					</ModalFooter>
@@ -104,6 +96,8 @@ MessageModal.propTypes = {
 	value: PropTypes.number.isRequired,
 	onDropsChange: PropTypes.func.isRequired,
 	dropMessage: PropTypes.func.isRequired,
+	showComments: PropTypes.bool.isRequired,
+	toggleComments: PropTypes.func.isRequired,
 }
 
 export default MessageModal

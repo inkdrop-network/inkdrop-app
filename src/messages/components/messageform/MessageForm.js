@@ -119,9 +119,9 @@ class MessageForm extends PureComponent {
 
                   <InputRangeSlider
                     minValue={0}
-                    maxValue={roundFloat3(
-                      this.web3.utils.fromWei(`${this.props.balance}`, 'ether')
-                    )}
+                    maxValue={
+                      roundFloat3(this.web3.utils.fromWei(`${this.props.balance}`, 'ether')) - 0.001
+                    }
                     value={this.state.drops}
                     onChange={this.onDropsChange}
                   />

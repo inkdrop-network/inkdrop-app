@@ -23,10 +23,12 @@ class MessageItem extends PureComponent {
     this.state = {
       showActions: false,
       showModal: false,
+      showComments: false,
       drops: 0.001, // 0.001 ETH
     }
 
     this.toggleActions = this.toggleActions.bind(this)
+    this.toggleComments = this.toggleComments.bind(this)
     this.toggleModal = this.toggleModal.bind(this)
     this.onDropsChange = this.onDropsChange.bind(this)
     this.dropMessage = this.dropMessage.bind(this)
@@ -55,9 +57,18 @@ class MessageItem extends PureComponent {
     })
   }
 
+  toggleComments() {
+    this.setState(prevState => {
+      return { showComments: !prevState.showComments }
+    })
+  }
+
   toggleModal() {
     this.setState(prevState => {
-      return { showModal: !prevState.showModal }
+      return {
+        showModal: !prevState.showModal,
+        showComments: true,
+      }
     })
   }
 
@@ -132,6 +143,8 @@ class MessageItem extends PureComponent {
           value={this.state.drops}
           onDropsChange={this.onDropsChange}
           dropMessage={this.dropMessage}
+          toggleComments={this.toggleComments}
+          showComments={this.state.showComments}
         />
       </Card>
     )
