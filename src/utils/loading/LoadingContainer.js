@@ -2,7 +2,7 @@ import { drizzleConnect } from 'drizzle-react'
 import React, { Children, Component } from 'react'
 import PropTypes from 'prop-types'
 import { Card, CardBody, CardFooter } from 'reactstrap'
-import { LOGOUT_REQUESTED } from '../../user/userSagas'
+import { LOGOUT_REQUESTED, LOGIN_REQUESTED } from '../../user/userSagas'
 
 /*
  * Create component.
@@ -12,8 +12,6 @@ class LoadingContainer extends Component {
   constructor(props, context) {
     super(props)
     this.context = context
-
-    console.log('Create LoadingContainer')
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -29,7 +27,7 @@ class LoadingContainer extends Component {
 
         // If accounts differ, log current user out and trigger update
         if (!accountsCheck) {
-          console.log('HERE 2!!!')
+          console.log('Update LoadingContainer')
           this.props.onLogoutUser()
           return true
         } else {
@@ -45,7 +43,7 @@ class LoadingContainer extends Component {
 
             // Do update if balances changed, otherwise don't
             if (!balancesCheck) {
-              console.log('HERE 1!!!')
+              console.log('Update LoadingContainer')
               return true
             } else {
               return false
@@ -54,24 +52,6 @@ class LoadingContainer extends Component {
         }
       }
     }
-
-    // console.log('LoadingContainer should update')
-    // if (this.props.drizzleStatus.initialized) {
-    //   console.log('INTIALIZED!!!')
-    // }
-    // console.log('-- drizzleStatus')
-    // console.log(this.props.drizzleStatus)
-    // console.log(nextProps.drizzleStatus)
-    // console.log(this.props.drizzleStatus === nextProps.drizzleStatus)
-    // console.log('-- Accounts')
-    // console.log(this.props.accounts)
-    // console.log(nextProps.accounts)
-    // console.log(this.props.accounts === nextProps.accounts)
-    // console.log('-- Balances')
-    // console.log(this.props.accountBalances)
-    // console.log(nextProps.accountBalances)
-    // console.log(this.props.accountBalances === nextProps.accountBalances)
-    // console.log('')
     return true
   }
 
@@ -173,6 +153,7 @@ class LoadingContainer extends Component {
     }
 
     if (this.props.drizzleStatus.initialized) {
+      this.props.onLoginUser({ address: this.props.accounts[0] })
       return Children.only(this.props.children)
     }
     return (
@@ -216,6 +197,9 @@ const mapDispatchToProps = dispatch => {
   return {
     onLogoutUser: () => {
       dispatch({ type: LOGOUT_REQUESTED })
+    },
+    onLoginUser: user => {
+      dispatch({ type: LOGIN_REQUESTED, user })
     },
   }
 }

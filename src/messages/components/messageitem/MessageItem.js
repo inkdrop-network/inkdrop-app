@@ -7,11 +7,6 @@ import MessageActionsExtend from './components/MessageActionsExtend'
 import MessageModal from './MessageModal'
 import { roundFloat3 } from '../../../utils/rounder'
 
-// icons
-// import inkdropDark from '../../../../public/icons/icon-inkdrop-dark.svg'
-// import inkdropGreen from '../../../../public/icons/inkdrop_logo.svg'
-// import iconLike from '../../../../public/icons/icon-like.svg'
-
 import loadingSpinner from '../../../../public/icons/loading-spinner.svg'
 
 class MessageItem extends PureComponent {
