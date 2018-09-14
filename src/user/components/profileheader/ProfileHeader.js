@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router'
+import SVG from 'react-inlinesvg'
 import {
   Nav,
   NavItem,
@@ -12,10 +13,7 @@ import {
 import LogoutButtonContainer from '../logoutbutton/LogoutButtonContainer'
 import { roundFloat3 } from '../../../utils/rounder'
 
-// Images
-// import iconAlarm from '../../../../public/icons/icon-alarm.svg'
-// import iconMessage from '../../../../public/icons/icon-message.svg'
-// import inkdropWhite from '../../../../public/icons/icon-inkdrop-white.svg'
+import iconEther from '../../../../public/icons/icon-ether.svg'
 
 class ProfileHeader extends PureComponent {
   constructor(props) {
@@ -76,17 +74,15 @@ class ProfileHeader extends PureComponent {
           </DropdownMenu>
         </UncontrolledDropdown>
 
-        <NavItem className="ml-3 d-flex align-items-center">
-          {/* <img
-            src={inkdropWhite}
-            className="align-middle nav-icons"
-            width="20"
-            height="20"
-            alt="drops"
-          /> */}
-          <span id="profile-drop-number" className="nav-icon-nr font-white">
-            {roundFloat3(this.props.user.drops)} ETH
-          </span>
+        <NavItem className="ml-2 d-flex align-items-center">
+          <div id="profile-drop-number" className="nav-icon-nr font-white">
+            {roundFloat3(this.props.user.drops)}{' '}
+            <SVG
+              src={iconEther}
+              wrapper={React.createFactory('div')}
+              className="icon white d-inline"
+            />
+          </div>
         </NavItem>
       </Nav>
     )

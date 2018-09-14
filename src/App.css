@@ -112,6 +112,11 @@ a:hover {
   fill: var(--dark);
 }
 
+.icon.white path {
+  opacity: 0.9;
+  fill: var(--white);
+}
+
 .icon-actions {
   font-size: 0.9rem;
   color: var(--gray);

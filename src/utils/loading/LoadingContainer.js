@@ -2,6 +2,7 @@ import { drizzleConnect } from 'drizzle-react'
 import React, { Children, Component } from 'react'
 import PropTypes from 'prop-types'
 import { Card, CardBody, CardFooter } from 'reactstrap'
+import { LOGOUT_REQUESTED } from '../../user/userSagas'
 
 /*
  * Create component.
@@ -11,7 +12,28 @@ class LoadingContainer extends Component {
   constructor(props, context) {
     super(props)
     this.context = context
+
+    console.log('Create LoadingContainer')
   }
+
+  // componentDidUpdate(prevProps) {
+  //   console.log('LoadingContainer updated')
+  //   console.log(prevProps)
+  //   console.log(this.props)
+  // }
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   if (this.props.drizzleStatus.initialized && nextProps.drizzleStatus.initialized) {
+  //     if ('accounts' in this.props && 'accounts' in nextProps) {
+  //       if (this.props.accounts[0] !== nextProps.accounts[0]) {
+  //         console.log('accounts changed')
+  //         this.props.onLogoutUser()
+  //       }
+  //     }
+  //     return false
+  //   } else {
+  //     return true
+  //   }
+  // }
 
   getNetworkName() {
     if (process.env.NODE_ENV === 'development') {
@@ -130,6 +152,14 @@ class LoadingContainer extends Component {
 LoadingContainer.contextTypes = {
   drizzle: PropTypes.object,
 }
+
+LoadingContainer.propTypes = {
+  accounts: PropTypes.object,
+  accountBalances: PropTypes.object,
+  drizzleStatus: PropTypes.object,
+  user: PropTypes.object,
+  web3: PropTypes.object,
+}
 /*
  * Export connected component.
  */
@@ -141,4 +171,13 @@ const mapStateToProps = state => {
     web3: state.web3,
   }
 }
-export default drizzleConnect(LoadingContainer, mapStateToProps)
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onLogoutUser: () => {
+      dispatch({ type: LOGOUT_REQUESTED })
+    },
+  }
+}
+
+export default drizzleConnect(LoadingContainer, mapStateToProps, mapDispatchToProps)
