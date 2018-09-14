@@ -109,6 +109,7 @@ class MessageItem extends PureComponent {
 
   render() {
     let msg = this.props.message
+    let currentBalance = roundFloat3(this.web3.utils.fromWei(`${this.props.balance}`, 'ether'))
 
     return (
       <Card className={`message-card ${msg.fromBlockchain ? '' : 'muted'}`}>
@@ -125,14 +126,15 @@ class MessageItem extends PureComponent {
           toggleActions={this.toggleActions}
           drops={this.state.drops}
         />
-        {this.state.showActions && (
-          <MessageActionsExtend
-            maxValue={roundFloat3(this.web3.utils.fromWei(`${this.props.balance}`, 'ether'))}
-            value={this.state.drops}
-            onDropsChange={this.onDropsChange}
-            dropMessage={this.dropMessage}
-          />
-        )}
+        {this.state.showActions &&
+          currentBalance > 0.001 && (
+            <MessageActionsExtend
+              maxValue={roundFloat3(this.web3.utils.fromWei(`${this.props.balance}`, 'ether'))}
+              value={this.state.drops}
+              onDropsChange={this.onDropsChange}
+              dropMessage={this.dropMessage}
+            />
+          )}
 
         {this.renderTxStatus()}
         <MessageModal

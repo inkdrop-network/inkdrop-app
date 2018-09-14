@@ -69,14 +69,15 @@ class MessageModal extends PureComponent {
 						</div>
 					</div>
 				</ModalBody>
-				{this.state.showActions && (
-					<MessageActionsExtend
-						maxValue={this.props.maxValue}
-						value={this.props.value}
-						onDropsChange={this.props.onDropsChange}
-						dropMessage={this.props.dropMessage}
-					/>
-				)}
+				{this.state.showActions &&
+					this.props.maxValue > 0.001 && (
+						<MessageActionsExtend
+							maxValue={this.props.maxValue}
+							value={this.props.value}
+							onDropsChange={this.props.onDropsChange}
+							dropMessage={this.props.dropMessage}
+						/>
+					)}
 
 				{this.props.showComments && (
 					<ModalFooter>

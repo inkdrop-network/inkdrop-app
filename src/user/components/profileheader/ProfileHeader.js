@@ -18,8 +18,6 @@ import iconEther from '../../../../public/icons/icon-ether.svg'
 class ProfileHeader extends PureComponent {
   constructor(props) {
     super(props)
-    // TODO: Check why ProfileHeader in initiated after every account snyc
-    // console.log('Profile header created')
     this.userPayout = this.userPayout.bind(this)
   }
 
@@ -76,7 +74,7 @@ class ProfileHeader extends PureComponent {
 
         <NavItem className="ml-2 d-flex align-items-center">
           <div id="profile-drop-number" className="nav-icon-nr font-white">
-            {roundFloat3(this.props.user.drops)}{' '}
+            {Number(roundFloat3(this.props.user.drops)).toFixed(3)}{' '}
             <SVG
               src={iconEther}
               wrapper={React.createFactory('div')}

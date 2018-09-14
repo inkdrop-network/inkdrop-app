@@ -81,7 +81,9 @@ class MessageForm extends PureComponent {
   }
 
   render() {
-    var inputClass = this.getClass()
+    let inputClass = this.getClass()
+    let currentBalance = roundFloat3(this.web3.utils.fromWei(`${this.props.balance}`, 'ether'))
+
     return (
       <div id="post-message" className={inputClass}>
         <Card className="message-card">
@@ -115,16 +117,17 @@ class MessageForm extends PureComponent {
                     onBlur={this.onBlur}
                     onFocus={this.onFocus}
                   />
-                  <label>Add ETH to boost your post</label>
-
-                  <InputRangeSlider
-                    minValue={0}
-                    maxValue={
-                      roundFloat3(this.web3.utils.fromWei(`${this.props.balance}`, 'ether')) - 0.001
-                    }
-                    value={this.state.drops}
-                    onChange={this.onDropsChange}
-                  />
+                  {currentBalance > 0.001 && (
+                    <div>
+                      <label>Add ETH to boost your post</label>
+                      <InputRangeSlider
+                        minValue={0}
+                        maxValue={currentBalance}
+                        value={this.state.drops}
+                        onChange={this.onDropsChange}
+                      />
+                    </div>
+                  )}
                 </FormGroup>
                 <Button color="green" block className="mt-3">
                   Send

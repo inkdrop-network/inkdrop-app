@@ -16,24 +16,64 @@ class LoadingContainer extends Component {
     console.log('Create LoadingContainer')
   }
 
-  // componentDidUpdate(prevProps) {
-  //   console.log('LoadingContainer updated')
-  //   console.log(prevProps)
-  //   console.log(this.props)
-  // }
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   if (this.props.drizzleStatus.initialized && nextProps.drizzleStatus.initialized) {
-  //     if ('accounts' in this.props && 'accounts' in nextProps) {
-  //       if (this.props.accounts[0] !== nextProps.accounts[0]) {
-  //         console.log('accounts changed')
-  //         this.props.onLogoutUser()
-  //       }
-  //     }
-  //     return false
-  //   } else {
-  //     return true
-  //   }
-  // }
+  shouldComponentUpdate(nextProps, nextState) {
+    // Check if the component should update once drizzle is initialized
+    if (this.props.drizzleStatus.initialized) {
+      // The account object should have already entries (length > 0)
+      if (
+        Object.keys(this.props.accounts).length > 0 &&
+        Object.keys(nextProps.accounts).length > 0
+      ) {
+        // Compare the accounts in both stages
+        let accountsCheck = this.props.accounts[0] === nextProps.accounts[0]
+
+        // If accounts differ, log current user out and trigger update
+        if (!accountsCheck) {
+          console.log('HERE 2!!!')
+          this.props.onLogoutUser()
+          return true
+        } else {
+          // The accountBalances object should have already entries
+          if (
+            Object.keys(this.props.accountBalances).length > 0 &&
+            Object.keys(nextProps.accountBalances).length > 0
+          ) {
+            // Compare both balances
+            let balancesCheck =
+              this.props.accountBalances[this.props.accounts[0]] ===
+              nextProps.accountBalances[nextProps.accounts[0]]
+
+            // Do update if balances changed, otherwise don't
+            if (!balancesCheck) {
+              console.log('HERE 1!!!')
+              return true
+            } else {
+              return false
+            }
+          }
+        }
+      }
+    }
+
+    // console.log('LoadingContainer should update')
+    // if (this.props.drizzleStatus.initialized) {
+    //   console.log('INTIALIZED!!!')
+    // }
+    // console.log('-- drizzleStatus')
+    // console.log(this.props.drizzleStatus)
+    // console.log(nextProps.drizzleStatus)
+    // console.log(this.props.drizzleStatus === nextProps.drizzleStatus)
+    // console.log('-- Accounts')
+    // console.log(this.props.accounts)
+    // console.log(nextProps.accounts)
+    // console.log(this.props.accounts === nextProps.accounts)
+    // console.log('-- Balances')
+    // console.log(this.props.accountBalances)
+    // console.log(nextProps.accountBalances)
+    // console.log(this.props.accountBalances === nextProps.accountBalances)
+    // console.log('')
+    return true
+  }
 
   getNetworkName() {
     if (process.env.NODE_ENV === 'development') {
