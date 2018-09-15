@@ -1,5 +1,14 @@
 const initialState = {
-  data: null,
+  data: {
+    name: '',
+    bio: '',
+    drops: 0,
+    address: '',
+    ipfsHash: '',
+    imgUrl: '',
+    followers: 0,
+  },
+  loggedIn: false,
   error: false,
   errorMessage: null,
   loading: false,
@@ -21,6 +30,7 @@ const userReducer = (state = initialState, action) => {
   if (action.type === USER_LOGGED_IN || action.type === USER_UPDATED) {
     return Object.assign({}, state, {
       data: action.payload,
+      loggedIn: true,
     })
   }
 

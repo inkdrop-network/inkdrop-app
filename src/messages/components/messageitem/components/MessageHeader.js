@@ -2,9 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router'
 import Moment from 'react-moment'
-import SVG from 'react-inlinesvg'
+// import SVG from 'react-inlinesvg'
 
-import iconDots from '../../../../../public/icons/icon-dots.svg'
+// import iconDots from '../../../../../public/icons/icon-dots.svg'
 
 const MessageHeader = ({ msg, extended }) => (
 	<div className="d-flex flex-row">
@@ -23,11 +23,11 @@ const MessageHeader = ({ msg, extended }) => (
 				<Moment fromNow>{msg.timestamp}</Moment>
 			</span>
 		</div>
-		{extended && (
+		{/*extended && (
 			<div className="icon-actions ml-auto" style={{ width: '30px', marginTop: '5px' }}>
 				<SVG src={iconDots} wrapper={React.createFactory('div')} className="icon" />
 			</div>
-		)}
+		)*/}
 	</div>
 )
 

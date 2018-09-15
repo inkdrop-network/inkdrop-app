@@ -1,5 +1,6 @@
-import { drizzleConnect } from 'drizzle-react'
 import React, { Children, Component } from 'react'
+// import { drizzleConnect } from 'drizzle-react'
+import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import { Card, CardBody, CardFooter } from 'reactstrap'
 import { LOGOUT_REQUESTED, LOGIN_REQUESTED } from '../../user/userSagas'
@@ -9,9 +10,16 @@ import { LOGOUT_REQUESTED, LOGIN_REQUESTED } from '../../user/userSagas'
  */
 
 class LoadingContainer extends Component {
-  constructor(props, context) {
-    super(props)
-    this.context = context
+  // constructor(props, context) {
+  //   super(props)
+  //   this.context = context
+  // }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.drizzleStatus.initialized) {
+      // TODO: This is still not the optimal solution. You can do better!
+      this.props.onLoginUser({ address: this.props.accounts[0] })
+    }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -27,7 +35,7 @@ class LoadingContainer extends Component {
 
         // If accounts differ, log current user out and trigger update
         if (!accountsCheck) {
-          console.log('Update LoadingContainer')
+          console.log('Update LoadingContainer 3')
           this.props.onLogoutUser()
           return true
         } else {
@@ -43,7 +51,7 @@ class LoadingContainer extends Component {
 
             // Do update if balances changed, otherwise don't
             if (!balancesCheck) {
-              console.log('Update LoadingContainer')
+              console.log('Update LoadingContainer 2')
               return true
             } else {
               return false
@@ -80,9 +88,10 @@ class LoadingContainer extends Component {
 
   getBalance() {
     if (this.props.accounts[0] in this.props.accountBalances) {
-      return this.context.drizzle.web3.utils.fromWei(
-        this.props.accountBalances[this.props.accounts[0]]
-      )
+      // return this.context.drizzle.web3.utils.fromWei(
+      //   this.props.accountBalances[this.props.accounts[0]]
+      // )
+      return this.props.accountBalances[this.props.accounts[0]]
     } else {
       return 0
     }
@@ -153,7 +162,6 @@ class LoadingContainer extends Component {
     }
 
     if (this.props.drizzleStatus.initialized) {
-      this.props.onLoginUser({ address: this.props.accounts[0] })
       return Children.only(this.props.children)
     }
     return (
@@ -170,16 +178,17 @@ class LoadingContainer extends Component {
     )
   }
 }
-LoadingContainer.contextTypes = {
-  drizzle: PropTypes.object,
-}
+// LoadingContainer.contextTypes = {
+//   drizzle: PropTypes.object,
+// }
 
 LoadingContainer.propTypes = {
-  accounts: PropTypes.object,
-  accountBalances: PropTypes.object,
-  drizzleStatus: PropTypes.object,
+  accounts: PropTypes.object.isRequired,
+  accountBalances: PropTypes.object.isRequired,
+  drizzleStatus: PropTypes.object.isRequired,
   user: PropTypes.object,
-  web3: PropTypes.object,
+  loggedIn: PropTypes.bool.isRequired,
+  web3: PropTypes.object.isRequired,
 }
 /*
  * Export connected component.
@@ -189,6 +198,7 @@ const mapStateToProps = state => {
     accounts: state.accounts,
     accountBalances: state.accountBalances,
     drizzleStatus: state.drizzleStatus,
+    loggedIn: state.user.loggedIn,
     web3: state.web3,
   }
 }
@@ -204,4 +214,8 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-export default drizzleConnect(LoadingContainer, mapStateToProps, mapDispatchToProps)
+// export default drizzleConnect(LoadingContainer, mapStateToProps, mapDispatchToProps)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(LoadingContainer)
