@@ -19,12 +19,17 @@ class MessageModal extends PureComponent {
 		}
 
 		this.toggleActions = this.toggleActions.bind(this)
+		this.reportMessage = this.reportMessage.bind(this)
 	}
 
 	toggleActions() {
 		this.setState(prevState => {
 			return { showActions: !prevState.showActions }
 		})
+	}
+
+	reportMessage() {
+		alert('Proof-of-Care functionalities coming soon. Stay tuned!')
 	}
 
 	render() {
@@ -58,7 +63,7 @@ class MessageModal extends PureComponent {
 								<div className="icon-number d-inline ml-1">{this.props.msg.commentIds.length}</div>
 							</div>
 
-							<div className="col icon-actions text-right">
+							<div className="col icon-actions text-right" onClick={this.reportMessage}>
 								<SVG
 									src={iconReport}
 									wrapper={React.createFactory('div')}
