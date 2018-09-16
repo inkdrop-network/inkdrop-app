@@ -22,6 +22,8 @@ For a fresh deployment to an empty testnet please start from 1., otherwise jump 
 
 For a fresh deployment please start from 1., otherwise jump straight to 4.
 
+Check the gas limit before the deployment at https://rinkeby.etherscan.io/blocks and set the most recent value to `truffle.js`.
+
 1.  Delete `zos.rinkeby.json`
 2.  `zos push --network rinkeby`
 3.  `zos create InkDrop --init initialize --args $OWNER --network rinkeby`
