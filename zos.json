@@ -1,6 +1,6 @@
 {
   "name": "inkdrop_app",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "contracts": {
     "InkDrop": "InkDrop"
   },

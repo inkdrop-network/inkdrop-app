@@ -345,10 +345,6 @@ contract InkDrop is Migratable, Ownable, Pausable {
     return (userList.length, messageOrder.length, commentList.length);
   }
 
-  function getOldStats() onlyOwner public constant returns(uint256 users, uint256 messages, uint256 comments) {
-    return (userList.length, messageList.length, commentList.length);
-  }
-
   function getMinimumDrop() public constant returns(uint256 min_drop) {
     return MINIMUM_DROP;
   }
@@ -381,23 +377,6 @@ contract InkDrop is Migratable, Ownable, Pausable {
     for(uint256 i = 0; i < messageOrder.length - 1; i++) {
       sort_item(i);
     }
-  }
-
-  function upgradeToMessageOrder() onlyOwner whenNotPaused public payable {
-    require(messageOrder.length == 0);
-
-    for(uint256 i = 0; i < messageList.length; i++) {
-      messageStructs[i] = messageList[i];
-      messageOrder.push(i);
-    }
-  }
-
-  function upgradeSingleMessageOrder(uint256 _index) onlyOwner whenNotPaused public payable {
-    require(_index < messageList.length);
-    require(messageList.length > messageOrder.length);
-
-    messageStructs[_index] = messageList[_index];
-    messageOrder.push(_index);
   }
 
   function reduceDrops(uint256 _id) onlyOwner whenNotPaused public payable {

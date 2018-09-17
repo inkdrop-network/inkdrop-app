@@ -2,8 +2,6 @@ import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import InfiniteScroll from 'react-infinite-scroller'
 import FlipMove from 'react-flip-move'
-// import MasonryInfiniteScroller from 'react-masonry-infinite'
-// import Masonry from 'react-masonry-component'
 
 import MessageItemContainer from '../messageitem/MessageItemContainer'
 import loadingSpinner from '../../../../public/icons/loading-spinner.svg'
@@ -19,19 +17,10 @@ class MessageList extends PureComponent {
     }
 
     this.loadMore = this.loadMore.bind(this)
-    this.sortNewsfeed = this.sortNewsfeed.bind(this)
   }
 
   loadMore() {
     this.props.fetchMessages(this.props.pagination.items)
-  }
-
-  // componentDidMount() {
-  //   this.props.fetchMessages(this.props.pagination.items)
-  // }
-
-  sortNewsfeed() {
-    this.props.sortNewsfeed()
   }
 
   render() {
