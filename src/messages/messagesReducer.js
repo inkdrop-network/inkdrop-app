@@ -1,6 +1,7 @@
 import { USER_LOGGED_OUT } from '../user/userReducer'
 const initialState = {
   data: [],
+  total: 0,
   userpage_user: null,
   userpage_messages: [],
   pagination: {
@@ -11,6 +12,7 @@ const initialState = {
 
 // actions
 export const MESSAGE_GOT = 'MESSAGE_GOT'
+export const MESSAGES_GOT = 'MESSAGES_GOT'
 export const USER_MESSAGE_GOT = 'USER_MESSAGE_GOT'
 export const USER_PAGE_GOT = 'USER_PAGE_GOT'
 
@@ -28,12 +30,20 @@ export const USER_MESSAGE_RESET = 'USER_MESSAGE_RESET'
 export const DELETE_MESSAGE = 'DELETE_MESSAGE'
 export const DELETE_COMMENT = 'DELETE_COMMENT'
 
+export const MESSAGES_SORTED = 'MESSAGES_SORTED'
+
 export const MESSAGES_PAGINATION = 'MESSAGES_PAGINATION'
 
 // reducer
 const messagesReducer = (state = initialState, action) => {
   if (action.type === USER_LOGGED_OUT) {
     return Object.assign({}, state, initialState)
+  }
+
+  if (action.type === MESSAGES_GOT) {
+    return Object.assign({}, state, {
+      total: action.payload,
+    })
   }
 
   if (action.type === MESSAGE_GOT) {
@@ -45,6 +55,14 @@ const messagesReducer = (state = initialState, action) => {
   if (action.type === MESSAGES_PAGINATION) {
     return Object.assign({}, state, {
       pagination: action.payload,
+    })
+  }
+
+  if (action.type === MESSAGES_SORTED) {
+    return Object.assign({}, state, {
+      data: state.data.sort(function(msgA, msgB) {
+        return msgB.drops - msgA.drops
+      }),
     })
   }
 

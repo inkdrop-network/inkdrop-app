@@ -8,6 +8,7 @@ import {
   USER_ERR_TX_RESET,
   USER_TX_MSG,
   USER_ERROR,
+  USER_PAYOUT,
 } from './userReducer'
 import ipfs from '../ipfs'
 
@@ -19,6 +20,7 @@ export const SIGNUP_REQUESTED = 'SIGNUP_REQUESTED'
 export const USERUPDATE_REQUESTED = 'USERUPDATE_REQUESTED'
 export const USERFOLLOW_REQUESTED = 'USERFOLLOW_REQUESTED'
 export const USERUNFOLLOW_REQUESTED = 'USERFOLLOW_REQUESTED'
+export const USER_PAYOUT_REQUESTED = 'USER_PAYOUT_REQUESTED'
 
 // drizzle's transactions events
 export const TX_CONFIRMAITON = 'TX_CONFIRMAITON'
@@ -28,6 +30,7 @@ export const TX_ERROR = 'TX_ERROR'
 
 // selectors
 const getUser = state => state.user.data
+const getUserDrops = state => state.user.data.drops
 
 function createTxChannel({ txObject, contractName, sendArgs = {} }) {
   var persistTxHash
@@ -76,11 +79,12 @@ function* loginRequested({ user }) {
   if (userTest) {
     try {
       let tmpUser = yield call(drizzle.contracts.InkDrop.methods.getUser(user.address).call)
-      let userDrops = parseInt(tmpUser.drops, 10) >= 0 ? parseInt(tmpUser.drops, 10) / 100 : 0
+      // let userDrops = parseInt(tmpUser.drops, 10) >= 0 ? parseInt(tmpUser.drops, 10) / 100 : 0
       let newUser = {
         name: drizzle.web3.utils.toUtf8(tmpUser.username),
         bio: tmpUser.bio,
-        drops: userDrops,
+        drops:
+          Math.round(parseFloat(drizzle.web3.utils.fromWei(tmpUser.drops, 'ether')) * 1e3) / 1e3,
         address: user.address,
         ipfsHash: tmpUser.ipfsHash,
         imgUrl: `https://gateway.ipfs.io/ipfs/${tmpUser.ipfsHash}`,
@@ -181,8 +185,7 @@ function* signupRequested({ user, buffer }) {
           let newUser = {
             name: user.name,
             bio: user.bio,
-            // the initial 10 drops
-            drops: 10,
+            drops: 0,
             address: user.address,
             ipfsHash: ipfsHash,
             imgUrl: `https://gateway.ipfs.io/ipfs/${ipfsHash}`,
@@ -321,6 +324,21 @@ function* userUpdateRequested({ user, buffer }) {
   }
 }
 
+function* userPayoutRequested() {
+  const drizzle = yield getContext('drizzle')
+  let currentDrops = yield select(getUserDrops)
+  try {
+    // estimate gas because of 'out of gas' possibility with the standard estimation
+    let gasAmount = yield call(drizzle.contracts.InkDrop.methods.userPayout().estimateGas)
+    yield call(drizzle.contracts.InkDrop.methods.userPayout().send, { gas: gasAmount * 2 })
+    yield put({ type: USER_PAYOUT, payload: 0 })
+  } catch (error) {
+    console.log(error)
+    // reset the earned tokens to the initial value
+    yield put({ type: USER_PAYOUT, payload: currentDrops })
+  }
+}
+
 // register sagas
 function* userSagas() {
   yield takeEvery(LOGIN_REQUESTED, loginRequested)
@@ -328,6 +346,7 @@ function* userSagas() {
   yield takeEvery(SIGNUP_REQUESTED, signupRequested)
   // yield takeEvery(IPFS_UPLOAD_REQUESTED, ipfsUploadRequested)
   yield takeEvery(USERUPDATE_REQUESTED, userUpdateRequested)
+  yield takeEvery(USER_PAYOUT_REQUESTED, userPayoutRequested)
 }
 
 export default userSagas

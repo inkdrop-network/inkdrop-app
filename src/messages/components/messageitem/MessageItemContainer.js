@@ -1,10 +1,12 @@
-import { connect } from 'react-redux'
+// import { connect } from 'react-redux'
+import { drizzleConnect } from 'drizzle-react'
 import MessageItem from './MessageItem'
 import { MESSAGE_DROP_REQUESTED } from '../../messagesSagas'
 
 const mapStateToProps = (state, ownProps) => {
   return {
     user: state.user.data,
+    balance: state.accountBalances[state.accounts[0]],
   }
 }
 
@@ -19,9 +21,6 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-const MessageItemContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(MessageItem)
+const MessageItemContainer = drizzleConnect(MessageItem, mapStateToProps, mapDispatchToProps)
 
 export default MessageItemContainer

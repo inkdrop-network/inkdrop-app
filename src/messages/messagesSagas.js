@@ -2,6 +2,7 @@ import { take, put, call, all, fork, takeEvery, select, getContext } from 'redux
 import { eventChannel, END, delay } from 'redux-saga'
 import {
   MESSAGE_GOT,
+  MESSAGES_GOT,
   MESSAGE_POSTED,
   COMMENT_POSTED,
   UPDATE_MESSAGE,
@@ -13,8 +14,10 @@ import {
   UPDATE_USER_MESSAGE_COMMENTS,
   USER_MESSAGE_RESET,
   MESSAGES_PAGINATION,
+  MESSAGES_SORTED,
 } from './messagesReducer'
 import { USER_DROPPED } from '../user/userReducer'
+import { roundFloat3 } from '../utils/rounder'
 
 // saga actions
 export const MESSAGES_FETCH_REQUESTED = 'MESSAGES_FETCH_REQUESTED'
@@ -23,6 +26,8 @@ export const COMMENT_REQUESTED = 'COMMENT_REQUESTED'
 export const MESSAGE_DROP_REQUESTED = 'MESSAGE_DROP_REQUESTED'
 export const USER_MESSAGES_FETCH_REQUESTED = 'USER_MESSAGES_FETCH_REQUESTED'
 export const USER_MESSAGES_RESET_REQUESTED = 'USER_MESSAGES_RESET_REQUESTED'
+
+export const MESSAGES_SORT_REQUESTED = 'MESSAGES_SORT_REQUESTED'
 
 // drizzle's transactions events
 const TX_CONFIRMAITON = 'TX_CONFIRMAITON'
@@ -34,6 +39,7 @@ const PAGINATION_ITEMS = 10
 
 // selectors
 const getUserAdr = state => state.accounts[0]
+const getMessagesTotal = state => state.messages.total
 const getMessagesLength = state => state.messages.data.length
 
 function createTxChannel({ txObject, contractName, sendArgs = {} }) {
@@ -76,20 +82,27 @@ function createTxChannel({ txObject, contractName, sendArgs = {} }) {
 function* messageRequested({ msg }) {
   const drizzle = yield getContext('drizzle')
   // pre-cache message to store
-  msg.sendingMessage = 'Transaction Pending - Confirm through Metamask'
-  yield put({ type: MESSAGE_POSTED, payload: msg })
+  let newMsg = Object.assign(
+    {},
+    {
+      ...msg,
+      sendingMessage: 'Transaction Pending - Confirm through Metamask',
+      drops: roundFloat3(msg.drops),
+    }
+  )
+
+  yield put({ type: MESSAGE_POSTED, payload: newMsg })
+  let count = yield select(getMessagesTotal)
+  yield put({ type: MESSAGES_GOT, payload: ++count })
 
   const contractName = 'InkDrop'
-  const args = {
-    content: msg.content,
-    drops: msg.drops,
+
+  const sendArgs = {
+    value: drizzle.web3.utils.toWei(`${msg.drops}`, 'ether'),
   }
-  const txObject = yield call(
-    drizzle.contracts.InkDrop.methods.createMessage,
-    msg.content,
-    msg.drops
-  )
-  const txChannel = yield call(createTxChannel, { txObject, contractName, args })
+
+  const txObject = yield call(drizzle.contracts.InkDrop.methods.createMessage, msg.content)
+  const txChannel = yield call(createTxChannel, { txObject, contractName, sendArgs })
 
   try {
     while (true) {
@@ -99,22 +112,25 @@ function* messageRequested({ msg }) {
       // catch the tx related events and update store
       if (event.type === TX_BROADCASTED) {
         console.log('1 - BROADCASTED')
-        msg.sendingMessage = 'Submitting transaction to blockchain'
-        yield put({ type: UPDATE_MESSAGE, payload: msg })
+        newMsg.sendingMessage = 'Submitting transaction to blockchain'
+        yield put({ type: UPDATE_MESSAGE, payload: newMsg })
       } else if (event.type === TX_CONFIRMAITON) {
         console.log('2 - CONFIRMATION')
         // TODO: show the confirmation number in the frontend
       } else if (event.type === TX_SUCCESSFUL) {
         console.log('3 - SUCCESS')
-        msg.fromBlockchain = true
-        msg.sendingMessage = ''
-        yield put({ type: UPDATE_MESSAGE, payload: msg })
+        newMsg.fromBlockchain = true
+        newMsg.sendingMessage = ''
+        yield put({ type: UPDATE_MESSAGE, payload: newMsg })
       } else if (event.type === TX_ERROR) {
         console.log('ERROR')
         // yield put({ type: DELETE_MESSAGE, payload: msg })
-        msg.error = 'Transaction failed'
-        msg.sendingMessage = ''
-        yield put({ type: UPDATE_MESSAGE, payload: msg })
+        newMsg.error = 'Transaction failed'
+        newMsg.sendingMessage = ''
+        yield put({ type: UPDATE_MESSAGE, payload: newMsg })
+        yield delay(4000)
+        newMsg.error = ''
+        yield put({ type: UPDATE_MESSAGE, payload: newMsg })
       }
     }
   } finally {
@@ -166,6 +182,9 @@ function* commentRequested({ comment }) {
         comment.error = 'Transaction failed'
         comment.sendingMessage = ''
         yield put({ type: UPDATE_COMMENT, payload: comment })
+        yield delay(4000)
+        comment.error = ''
+        yield put({ type: UPDATE_MESSAGE, payload: comment })
       }
     }
   } finally {
@@ -178,23 +197,24 @@ function* messageDropRequested({ msg, drops }) {
   const drizzle = yield getContext('drizzle')
   console.log('DROP SAGA Here')
   let newMsg = Object.assign({}, msg, {
-    drops: msg.drops + drops,
+    drops: roundFloat3(msg.drops + drops),
   })
   newMsg.sendingMessage = 'Transaction Pending - Confirm through Metamask'
   yield put({ type: UPDATE_MESSAGE, payload: newMsg })
   // update user & reduce his drops
-  // TODO: check if user is author of the message. If yes, give him 50% of the drops
+  // check if user is author of the message. If yes, give him 50% of the drops
   let userAdr = yield select(getUserAdr)
   let userShare = 0
   if (userAdr === msg.userAdr) {
     userShare = 0.5 * drops
+    yield put({ type: USER_DROPPED, payload: userShare })
   }
-  yield put({ type: USER_DROPPED, payload: drops - userShare })
 
   const contractName = 'InkDrop'
-  const args = { id: msg.id, drops: drops }
-  const txObject = yield call(drizzle.contracts.InkDrop.methods.dropMessage, msg.id, drops)
-  const txChannel = yield call(createTxChannel, { txObject, contractName, args })
+  const sendArgs = { value: drizzle.web3.utils.toWei(`${drops}`, 'ether') }
+
+  const txObject = yield call(drizzle.contracts.InkDrop.methods.dropMessage, msg.id)
+  const txChannel = yield call(createTxChannel, { txObject, contractName, sendArgs })
 
   try {
     while (true) {
@@ -219,8 +239,13 @@ function* messageDropRequested({ msg, drops }) {
         msg.error = 'Transaction failed'
         msg.sendingMessage = ''
         yield put({ type: UPDATE_MESSAGE, payload: msg })
-        // update user & give back drops used
-        yield put({ type: USER_DROPPED, payload: -(drops - userShare) })
+        // update user & give back drops used in case of author == dropper
+        if (userAdr === msg.userAdr) {
+          yield put({ type: USER_DROPPED, payload: -userShare })
+        }
+        yield delay(4000)
+        msg.error = ''
+        yield put({ type: UPDATE_MESSAGE, payload: msg })
       }
     }
   } finally {
@@ -234,6 +259,8 @@ function* messagesFetchRequested({ items }) {
   const drizzle = yield getContext('drizzle')
   try {
     let count = yield call(drizzle.contracts.InkDrop.methods.getMessageCount().call)
+    // update store with total number of messages
+    yield put({ type: MESSAGES_GOT, payload: count })
     // get messages length from store
     let msgsLength = yield select(getMessagesLength)
     // do not procede if all messages are already loaded
@@ -251,6 +278,7 @@ function* messagesFetchRequested({ items }) {
       yield all(arr)
 
       yield delay(2000)
+
       yield put({
         type: MESSAGES_PAGINATION,
         payload: { items: newItems, hasMore: true },
@@ -266,11 +294,15 @@ function* messagesFetchRequested({ items }) {
   }
 }
 
-function* getMessageCall(msgId) {
+// NEW NEW NEW
+function* getMessageCall(msgIndex) {
   const drizzle = yield getContext('drizzle')
   try {
+    // get the msgId for the msgIndex first
+    let msgId = yield call(drizzle.contracts.InkDrop.methods.getMessageIdAtIndex(msgIndex).call)
+    // get the message by its id
     let tmpMsg = yield call(drizzle.contracts.InkDrop.methods.getMessage(msgId).call)
-    let msg = parseMessage(msgId, tmpMsg)
+    let msg = yield parseMessage(msgId, tmpMsg)
     // update the store so the UI get updated
     yield put({ type: MESSAGE_GOT, payload: msg })
     yield all([fork(getUser, msg), fork(getComments, msg)])
@@ -278,6 +310,21 @@ function* getMessageCall(msgId) {
     console.log(error)
   }
 }
+
+// OLD
+// function* getMessageCall(msgId) {
+//   const drizzle = yield getContext('drizzle')
+//   try {
+//     // get the message by its id
+//     let tmpMsg = yield call(drizzle.contracts.InkDrop.methods.getMessage(msgId).call)
+//     let msg = yield parseMessage(msgId, tmpMsg)
+//     // update the store so the UI get updated
+//     yield put({ type: MESSAGE_GOT, payload: msg })
+//     yield all([fork(getUser, msg), fork(getComments, msg)])
+//   } catch (error) {
+//     console.log(error)
+//   }
+// }
 
 function* getComments(msg) {
   let arr = []
@@ -302,7 +349,7 @@ function* getComment(msgId, commentId) {
   const drizzle = yield getContext('drizzle')
   try {
     let comment = yield call(drizzle.contracts.InkDrop.methods.getComment(commentId).call)
-    let newComment = parseComment(commentId, comment)
+    let newComment = yield parseComment(commentId, comment)
     let user = yield call(drizzle.contracts.InkDrop.methods.getUser(comment.writtenBy).call)
     let newUser = yield parseUser(commentId, user)
     yield put({
@@ -315,7 +362,9 @@ function* getComment(msgId, commentId) {
   }
 }
 
-function parseMessage(id, msg) {
+function* parseMessage(id, msg) {
+  const drizzle = yield getContext('drizzle')
+
   return {
     id: id,
     content: msg.content,
@@ -323,7 +372,7 @@ function parseMessage(id, msg) {
     timestamp: new Date(msg.timestamp * 1000),
     timetolive: new Date(msg.timetolive * 1000),
     likes: parseInt(msg.likes, 10),
-    drops: parseInt(msg.drops, 10) / 100,
+    drops: roundFloat3(drizzle.web3.utils.fromWei(msg.drops, 'ether')), // parseInt(msg.drops, 10) / 100,
     userUrl: '', //`https://gateway.ipfs.io/ipfs/${tmpUser.ipfsHash}`,
     userAdr: msg.writtenBy,
     commentIds: msg.comments.map(function(e) {
@@ -335,7 +384,8 @@ function parseMessage(id, msg) {
   }
 }
 
-function parseComment(id, comment) {
+function* parseComment(id, comment) {
+  const drizzle = yield getContext('drizzle')
   return {
     id: id,
     content: comment.content,
@@ -344,7 +394,7 @@ function parseComment(id, comment) {
     timestamp: new Date(comment.timestamp * 1000),
     timetolive: new Date(comment.timetolive * 1000),
     likes: parseInt(comment.likes, 10),
-    drops: parseInt(comment.drops, 10) / 100,
+    drops: roundFloat3(drizzle.web3.utils.fromWei(comment.drops, 'ether')), //parseInt(comment.drops, 10) / 100,
     userUrl: '', //`https://gateway.ipfs.io/ipfs/${tmpUser.ipfsHash}`,
     userAdr: comment.writtenBy,
     fromBlockchain: true,
@@ -366,7 +416,7 @@ function* parseCompleteUser(user) {
   return {
     username: drizzle.web3.utils.toUtf8(user.username),
     userUrl: `https://gateway.ipfs.io/ipfs/${user.ipfsHash}`,
-    drops: parseInt(user.drops, 10) / 100,
+    drops: roundFloat3(drizzle.web3.utils.fromWei(user.drops, 'ether')), //parseInt(user.drops, 10) / 100,
     bio: user.bio,
     followers: parseInt(user.followers, 10),
     messageIds: user.messages.map(function(e) {
@@ -402,7 +452,7 @@ function* getUserMessageCall(msgId) {
   const drizzle = yield getContext('drizzle')
   try {
     let tmpMsg = yield call(drizzle.contracts.InkDrop.methods.getMessage(msgId).call)
-    let msg = parseMessage(msgId, tmpMsg)
+    let msg = yield parseMessage(msgId, tmpMsg)
     // update the store so the UI get updated
     yield put({ type: USER_MESSAGE_GOT, payload: msg })
     yield all([fork(getUserpageUser, msg), fork(getUserComments, msg)])
@@ -434,7 +484,7 @@ function* getUserComment(msgId, commentId) {
   const drizzle = yield getContext('drizzle')
   try {
     let comment = yield call(drizzle.contracts.InkDrop.methods.getComment(commentId).call)
-    let newComment = parseComment(commentId, comment)
+    let newComment = yield parseComment(commentId, comment)
     let user = yield call(drizzle.contracts.InkDrop.methods.getUser(comment.writtenBy).call)
     let newUser = yield parseUser(commentId, user)
     yield put({
@@ -449,9 +499,17 @@ function* getUserComment(msgId, commentId) {
 
 function* userMessagesResetRequested() {
   console.log('RESET USER MESSAGES')
-  yield put({
-    type: USER_MESSAGE_RESET,
-  })
+  yield put({ type: USER_MESSAGE_RESET })
+}
+
+function* messagesSortRequested() {
+  const drizzle = yield getContext('drizzle')
+  try {
+    yield call(drizzle.contracts.InkDrop.methods.sort().send)
+    yield put({ type: MESSAGES_SORTED })
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 // register sagas
@@ -462,6 +520,7 @@ function* messagesSaga() {
   yield takeEvery(MESSAGE_DROP_REQUESTED, messageDropRequested)
   yield takeEvery(USER_MESSAGES_FETCH_REQUESTED, userMessagesFetchRequested)
   yield takeEvery(USER_MESSAGES_RESET_REQUESTED, userMessagesResetRequested)
+  yield takeEvery(MESSAGES_SORT_REQUESTED, messagesSortRequested)
 }
 
 export default messagesSaga

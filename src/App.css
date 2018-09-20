@@ -1,10 +1,14 @@
 :root {
   --dark: #29313e;
+  /*--font: #1a1a1a;*/
   --green: #85bd3e;
+  --success: var(--green);
   --green-dark: #73a336;
   --white: #ffffff;
-  --dark-light: #f0f0f0;
-  --success: var(--green);
+  /*--dark-light: #f0f0f0;*/
+  --dark-light: #f1f1f1;
+  --gray: #999999;
+  --blue: #8999b6;
 }
 
 body {
@@ -13,6 +17,7 @@ body {
   -webkit-font-smoothing: antialiased;
   color: var(--dark);
   font-weight: 300;
+  /*line-height: 1.2;*/
 }
 
 a {
@@ -22,6 +27,12 @@ a {
 a:hover {
   color: var(--green-dark);
   text-decoration: none;
+}
+
+@media (min-width: 1600px) {
+  .container-fluid-xxl {
+    width: 1570px;
+  }
 }
 
 .font-green,
@@ -63,6 +74,11 @@ a:hover {
     }
 }*/
 
+.btn {
+  border-radius: 8px;
+  line-height: 1.2;
+}
+
 .btn-green {
   color: #fff;
   background-color: var(--green);
@@ -85,6 +101,40 @@ a:hover {
   color: #fff;
   background-color: var(--green-dark);
   border-color: var(--green-dark);
+}
+
+.icon.icon-dots:after {
+  content: '\2807';
+  font-size: 100px;
+}
+
+.icon path {
+  opacity: 0.9;
+  fill: var(--dark);
+}
+
+.icon.white path {
+  opacity: 0.9;
+  fill: var(--white);
+}
+
+.icon-actions {
+  font-size: 0.9rem;
+  color: var(--gray);
+}
+
+.icon-actions .icon path {
+  fill: var(--gray);
+}
+
+.icon-actions.active,
+.icon-actions:hover {
+  color: var(--green);
+}
+
+.icon-actions.active .icon path,
+.icon-actions:hover .icon path {
+  fill: var(--green);
 }
 
 footer {
@@ -133,11 +183,20 @@ footer .list-inline {
 
 .card.message-card,
 .card.profile-card,
-.card-body.comment-card {
+.card-body.comment-card,
+.modal-content {
   opacity: 1;
-  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.15);
-  border-radius: 5px;
+  /*box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.15);*/
+  box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
   background-color: var(--white);
+}
+
+.modal-footer {
+  background-color: var(--dark-light);
+  border-bottom-right-radius: 8px;
+  border-bottom-left-radius: 8px;
+  justify-content: normal;
 }
 
 .card.message-card.muted,
@@ -145,17 +204,26 @@ footer .list-inline {
   opacity: 0.5;
 }
 
-.card-user a {
-  color: var(--dark);
+.card .card-user {
+  display: flex;
 }
 
-.card-user a:hover {
-  color: var(--green-dark);
+a.message-header-link {
+  /*color: var(--dark);*/
+  color: var(--blue);
+}
+
+a.message-header-link:hover {
+  color: var(--green);
   text-decoration: none;
 }
 
 .card.message-card .comments-card {
   border-left: 3px solid var(--green);
+}
+
+.card-columns {
+  column-count: 4;
 }
 
 .profile-img {
@@ -178,42 +246,11 @@ footer .list-inline {
   /*margin-top: -8.5rem;*/
 }
 
-.card .icon-number {
-  letter-spacing: 0;
-  font-size: 0.9rem;
-}
-
-.card .like-message-button,
-.card .drop-message-button,
+/*.card .drop-message-button,*/
+/*.card .like-message-button,
 .card .comment-message-button {
   width: 3rem;
-}
-
-.card .comment-message-button .comment-number::after {
-  display: inline-block;
-  width: 0;
-  height: 0;
-  margin-left: 0.255em;
-  vertical-align: 0.255em;
-  content: '';
-  border-top: 0.3em solid;
-  border-right: 0.3em solid transparent;
-  border-bottom: 0;
-  border-left: 0.3em solid transparent;
-}
-
-.card .comment-message-button .comment-number.open::after {
-  display: inline-block;
-  width: 0;
-  height: 0;
-  margin-left: 0.255em;
-  vertical-align: 0.255em;
-  content: '';
-  border-top: 0;
-  border-right: 0.3em solid transparent;
-  border-bottom: 0.3em solid;
-  border-left: 0.3em solid transparent;
-}
+}*/
 
 #post-message textarea {
   width: 100%;

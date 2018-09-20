@@ -34,8 +34,20 @@ module.exports = {
         return new HDWalletProvider(MNEMONIC, 'https://rinkeby.infura.io/' + INFURA_API_KEY)
       },
       network_id: 4,
-      gas: 7131189,
+      gas: 6998777,
       gasPrice: 100000000000,
+    },
+  },
+  solc: {
+    // Turns on the Solidity optimizer. For development the optimizer's
+    // quite helpful, just remember to be careful, and potentially turn it
+    // off, for live deployment and/or audit time. For more information,
+    // see the Truffle 4.0.0 release notes.
+    //
+    // https://github.com/trufflesuite/truffle/releases/tag/v4.0.0
+    optimizer: {
+      enabled: true,
+      runs: 200,
     },
   },
 }

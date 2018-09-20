@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react'
+import PropTypes from 'prop-types'
 
 class LogoutButton extends PureComponent {
   constructor(props) {
@@ -21,6 +22,10 @@ class LogoutButton extends PureComponent {
       </li>
     )
   }
+}
+
+LogoutButton.propTypes = {
+  onLogoutUser: PropTypes.func,
 }
 
 export default LogoutButton

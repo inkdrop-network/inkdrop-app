@@ -1,10 +1,12 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import { Link } from 'react-router'
 import Linkify from 'react-linkify'
 import { Card, CardBody, CardFooter } from 'reactstrap'
-import Moment from 'react-moment'
-import CommentList from '../commentlist/CommentList'
+import MessageHeader from './components/MessageHeader'
+import MessageActions from './components/MessageActions'
+import MessageActionsExtend from './components/MessageActionsExtend'
+import MessageModal from './MessageModal'
+import { roundFloat3 } from '../../../utils/rounder'
 
 // icons
 import inkdropDark from '../../../icons/icon-inkdrop-dark.svg'
@@ -13,42 +15,60 @@ import iconComment from '../../../icons/icon-comments.svg'
 import loadingSpinner from '../../../icons/loading-spinner.svg'
 
 class MessageItem extends PureComponent {
-  constructor(props) {
+  constructor(props, context) {
     super(props)
 
+    this.web3 = context.drizzle.web3
+
     this.state = {
+      showActions: false,
+      showModal: false,
       showComments: false,
+      drops: 0.001, // 0.001 ETH
     }
 
+    this.toggleActions = this.toggleActions.bind(this)
     this.toggleComments = this.toggleComments.bind(this)
+    this.toggleModal = this.toggleModal.bind(this)
+    this.onDropsChange = this.onDropsChange.bind(this)
     this.dropMessage = this.dropMessage.bind(this)
+  }
+
+  onDropsChange(value) {
+    this.setState({ drops: parseFloat(value) })
   }
 
   async dropMessage() {
     if (!this.props.message.cached) {
       // TODO: add slider for amount of drops to be submitted
-      let newDrops = 1
-      if (this.props.user.drops - newDrops < 0) {
-        alert('You have not enough funds for this transaction.')
+      let newDrops = this.state.drops
+      if (this.state.drops > this.props.balance) {
+        return alert("You don't have enough funds for this post.")
       } else {
         this.props.onMessageDrop(this.props.message, newDrops)
+        this.setState({ drops: 0.001 })
       }
     }
   }
 
-  getClass() {
-    if (this.state.showComments === false) return 'd-none'
-    else return ''
-  }
-
-  getNrClass() {
-    if (this.state.showComments === true) return 'open'
-    else return ''
+  toggleActions() {
+    this.setState(prevState => {
+      return { showActions: !prevState.showActions }
+    })
   }
 
   toggleComments() {
     this.setState(prevState => {
       return { showComments: !prevState.showComments }
+    })
+  }
+
+  toggleModal() {
+    this.setState(prevState => {
+      return {
+        showModal: !prevState.showModal,
+        showComments: true,
+      }
     })
   }
 
@@ -87,73 +107,60 @@ class MessageItem extends PureComponent {
     }
   }
 
-  renderDonations(msg) {
-    return (
-      <div className="col text-center">
-        <div className="like-message-button mx-auto">
-          <img src={iconLike} width="20" height="20" className="" alt="likes" />
-          <span className="like-number icon-number ml-1">{msg.likes}</span>
-        </div>
-      </div>
-    )
-  }
-
   render() {
-    let commentsClass = this.getClass()
-    let commentsNrClass = this.getNrClass()
     let msg = this.props.message
+    let currentBalance = roundFloat3(this.web3.utils.fromWei(`${this.props.balance}`, 'ether'))
 
     return (
-      <Card className={`message-card mb-4 ${msg.fromBlockchain ? '' : 'muted'}`}>
-        <CardBody className="card-user d-flex flex-row pb-2">
-          <img
-            className="mr-2 profile-img"
-            src={msg.userUrl || 'https://via.placeholder.com/50/85bd3e/85bd3e'}
-            alt="profile"
-          />
-          <div>
-            <Link to={`/user/${msg.userAdr}`} className="">
-              <strong className="align-top d-block card-username">@{msg.username}</strong>
-            </Link>
-            <span className="card-message-time">
-              <Moment fromNow>{msg.timestamp}</Moment>
-            </span>
-          </div>
+      <Card className={`message-card ${msg.fromBlockchain ? '' : 'muted'}`}>
+        <CardBody>
+          <MessageHeader msg={msg} extended={false} />
         </CardBody>
-        <CardBody className="card-content py-2">
-          <Linkify properties={{ target: '_blank' }}>{msg.content}</Linkify>
+        <CardBody className="py-2" onClick={this.toggleModal}>
+          {msg.content}
         </CardBody>
-        <CardBody className="pt-2">
-          <div className="row">
-            <div className="col">
-              <div className="drop-message-button float-left" onClick={this.dropMessage}>
-                <img src={inkdropDark} width="20" height="20" className="drops" alt="" />
-                <span className="drop-number icon-number ml-1">{msg.drops}</span>
-              </div>
-            </div>
+        <MessageActions
+          msg={msg}
+          active={this.state.showActions}
+          toggleComments={this.toggleModal}
+          toggleActions={this.toggleActions}
+          drops={this.state.drops}
+        />
+        {this.state.showActions &&
+          currentBalance > 0.001 && (
+            <MessageActionsExtend
+              maxValue={roundFloat3(this.web3.utils.fromWei(`${this.props.balance}`, 'ether'))}
+              value={this.state.drops}
+              onDropsChange={this.onDropsChange}
+              dropMessage={this.dropMessage}
+            />
+          )}
 
-            <div className="col">
-              <div className="comment-message-button float-right" onClick={this.toggleComments}>
-                <img src={iconComment} width="20" height="20" className="" alt="comments" />
-                <span className={`comment-number icon-number ml-1 ${commentsNrClass}`}>
-                  {msg.commentIds.length}
-                </span>
-              </div>
-            </div>
-          </div>
-        </CardBody>
         {this.renderTxStatus()}
-        <CardFooter className={`comments-card ${commentsClass}`}>
-          {msg.fromBlockchain && <CommentList message={msg} />}
-        </CardFooter>
+        <MessageModal
+          msg={msg}
+          isOpen={this.state.showModal}
+          toggle={this.toggleModal}
+          maxValue={roundFloat3(this.web3.utils.fromWei(`${this.props.balance}`, 'ether'))}
+          value={this.state.drops}
+          onDropsChange={this.onDropsChange}
+          dropMessage={this.dropMessage}
+          toggleComments={this.toggleComments}
+          showComments={this.state.showComments}
+        />
       </Card>
     )
   }
 }
 
+MessageItem.contextTypes = {
+  drizzle: PropTypes.object,
+}
+
 MessageItem.propTypes = {
-  message: PropTypes.object,
-  user: PropTypes.object,
+  message: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
+  onMessageDrop: PropTypes.func.isRequired,
 }
 
 export default MessageItem

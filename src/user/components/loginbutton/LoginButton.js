@@ -30,6 +30,7 @@ class LoginButton extends PureComponent {
 
 LoginButton.propTypes = {
   accounts: PropTypes.object,
+  onLoginUser: PropTypes.func,
 }
 
 export default LoginButton

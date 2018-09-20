@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router'
+import SVG from 'react-inlinesvg'
 import {
   Nav,
   NavItem,
@@ -10,6 +11,7 @@ import {
   DropdownItem,
 } from 'reactstrap'
 import LogoutButtonContainer from '../logoutbutton/LogoutButtonContainer'
+import { roundFloat3 } from '../../../utils/rounder'
 
 // Images
 // import iconAlarm from '../../../../public/icons/icon-alarm.svg'
@@ -17,11 +19,20 @@ import LogoutButtonContainer from '../logoutbutton/LogoutButtonContainer'
 import inkdropWhite from '../../../icons/icon-inkdrop-white.svg'
 
 class ProfileHeader extends PureComponent {
-  // constructor(props) {
-  //   super(props)
-  //   // TODO: Check why ProfileHeady in initiated after every account snyc
-  //   console.log('Profile header created')
-  // }
+  constructor(props) {
+    super(props)
+    this.userPayout = this.userPayout.bind(this)
+  }
+
+  userPayout(event) {
+    event.preventDefault()
+
+    if (this.props.user.drops <= 0) {
+      return alert('You have no earned amount for a payout.')
+    }
+
+    this.props.onUserPayout()
+  }
 
   render() {
     return (
@@ -51,22 +62,28 @@ class ProfileHeader extends PureComponent {
             </DropdownItem>
             <DropdownItem divider />
             <DropdownItem>
+              <li className="nav-item">
+                <a href="" className="" onClick={this.userPayout}>
+                  Payout
+                </a>
+              </li>
+            </DropdownItem>
+            <DropdownItem divider />
+            <DropdownItem>
               <LogoutButtonContainer />
             </DropdownItem>
           </DropdownMenu>
         </UncontrolledDropdown>
 
-        <NavItem className="ml-3">
-          <img
-            src={inkdropWhite}
-            className="align-middle nav-icons"
-            width="20"
-            height="20"
-            alt="drops"
-          />
-          <span id="profile-drop-number" className="nav-icon-nr font-white align-bottom ml-1">
-            {this.props.user.drops}
-          </span>
+        <NavItem className="ml-2 d-flex align-items-center">
+          <div id="profile-drop-number" className="nav-icon-nr font-white">
+            {Number(roundFloat3(this.props.user.drops)).toFixed(3)}{' '}
+            <SVG
+              src={iconEther}
+              wrapper={React.createFactory('div')}
+              className="icon white d-inline"
+            />
+          </div>
         </NavItem>
       </Nav>
     )
@@ -75,6 +92,7 @@ class ProfileHeader extends PureComponent {
 
 ProfileHeader.propTypes = {
   user: PropTypes.object,
+  userPayout: PropTypes.func,
 }
 
 export default ProfileHeader

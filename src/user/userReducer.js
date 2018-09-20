@@ -1,5 +1,14 @@
 const initialState = {
-  data: null,
+  data: {
+    name: '',
+    bio: '',
+    drops: 0,
+    address: '',
+    ipfsHash: '',
+    imgUrl: '',
+    followers: 0,
+  },
+  loggedIn: false,
   error: false,
   errorMessage: null,
   loading: false,
@@ -14,12 +23,14 @@ export const USER_DROPPED = 'USER_DROPPED'
 export const USER_ERROR = 'USER_ERROR'
 export const USER_TX_MSG = 'USER_TX_MSG'
 export const USER_ERR_TX_RESET = 'USER_ERR_TX_RESET'
+export const USER_PAYOUT = 'USER_PAYOUT'
 
 // reducer
 const userReducer = (state = initialState, action) => {
   if (action.type === USER_LOGGED_IN || action.type === USER_UPDATED) {
     return Object.assign({}, state, {
       data: action.payload,
+      loggedIn: true,
     })
   }
 
@@ -56,7 +67,16 @@ const userReducer = (state = initialState, action) => {
     return Object.assign({}, state, {
       data: {
         ...state.data,
-        drops: state.data.drops - action.payload,
+        drops: state.data.drops + action.payload,
+      },
+    })
+  }
+
+  if (action.type === USER_PAYOUT) {
+    return Object.assign({}, state, {
+      data: {
+        ...state.data,
+        drops: action.payload,
       },
     })
   }

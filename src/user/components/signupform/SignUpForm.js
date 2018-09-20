@@ -231,6 +231,8 @@ SignUpForm.propTypes = {
   errorMessage: PropTypes.string,
   loading: PropTypes.bool,
   txMessage: PropTypes.string,
+  onSignupUser: PropTypes.func,
+  onIpfsUpload: PropTypes.func,
 }
 
 export default SignUpForm

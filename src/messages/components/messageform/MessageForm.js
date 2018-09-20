@@ -1,20 +1,32 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Button, Form, FormGroup, Input, Card, CardBody } from 'reactstrap'
+import InputRangeSlider from '../rangeslider/InputRangeSlider'
+import { roundFloat3 } from '../../../utils/rounder'
 
 import iconPhoto from '../../../icons/icon-photo.svg'
 import iconVideo from '../../../icons/icon-video.svg'
 import iconPlace from '../../../icons/icon-place.svg'
 
 class MessageForm extends PureComponent {
-  constructor(props) {
+  constructor(props, context) {
     super(props)
+
+    this.web3 = context.drizzle.web3
+
+    // TODO: Remove focus from state. Always show MessageForm with no opacitiy!
 
     this.state = {
       content: '',
-      drops: 0, // TODO: add drop slider
-      focus: false,
+      drops: 0,
+      focus: true,
     }
+
+    this.onContentChange = this.onContentChange.bind(this)
+    this.onDropsChange = this.onDropsChange.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
+    this.onBlur = this.onBlur.bind(this)
+    this.onFocus = this.onFocus.bind(this)
   }
 
   onFocus() {
@@ -22,7 +34,7 @@ class MessageForm extends PureComponent {
   }
 
   onBlur() {
-    this.setState({ focus: false })
+    this.setState({ focus: true })
   }
 
   getClass() {
@@ -34,25 +46,33 @@ class MessageForm extends PureComponent {
     this.setState({ content: event.target.value })
   }
 
+  onDropsChange(value) {
+    this.setState({ drops: parseFloat(value) })
+  }
+
   async handleSubmit(event) {
     event.preventDefault()
+    if (this.state.drops > this.props.balance) {
+      return alert("You don't have enough funds for this post.")
+    }
+
     if (this.state.content === '' && this.state.content.length < 2) {
       return alert('Please share something valuable.')
     }
 
-    if (this.state.drops < 0) {
+    if (!(this.state.drops >= 0)) {
       return alert('Please add some drops to your post.')
     }
 
     let newMsg = {
       content: this.state.content,
       username: this.props.user.name,
-      timestamp: Date.now(),
+      timestamp: new Date(),
       likes: 0,
       drops: this.state.drops,
       userUrl: this.props.user.imgUrl,
       userAdr: this.props.accounts[0],
-      id: this.props.messages.length,
+      id: this.props.messages_total,
       commentIds: [],
       comments: [],
       fromBlockchain: false,
@@ -61,13 +81,15 @@ class MessageForm extends PureComponent {
 
     this.props.onCreateMessage(newMsg)
     // TODO: delete content after TX_BROADCAST
-    this.setState({ content: '' })
+    this.setState({ content: '', drops: 0 })
   }
 
   render() {
-    var inputClass = this.getClass()
+    let inputClass = this.getClass()
+    let currentBalance = roundFloat3(this.web3.utils.fromWei(`${this.props.balance}`, 'ether'))
+
     return (
-      <div id="post-message" className={`col-sm-7 ${inputClass}`}>
+      <div id="post-message" className={inputClass}>
         <Card className="message-card">
           <CardBody className="d-flex flex-row pb-2">
             <img
@@ -85,21 +107,35 @@ class MessageForm extends PureComponent {
           </CardBody>
           <CardBody className="py-2">
             <div id="send-area">
-              <Form onSubmit={this.handleSubmit.bind(this)}>
-                <FormGroup>
+              <Form onSubmit={this.handleSubmit}>
+                <FormGroup className="mb-0">
                   <Input
                     type="textarea"
                     name="text"
                     rows="2"
                     id="content"
+                    className="mb-3"
                     placeholder="Share something valuable"
                     value={this.state.content}
-                    onChange={this.onContentChange.bind(this)}
-                    onBlur={this.onBlur.bind(this)}
-                    onFocus={this.onFocus.bind(this)}
+                    onChange={this.onContentChange}
+                    onBlur={this.onBlur}
+                    onFocus={this.onFocus}
                   />
+                  {currentBalance > 0.001 && (
+                    <div>
+                      <label>Add ETH to boost your post</label>
+                      <InputRangeSlider
+                        minValue={0}
+                        maxValue={currentBalance}
+                        value={this.state.drops}
+                        onChange={this.onDropsChange}
+                      />
+                    </div>
+                  )}
                 </FormGroup>
-                <Button color="green">Send</Button>
+                <Button color="green" block className="mt-3">
+                  Send
+                </Button>
               </Form>
             </div>
           </CardBody>
@@ -128,10 +164,15 @@ class MessageForm extends PureComponent {
   }
 }
 
+MessageForm.contextTypes = {
+  drizzle: PropTypes.object,
+}
+
 MessageForm.propTypes = {
   accounts: PropTypes.object,
   user: PropTypes.object,
   messages: PropTypes.array,
+  onCreateMessage: PropTypes.func,
 }
 
 export default MessageForm

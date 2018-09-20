@@ -13,7 +13,7 @@ const drizzleOptions = {
   //   InkDrop: ['LogNewUser', 'LogUpdateUser', 'LogDeleteUser'],
   // },
   polls: {
-    accounts: 10000,
+    accounts: 3000,
     blocks: 3000,
   },
 }

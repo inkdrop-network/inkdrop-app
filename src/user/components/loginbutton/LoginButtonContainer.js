@@ -1,6 +1,7 @@
 // import { drizzleConnect } from 'drizzle-react'
 import { connect } from 'react-redux'
 import LoginButton from './LoginButton'
+import { LOGIN_REQUESTED } from '../../userSagas'
 
 const mapStateToProps = state => {
   return {
@@ -11,7 +12,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     onLoginUser: user => {
-      dispatch({ type: 'LOGIN_REQUESTED', user })
+      dispatch({ type: LOGIN_REQUESTED, user })
     },
   }
 }

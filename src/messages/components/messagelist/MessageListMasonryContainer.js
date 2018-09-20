@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import MessageList from './MessageList'
+import MessageListMasonry from './MessageListMasonry'
 import { MESSAGES_FETCH_REQUESTED, MESSAGES_SORT_REQUESTED } from '../../messagesSagas'
 
 const mapStateToProps = (state, ownProps) => {
@@ -20,9 +20,9 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-const MessageListContainer = connect(
+const MessageListMasonryContainer = connect(
   mapStateToProps,
   mapDispatchToProps
-)(MessageList)
+)(MessageListMasonry)
 
-export default MessageListContainer
+export default MessageListMasonryContainer
