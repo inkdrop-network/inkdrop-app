@@ -1,10 +1,10 @@
 {
   "contracts": {
     "InkDrop": {
-      "address": "0xca3bb23ee634435d06a48fc941460eb0c34263eb",
-      "constructorCode": "60806040526001805460a060020a60ff021916905566038d7ea4c6800060065534801561002b57600080fd5b5061371a8061003b6000396000f300",
-      "bodyBytecodeHash": "cdf0b2e1fa329e68ce8852270b2f39828aa390727c9e8260f6fe563a74756bfa",
-      "bytecodeHash": "7ed13b9dcd8d53bbbc01cf957e8866ff042106b6109abb94d14361761bf2fa95"
+      "address": "0x4ed38ade5ca7ab8f506b163ec7d2bd182b1080d2",
+      "constructorCode": "60806040526001805460a060020a60ff021916905566038d7ea4c6800060065534801561002b57600080fd5b506134968061003b6000396000f300",
+      "bodyBytecodeHash": "bdffc93c3805d97ff8e7e271fbacb692066440dbae558dd14d1bc4048048eb9e",
+      "bytecodeHash": "5c7110fc592e15fd41dc16b57c512a23d1ba5161683d2553ce09572e1e508f45"
     }
   },
   "proxies": {
@@ -13,11 +13,16 @@
         "address": "0x7152f90659e13e7f20062440d5a5b46c58aa680b",
         "version": "1.1",
         "implementation": "0xca3bb23ee634435d06a48fc941460eb0c34263eb"
+      },
+      {
+        "address": "0x6cb2bf651df6ee09f6695140daa1720a2ed271e6",
+        "version": "1.2.2",
+        "implementation": "0x4ed38ade5ca7ab8f506b163ec7d2bd182b1080d2"
       }
     ]
   },
   "stdlib": {
-    "address": "0xeeb2d75f4a3cdd118814848cd4f7770d57c0f691",
+    "address": "0x4b2c6d706ed7aa18215718602bc54f208c0f3a2b",
     "customDeploy": true,
     "name": "openzeppelin-zos",
     "version": "^1.9.1"
@@ -25,11 +30,11 @@
   "app": {
     "address": "0x548cf9888baeb48a740032927fe711425a5f8480"
   },
-  "version": "1.1",
+  "version": "1.2.2",
   "package": {
     "address": "0x0aa944c70701fc6cdd8f6f2983c0ffb68ef1f3f0"
   },
   "provider": {
-    "address": "0x89eaf1096ae06c616ed03ae73b206f16a40b132d"
+    "address": "0xcf0ba8c8e15300df22169d9d77e611f4e2ad2b28"
   }
 }
