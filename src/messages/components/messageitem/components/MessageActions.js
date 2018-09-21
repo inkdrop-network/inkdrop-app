@@ -3,8 +3,8 @@ import PropTypes from 'prop-types'
 import { CardBody } from 'reactstrap'
 import SVG from 'react-inlinesvg'
 
-import iconComments from '../../../../../public/icons/icon-comments.svg'
-import iconEther from '../../../../../public/icons/icon-ether.svg'
+import iconComments from '../../../../icons/icon-comments.svg'
+import iconEther from '../../../../icons/icon-ether.svg'
 
 const MessageActions = ({ msg, toggleComments, toggleActions, drops, active }) => (
 	<CardBody className="pt-2">

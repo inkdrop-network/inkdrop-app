@@ -6,9 +6,9 @@ import MessageHeader from './components/MessageHeader'
 import MessageActionsExtend from './components/MessageActionsExtend'
 import CommentList from '../commentlist/CommentList'
 
-import iconComments from '../../../../public/icons/icon-comments.svg'
-import iconReport from '../../../../public/icons/icon-report.svg'
-import iconEther from '../../../../public/icons/icon-ether.svg'
+import iconComments from '../../../icons/icon-comments.svg'
+import iconReport from '../../../icons/icon-report.svg'
+import iconEther from '../../../icons/icon-ether.svg'
 
 class MessageModal extends PureComponent {
 	constructor(props) {

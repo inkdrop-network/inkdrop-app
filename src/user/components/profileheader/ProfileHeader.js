@@ -13,10 +13,7 @@ import {
 import LogoutButtonContainer from '../logoutbutton/LogoutButtonContainer'
 import { roundFloat3 } from '../../../utils/rounder'
 
-// Images
-// import iconAlarm from '../../../../public/icons/icon-alarm.svg'
-// import iconMessage from '../../../../public/icons/icon-message.svg'
-import inkdropWhite from '../../../icons/icon-inkdrop-white.svg'
+import iconEther from '../../../icons/icon-ether.svg'
 
 class ProfileHeader extends PureComponent {
   constructor(props) {

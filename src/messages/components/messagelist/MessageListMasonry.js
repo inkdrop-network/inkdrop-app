@@ -4,7 +4,7 @@ import Masonry from 'react-masonry-component'
 import InfiniteScroll from 'react-infinite-scroller'
 import MessageFormContainer from '../messageform/MessageFormContainer'
 import MessageItemContainer from '../messageitem/MessageItemContainer'
-import loadingSpinner from '../../../../public/icons/loading-spinner.svg'
+import loadingSpinner from '../../../icons/loading-spinner.svg'
 
 class MessageListMasonry extends Component {
 	constructor(props) {

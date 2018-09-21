@@ -4,7 +4,7 @@ import SVG from 'react-inlinesvg'
 import InputRange from 'react-input-range'
 import { roundFloat3 } from '../../../utils/rounder'
 
-import iconEther from '../../../../public/icons/icon-ether.svg'
+import iconEther from '../../../icons/icon-ether.svg'
 import 'react-input-range/lib/css/index.css'
 import './customStyles.css'
 

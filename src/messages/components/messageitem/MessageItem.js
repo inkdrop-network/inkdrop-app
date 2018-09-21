@@ -9,9 +9,6 @@ import MessageModal from './MessageModal'
 import { roundFloat3 } from '../../../utils/rounder'
 
 // icons
-import inkdropDark from '../../../icons/icon-inkdrop-dark.svg'
-import iconLike from '../../../icons/icon-like.svg'
-import iconComment from '../../../icons/icon-comments.svg'
 import loadingSpinner from '../../../icons/loading-spinner.svg'
 
 class MessageItem extends PureComponent {
