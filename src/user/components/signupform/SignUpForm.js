@@ -13,6 +13,7 @@ import {
   CardFooter,
   Label,
 } from 'reactstrap'
+import ProfilePicture from '../profilepicture/ProfilePicture'
 
 import loadingSpinner from '../../../icons/loading-spinner.svg'
 
@@ -63,6 +64,7 @@ class SignUpForm extends PureComponent {
       address: this.props.accounts[0],
     }
 
+    // console.log(this.state.buffer)
     this.props.onSignupUser(user, this.state.buffer)
   }
 
@@ -136,11 +138,10 @@ class SignUpForm extends PureComponent {
         <CardBody>
           <Form onSubmit={this.handleSubmit}>
             <FormGroup>
-              <img
-                id="signup-profile-picture"
-                className="profile-img mb-2"
-                src={this.state.userUrl || 'https://via.placeholder.com/150/85bd3e/85bd3e'}
-                alt="profile"
+              <ProfilePicture
+                diameter={100}
+                address={this.state.address}
+                url={this.state.userUrl}
               />
               <Input
                 type="file"
@@ -148,7 +149,6 @@ class SignUpForm extends PureComponent {
                 id="signup-user-img"
                 onChange={this.captureFile}
                 accept="image/gif, image/jpeg, image/png"
-                required
               />
               <FormText color="muted">
                 Upload an image with square format and a minimum resolution of 150x150px. Only
@@ -163,7 +163,7 @@ class SignUpForm extends PureComponent {
                   type="text"
                   value={this.state.name}
                   onChange={this.onNameChange}
-                  placeholder="Your name"
+                  placeholder="How should we call you"
                   required
                 />
               </InputGroup>
@@ -174,7 +174,7 @@ class SignUpForm extends PureComponent {
                 type="text"
                 value={this.state.bio}
                 onChange={this.onBioChange}
-                placeholder="Tell us something about yourself"
+                placeholder="Tell the community a little more about yourself"
               />
             </FormGroup>
             <FormGroup check>
@@ -213,7 +213,7 @@ class SignUpForm extends PureComponent {
                 </a>
               </Label>
             </FormGroup>
-            <Button color="green" className="mt-3">
+            <Button color="green" className="mt-3" block>
               Sign Up
             </Button>
           </Form>

@@ -7,10 +7,8 @@ class SignUp extends Component {
       <main className="container">
         <div className="row justify-content-center my-4">
           <div className="col-sm-7">
-            <h1>Sign Up</h1>
-            <p>
-              We've got your wallet information, simply input your name and your account is made!
-            </p>
+            <h1>Who Are You?</h1>
+            <p>Create a Profile Connected to Your Wallet</p>
             <div id="signup-form">
               <SignUpFormContainer />
             </div>

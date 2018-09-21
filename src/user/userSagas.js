@@ -141,7 +141,7 @@ function* signupRequested({ user, buffer }) {
 
   if (!userTest) {
     // upload image to ipfs
-    let ipfsHash = yield call(ipfsUploadRequested, { buffer })
+    let ipfsHash = buffer instanceof Buffer ? yield call(ipfsUploadRequested, { buffer }) : ''
 
     // show message in the UI
     yield put({
