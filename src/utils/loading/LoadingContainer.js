@@ -107,15 +107,14 @@ class LoadingContainer extends Component {
         <main className="container">
           <div className="row justify-content-center py-5">
             <div className="col-sm-7">
-              <Card>
+              <Card className="loading-card">
                 <CardBody>
                   <h1 className="text-center">
-                    New to <span className="font-green">Crypto</span>?
+                    <span className="font-green">WELCOME!</span> First Things First...
                   </h1>
-                  <h4 className="text-center">Let's get you started</h4>
+                  <h4 className="text-center">Get Your Browser Ready For Web3</h4>
                   <p className="mt-4">
-                    In order to interact with the InkDrop Ethereum app, you just need a couple of
-                    things:
+                    In order to interact with the InkDrop dApp, you just need a couple of things:
                   </p>
                   <ol>
                     <li>
@@ -131,7 +130,7 @@ class LoadingContainer extends Component {
                       </span>
                     </li>
                     <li>
-                      Log in to MetaMask{' '}
+                      Login to MetaMask{' '}
                       <span role="img" aria-label="emoji">
                         {this.props.web3.status === 'initialized' &&
                         Object.keys(this.props.accounts).length === 0
@@ -148,19 +147,37 @@ class LoadingContainer extends Component {
                   </ol>
                 </CardBody>
                 <CardFooter className="py-4">
-                  <p>Possible solutions:</p>
+                  <p>Solutions:</p>
                   <ol>
                     <li>
-                      We recommend to use the Chrome/FireFox extension{' '}
+                      Install{' '}
                       <a href="https://metamask.io/" target="_blank" rel="noopener noreferrer">
                         MetaMask
-                      </a>, or dedicated Ethereum browsers like Mist or Parity.
+                      </a>, a Google Chrome extension, to enable your browser to run decentralized
+                      apps. You can choose to use an existing Ethereum address or create a new one.
+                      Alternatively, you can also use a dedicated Ethereum browsers like Mist or
+                      Parity, or{' '}
+                      <a
+                        href="https://www.cipherbrowser.com/"
+                        target="_blank"
+                        rel="noopener noreferrer">
+                        Cipher
+                      </a>{' '}
+                      or{' '}
+                      <a
+                        href="https://de.trustwalletapp.com/features/trust-browser"
+                        target="_blank"
+                        rel="noopener noreferrer">
+                        Trust
+                      </a>{' '}
+                      for mobile.
                     </li>
                     <li>
-                      Click on the upper left network dropdown in MetaMask and select the Rinkeby
-                      network.
+                      Since InkDrop is still under heavy development, we run it on the Rinkeby
+                      testnet. Click on the upper left network dropdown in MetaMask and select the
+                      Rinkeby network.
                     </li>
-                    <li>Please log in to MetaMask and then refresh the page.</li>
+                    <li>Please log in to MetaMask and wait for the page reload.</li>
                     <li>
                       Get some Ether with the{' '}
                       <a

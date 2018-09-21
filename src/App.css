@@ -183,6 +183,7 @@ footer .list-inline {
 
 .card.message-card,
 .card.profile-card,
+.card.loading-card,
 .card-body.comment-card,
 .modal-content {
   opacity: 1;
