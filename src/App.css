@@ -233,19 +233,18 @@ a.message-header-link:hover {
   height: 50px;
 }
 
-#profile-update .profile-img,
+/*#profile-update .profile-img,
 #signup-form .profile-img {
   border-radius: 100%;
   width: 100px;
   height: 100px;
-}
+}*/
 
-.profile-img-lg {
+/*.profile-img-lg {
   border-radius: 100%;
   width: 190px;
   height: 190px;
-  /*margin-top: -8.5rem;*/
-}
+}*/
 
 /*.card .drop-message-button,*/
 /*.card .like-message-button,

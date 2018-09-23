@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Button, Form, FormGroup, Input, Card, CardBody } from 'reactstrap'
 import InputRangeSlider from '../rangeslider/InputRangeSlider'
+import ProfilePicture from '../../../user/components/profilepicture/ProfilePicture'
 import { roundFloat3 } from '../../../utils/rounder'
 
 import iconPhoto from '../../../icons/icon-photo.svg'
@@ -92,13 +93,18 @@ class MessageForm extends PureComponent {
       <div id="post-message" className={inputClass}>
         <Card className="message-card">
           <CardBody className="d-flex flex-row pb-2">
-            <img
+            <ProfilePicture
+              diameter={50}
+              address={this.props.accounts[0]}
+              url={this.props.user.imgUrl}
+            />
+            {/*<img
               id="post-message-profile-picture"
               className="mr-2 profile-img"
               src={this.props.user.imgUrl || 'https://via.placeholder.com/50/85bd3e/85bd3e'}
               alt="profile"
-            />
-            <div>
+            />*/}
+            <div className="ml-2">
               <strong id="post-message-username" className="align-top d-block card-username">
                 @{this.props.user.name}
               </strong>

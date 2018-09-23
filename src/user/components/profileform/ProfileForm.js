@@ -11,6 +11,7 @@ import {
   CardBody,
   CardFooter,
 } from 'reactstrap'
+import ProfilePicture from '../profilepicture/ProfilePicture'
 
 import loadingSpinner from '../../../icons/loading-spinner.svg'
 
@@ -152,12 +153,17 @@ class ProfileForm extends PureComponent {
         <CardBody>
           <Form onSubmit={this.handleSubmit}>
             <FormGroup>
-              <img
+              <ProfilePicture
+                diameter={100}
+                address={this.props.accounts[0]}
+                url={this.state.imgUrl}
+              />
+              {/*<img
                 id="update-profile-picture"
                 className="profile-img mb-2"
                 src={this.state.imgUrl}
                 alt="profile"
-              />
+              />*/}
               <Input
                 type="file"
                 name="file"

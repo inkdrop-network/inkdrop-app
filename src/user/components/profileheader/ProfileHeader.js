@@ -11,6 +11,7 @@ import {
   DropdownItem,
 } from 'reactstrap'
 import LogoutButtonContainer from '../logoutbutton/LogoutButtonContainer'
+import ProfilePicture from '../profilepicture/ProfilePicture'
 import { roundFloat3 } from '../../../utils/rounder'
 
 import iconEther from '../../../icons/icon-ether.svg'
@@ -36,12 +37,17 @@ class ProfileHeader extends PureComponent {
       <Nav navbar className="d-inline-flex flex-row">
         <UncontrolledDropdown nav inNavbar>
           <DropdownToggle nav caret className="py-0">
-            <img
+            <ProfilePicture
+              diameter={50}
+              address={this.props.user.address}
+              url={this.props.user.imgUrl}
+            />
+            {/* <img
               id="profile-picture"
               className="mr-1 profile-img"
               src={this.props.user.imgUrl}
               alt="profile"
-            />
+            />*/}
           </DropdownToggle>
           <DropdownMenu right>
             <DropdownItem disabled>@{this.props.user.name}</DropdownItem>

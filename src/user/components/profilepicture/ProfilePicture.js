@@ -7,10 +7,15 @@ class ProfilePicture extends PureComponent {
 		if (this.props.url.length > 0) {
 			return (
 				<img
-					id="signup-profile-picture"
-					className="profile-img mb-2"
+					id="profile-picture"
+					className="profile-img"
 					src={this.props.url}
 					alt="profile"
+					style={{
+						width: `${this.props.diameter}px`,
+						height: `${this.props.diameter}px`,
+						borderRadius: `${this.props.diameter}px`,
+					}}
 				/>
 			)
 		}

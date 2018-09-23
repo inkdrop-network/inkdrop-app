@@ -10,6 +10,7 @@ import {
   USER_ERROR,
   USER_PAYOUT,
 } from './userReducer'
+import { roundFloat3 } from '../utils/rounder'
 import ipfs from '../ipfs'
 
 // saga actions actions
@@ -83,11 +84,11 @@ function* loginRequested({ user }) {
       let newUser = {
         name: drizzle.web3.utils.toUtf8(tmpUser.username),
         bio: tmpUser.bio,
-        drops:
-          Math.round(parseFloat(drizzle.web3.utils.fromWei(tmpUser.drops, 'ether')) * 1e3) / 1e3,
+        drops: roundFloat3(drizzle.web3.utils.fromWei(tmpUser.drops, 'ether')),
         address: user.address,
         ipfsHash: tmpUser.ipfsHash,
-        imgUrl: `https://gateway.ipfs.io/ipfs/${tmpUser.ipfsHash}`,
+        imgUrl:
+          tmpUser.ipfsHash.length > 0 ? `https://gateway.ipfs.io/ipfs/${tmpUser.ipfsHash}` : '',
         followers: parseInt(tmpUser.followers, 10),
       }
       // update store
@@ -188,7 +189,7 @@ function* signupRequested({ user, buffer }) {
             drops: 0,
             address: user.address,
             ipfsHash: ipfsHash,
-            imgUrl: `https://gateway.ipfs.io/ipfs/${ipfsHash}`,
+            imgUrl: ipfsHash.length > 0 ? `https://gateway.ipfs.io/ipfs/${ipfsHash}` : '',
             followers: 0,
           }
 
@@ -258,7 +259,7 @@ function* userUpdateRequested({ user, buffer }) {
   newUser = {
     ...newUser,
     ipfsHash: ipfsHash,
-    imgUrl: `https://gateway.ipfs.io/ipfs/${ipfsHash}`,
+    imgUrl: ipfsHash.length > 0 ? `https://gateway.ipfs.io/ipfs/${ipfsHash}` : '',
   }
   // update store
   yield put({
