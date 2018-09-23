@@ -11,11 +11,6 @@ const MessageHeader = ({ msg, extended }) => (
 	<div className="d-flex flex-row">
 		<Link to={`/user/${msg.userAdr}`} className="message-header-link">
 			<ProfilePicture diameter={50} address={msg.userAdr} url={msg.userUrl} />
-			{/*<img
-				className="mr-2 profile-img"
-				src={msg.userUrl || 'https://via.placeholder.com/50/85bd3e/85bd3e'}
-				alt="profile"
-			/>*/}
 		</Link>
 		<div className="ml-2">
 			<Link to={`/user/${msg.userAdr}`} className="message-header-link">

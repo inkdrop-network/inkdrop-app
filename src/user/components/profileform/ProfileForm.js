@@ -158,12 +158,6 @@ class ProfileForm extends PureComponent {
                 address={this.props.accounts[0]}
                 url={this.state.imgUrl}
               />
-              {/*<img
-                id="update-profile-picture"
-                className="profile-img mb-2"
-                src={this.state.imgUrl}
-                alt="profile"
-              />*/}
               <Input
                 type="file"
                 name="file"

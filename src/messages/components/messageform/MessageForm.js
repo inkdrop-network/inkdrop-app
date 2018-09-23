@@ -98,12 +98,6 @@ class MessageForm extends PureComponent {
               address={this.props.accounts[0]}
               url={this.props.user.imgUrl}
             />
-            {/*<img
-              id="post-message-profile-picture"
-              className="mr-2 profile-img"
-              src={this.props.user.imgUrl || 'https://via.placeholder.com/50/85bd3e/85bd3e'}
-              alt="profile"
-            />*/}
             <div className="ml-2">
               <strong id="post-message-username" className="align-top d-block card-username">
                 @{this.props.user.name}

@@ -223,35 +223,6 @@ a.message-header-link:hover {
   border-left: 3px solid var(--green);
 }
 
-.card-columns {
-  column-count: 4;
-}
-
-.profile-img {
-  border-radius: 100%;
-  width: 50px;
-  height: 50px;
-}
-
-/*#profile-update .profile-img,
-#signup-form .profile-img {
-  border-radius: 100%;
-  width: 100px;
-  height: 100px;
-}*/
-
-/*.profile-img-lg {
-  border-radius: 100%;
-  width: 190px;
-  height: 190px;
-}*/
-
-/*.card .drop-message-button,*/
-/*.card .like-message-button,
-.card .comment-message-button {
-  width: 3rem;
-}*/
-
 #post-message textarea {
   width: 100%;
   border: none;
@@ -271,4 +242,9 @@ a.message-header-link:hover {
 
 .profile-page #profile-top-picture {
   height: 350px;
+}
+
+.dropdown-toggle::after {
+  margin-left: 5px;
+  vertical-align: 22px;
 }
