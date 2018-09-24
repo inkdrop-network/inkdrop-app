@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
-import IntroTour from '../../utils/IntroTour.js'
 import MessageListMasonryContainer from '../components/messagelist/MessageListMasonryContainer'
+import IntroTour from '../../utils/IntroTour.js'
 
 class Newsfeed extends Component {
 	render() {
 		return (
 			<React.Fragment>
-				<MessageListMasonryContainer />
 				<IntroTour />
+				<MessageListMasonryContainer />
 			</React.Fragment>
 		)
 	}

@@ -51,7 +51,7 @@ class MessageListMasonry extends Component {
 
 		// add message for to the first position of the array
 		items.unshift(
-			<div key={-1} className="grid-stamp col-12 col-md-4 col-lg-3 mb-3 px-2">
+			<div key={-1} id="post-message" className="grid-stamp col-12 col-md-4 col-lg-3 mb-3 px-2">
 				<MessageFormContainer />
 			</div>
 		)

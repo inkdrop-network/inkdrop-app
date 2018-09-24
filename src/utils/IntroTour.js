@@ -1,22 +1,28 @@
-import React, { PureComponent } from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import Joyride from 'react-joyride'
 
-class IntroTour extends PureComponent {
+class IntroTour extends Component {
   constructor(props) {
     super(props)
     this.state = {
       run: true,
       steps: [
         {
-          target: 'body',
-          content: 'This if my awesome feature!',
-          placement: 'bottom',
+          target: '#post-message .message-card',
+          title: 'Share Something Valuable',
+          content:
+            'Drop your first post. Share something valuable with the Ethereum community. Attach some ETH to it to give it an initial boost.',
+          disableBeacon: true,
+          placement: 'right',
         },
         {
           target: 'body',
-          content: 'This if my awesome feature!',
+          title: 'Crypto-Likes',
+          content:
+            'Appreciate content and support creators. Crypto-likes give posts a little boost and the awarded ETH will be donated to the author.',
+          disableBeacon: true,
           placement: 'bottom',
         },
       ],
@@ -34,7 +40,8 @@ class IntroTour extends PureComponent {
   }
 
   render() {
-    return <Joyride steps={[]} run={this.state.run} callback={this.callback} />
+    console.log(this.state.steps)
+    return <Joyride steps={this.state.steps} run={this.state.run} callback={this.callback} />
   }
 }
 
