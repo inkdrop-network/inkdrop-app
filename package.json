@@ -3,6 +3,7 @@
     "version": "0.0.1",
     "devDependencies": {
         "openzeppelin-zos": "^1.9.4",
+        "react-joyride": "^1.11.4",
         "truffle": "^4.1.13",
         "truffle-contract": "^3.0.5",
         "truffle-hdwallet-provider": "0.0.5",

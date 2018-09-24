@@ -1,7 +1,8 @@
 import React, { PureComponent } from 'react'
 import { Link } from 'react-router'
-import { HiddenOnlyAuth, VisibleOnlyAuth } from './utils/wrappers.js'
 import { Navbar, Nav, NavItem } from 'reactstrap'
+import IntroTour from './utils/IntroTour.js'
+import { HiddenOnlyAuth, VisibleOnlyAuth } from './utils/wrappers.js'
 
 // UI Components
 import LoginButtonContainer from './user/components/loginbutton/LoginButtonContainer'
@@ -55,6 +56,7 @@ class App extends PureComponent {
 
     return (
       <div className="App">
+        {/* <IntroTour />*/}
         <Navbar color="dark" dark expand="md" className="sticky-top justify-content-between">
           <OnlyGuestLinks />
           <OnlyAuthLinks />

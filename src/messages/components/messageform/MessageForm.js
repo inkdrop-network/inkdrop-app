@@ -20,27 +20,11 @@ class MessageForm extends PureComponent {
     this.state = {
       content: '',
       drops: 0,
-      focus: true,
     }
 
     this.onContentChange = this.onContentChange.bind(this)
     this.onDropsChange = this.onDropsChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
-    this.onBlur = this.onBlur.bind(this)
-    this.onFocus = this.onFocus.bind(this)
-  }
-
-  onFocus() {
-    this.setState({ focus: true })
-  }
-
-  onBlur() {
-    this.setState({ focus: true })
-  }
-
-  getClass() {
-    if (this.state.focus === true) return 'selected'
-    else return ''
   }
 
   onContentChange(event) {
@@ -81,16 +65,15 @@ class MessageForm extends PureComponent {
     }
 
     this.props.onCreateMessage(newMsg)
-    // TODO: delete content after TX_BROADCAST
+    // Delete content after TX_BROADCAST
     this.setState({ content: '', drops: 0 })
   }
 
   render() {
-    let inputClass = this.getClass()
     let currentBalance = roundFloat3(this.web3.utils.fromWei(`${this.props.balance}`, 'ether'))
 
     return (
-      <div id="post-message" className={inputClass}>
+      <div id="post-message">
         <Card className="message-card">
           <CardBody className="d-flex flex-row pb-2">
             <ProfilePicture
@@ -118,8 +101,6 @@ class MessageForm extends PureComponent {
                     placeholder="Share something valuable"
                     value={this.state.content}
                     onChange={this.onContentChange}
-                    onBlur={this.onBlur}
-                    onFocus={this.onFocus}
                   />
                   {currentBalance > 0.001 && (
                     <div>

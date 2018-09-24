@@ -36,18 +36,12 @@ class ProfileHeader extends PureComponent {
     return (
       <Nav navbar className="d-inline-flex flex-row">
         <UncontrolledDropdown nav inNavbar>
-          <DropdownToggle nav caret className="py-0">
+          <DropdownToggle nav caret className="py-0" style={{ height: '50px' }}>
             <ProfilePicture
               diameter={50}
               address={this.props.user.address}
               url={this.props.user.imgUrl}
             />
-            {/* <img
-              id="profile-picture"
-              className="mr-1 profile-img"
-              src={this.props.user.imgUrl}
-              alt="profile"
-            />*/}
           </DropdownToggle>
           <DropdownMenu right>
             <DropdownItem disabled>@{this.props.user.name}</DropdownItem>

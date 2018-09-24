@@ -173,14 +173,6 @@ footer .list-inline {
   font-weight: bolder;
 }
 
-#post-message {
-  opacity: 0.5;
-}
-
-#post-message.selected {
-  opacity: 1;
-}
-
 .card.message-card,
 .card.profile-card,
 .card.loading-card,

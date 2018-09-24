@@ -8,6 +8,7 @@ const initialState = {
     imgUrl: '',
     followers: 0,
   },
+  showTour: false,
   loggedIn: false,
   error: false,
   errorMessage: null,
@@ -24,6 +25,7 @@ export const USER_ERROR = 'USER_ERROR'
 export const USER_TX_MSG = 'USER_TX_MSG'
 export const USER_ERR_TX_RESET = 'USER_ERR_TX_RESET'
 export const USER_PAYOUT = 'USER_PAYOUT'
+export const USER_TOUR = 'USER_TOUR'
 
 // reducer
 const userReducer = (state = initialState, action) => {
@@ -51,6 +53,12 @@ const userReducer = (state = initialState, action) => {
     return Object.assign({}, state, {
       txMessage: action.payload,
       loading: action.loading,
+    })
+  }
+
+  if (action.type === USER_TOUR) {
+    return Object.assign({}, state, {
+      showTour: action.payload,
     })
   }
 

@@ -9,6 +9,7 @@ import {
   USER_TX_MSG,
   USER_ERROR,
   USER_PAYOUT,
+  USER_TOUR,
 } from './userReducer'
 import { roundFloat3 } from '../utils/rounder'
 import ipfs from '../ipfs'
@@ -206,6 +207,11 @@ function* signupRequested({ user, buffer }) {
           } else {
             yield browserHistory.push('/newsfeed')
           }
+          // Show intro tour
+          yield put({
+            type: USER_TOUR,
+            payload: true,
+          })
         } else if (event.type === TX_ERROR) {
           console.log('ERROR')
           yield put({
