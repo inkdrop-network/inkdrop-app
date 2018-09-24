@@ -4,45 +4,49 @@ import { connect } from 'react-redux'
 import Joyride from 'react-joyride'
 
 class IntroTour extends PureComponent {
-  state = {
-    run: false,
-    steps: [
-      {
-        target: '.my-first-step',
-        content: 'This if my awesome feature!',
-        placement: 'bottom',
-      },
-      {
-        target: '.my-other-step',
-        content: 'This if my awesome feature!',
-        placement: 'bottom',
-      },
-    ],
+  constructor(props) {
+    super(props)
+    this.state = {
+      run: true,
+      steps: [
+        {
+          target: 'body',
+          content: 'This if my awesome feature!',
+          placement: 'bottom',
+        },
+        {
+          target: 'body',
+          content: 'This if my awesome feature!',
+          placement: 'bottom',
+        },
+      ],
+    }
+
+    this.callback = this.callback.bind(this)
   }
 
   componentDidMount() {
     this.setState({ run: true }) // this.props.showTour
   }
 
-  callback = data => {
-    const { action, index, type } = data
+  callback(data) {
+    // const { action, index, type } = data
   }
 
   render() {
-    const { steps, run } = this.state
-
-    return <Joyride steps={steps} run={run} callback={this.callback} />
+    return <Joyride steps={[]} run={this.state.run} callback={this.callback} />
   }
 }
 
-IntroTour.propTypes = {
-  showTour: PropTypes.bool.isRequired,
-}
+// IntroTour.propTypes = {
+//   showTour: PropTypes.bool.isRequired,
+// }
 
-const mapStateToProps = state => {
-  return {
-    showTour: state.user.showTour,
-  }
-}
+// const mapStateToProps = state => {
+//   return {
+//     showTour: state.user.showTour,
+//   }
+// }
 
-export default connect(mapStateToProps)(IntroTour)
+// export default connect(mapStateToProps)(IntroTour)
+export default IntroTour

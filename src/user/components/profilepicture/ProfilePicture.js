@@ -21,8 +21,8 @@ class ProfilePicture extends PureComponent {
 
 	render() {
 		if (this.props.url.length > 0) {
-			let altImage = !this.state.showImage
-			let imageClass = this.state.showImage ? '' : 'd-none'
+			let showIcon = !this.state.showImage
+			let imageClass = this.state.showImage ? 'd-inline' : 'd-none'
 			return (
 				<React.Fragment>
 					<img
@@ -38,12 +38,13 @@ class ProfilePicture extends PureComponent {
 							borderRadius: `${this.props.diameter}px`,
 						}}
 					/>
-					{altImage && (
+					{showIcon && (
 						<Jazzicon
 							diameter={this.props.diameter}
 							seed={jsNumberForAddress(this.props.address)}
 							paperStyles={{
 								borderRadius: `${this.props.diameter}px`,
+								verticalAlign: 'middle',
 							}}
 						/>
 					)}
@@ -56,6 +57,7 @@ class ProfilePicture extends PureComponent {
 				seed={jsNumberForAddress(this.props.address)}
 				paperStyles={{
 					borderRadius: `${this.props.diameter}px`,
+					verticalAlign: 'middle',
 				}}
 			/>
 		)
