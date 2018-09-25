@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import MessageListMasonryContainer from '../components/messagelist/MessageListMasonryContainer'
-import IntroTour from '../../utils/IntroTour.js'
+import IntroTour from '../../utils/introtour/IntroTour.js'
 
 class Newsfeed extends Component {
 	render() {

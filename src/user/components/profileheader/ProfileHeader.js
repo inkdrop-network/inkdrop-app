@@ -34,7 +34,7 @@ class ProfileHeader extends PureComponent {
 
   render() {
     return (
-      <Nav navbar className="d-inline-flex flex-row">
+      <Nav navbar id="profile-header" className="d-inline-flex flex-row">
         <UncontrolledDropdown nav inNavbar>
           <DropdownToggle nav caret className="py-0" style={{ height: '50px' }}>
             <ProfilePicture
