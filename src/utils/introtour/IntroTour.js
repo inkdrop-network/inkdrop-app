@@ -40,7 +40,7 @@ class IntroTour extends Component {
   }
 
   componentDidMount() {
-    this.setState({ run: true }) // this.props.showTour
+    this.setState({ run: this.props.showTour }) // this.props.showTour
   }
 
   callback(data) {
