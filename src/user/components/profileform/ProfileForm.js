@@ -215,7 +215,7 @@ class ProfileForm extends PureComponent {
               </Col>
             </FormGroup>
 
-            <Button color="green" className="mt-5" block>
+            <Button color="green" className="mt-4" block>
               Update Profile
             </Button>
           </Form>

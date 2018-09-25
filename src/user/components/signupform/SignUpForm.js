@@ -235,7 +235,7 @@ class SignUpForm extends PureComponent {
                 </Label>
               </Col>
             </FormGroup>
-            <Button color="green" className="mt-5" block>
+            <Button color="green" className="mt-4" block>
               Sign Up
             </Button>
           </Form>

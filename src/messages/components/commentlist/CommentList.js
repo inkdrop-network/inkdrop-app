@@ -7,7 +7,7 @@ class CommentList extends PureComponent {
   render() {
     return (
       <div className="container-fluid">
-        <div className="row mt-3 mb-5">
+        <div className="row mb-5">
           <CommentFormContainer message={this.props.message} />
         </div>
         <div className="comments row">

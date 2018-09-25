@@ -7,7 +7,6 @@ class IntroTour extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      run: true,
       steps: [
         {
           target: '#post-message',
@@ -20,16 +19,16 @@ class IntroTour extends Component {
         {
           target: '.newsfeed:first-child .grid-item',
           title: 'Crypto-Likes',
-          content:
-            'Appreciate content and support creators. Crypto-likes give posts a little boost and the awarded ETH will be donated to the author.',
+          content: `Appreciate content and support creators. Crypto-likes give posts a little boost and the awarded ETH will be donated to the author. 
+            Simply click on the ETH symbol and choose the amount you want to attach.`,
           disableBeacon: true,
           placement: 'right',
         },
         {
           target: '#profile-header',
-          title: 'Earn ETH',
+          title: 'Withdraw Your Earned ETHs',
           content:
-            'Appreciate content and support creators. Crypto-likes give posts a little boost and the awarded ETH will be donated to the author.',
+            'See what you earned on InkDrop and withdraw it to your personal ETH wallet with one click.',
           disableBeacon: true,
           placement: 'bottom',
         },
@@ -40,7 +39,7 @@ class IntroTour extends Component {
   }
 
   componentDidMount() {
-    this.setState({ run: this.props.showTour }) // this.props.showTour
+    this.setState({ run: this.props.showTour })
   }
 
   callback(data) {
@@ -59,7 +58,7 @@ class IntroTour extends Component {
     return (
       <Joyride
         steps={this.state.steps}
-        run={this.state.run}
+        run={this.props.showTour}
         callback={this.callback}
         continuous={true}
         showProgress={true}
@@ -81,4 +80,3 @@ const mapStateToProps = state => {
 }
 
 export default connect(mapStateToProps)(IntroTour)
-// export default IntroTour
