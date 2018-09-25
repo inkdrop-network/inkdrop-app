@@ -206,7 +206,7 @@ class ProfileForm extends PureComponent {
                   onChange={this.captureFile}
                   accept="image/gif, image/jpeg, image/png"
                   className="mt-2"
-                  label="Choose your profile picture (optional)"
+                  label="Change your profile picture"
                 />
                 {/*<FormText color="muted">
                 Upload an image with square format and a minimum resolution of 150x150px. Only

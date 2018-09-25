@@ -2,11 +2,14 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import Joyride from 'react-joyride'
+import { EVENTS } from 'react-joyride/es/constants'
+import { USER_TOUR } from '../../user/userReducer'
 
 class IntroTour extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      locale: { back: 'Back', close: 'Close', last: 'Finish', next: 'Next', skip: 'Skip' },
       steps: [
         {
           target: '#post-message',
@@ -43,7 +46,11 @@ class IntroTour extends Component {
   }
 
   callback(data) {
-    // const { action, index, type } = data
+    const { type } = data
+
+    if (type === EVENTS.TOUR_END) {
+      this.props.resetIntroTour()
+    }
   }
 
   render() {
@@ -63,6 +70,7 @@ class IntroTour extends Component {
         continuous={true}
         showProgress={true}
         spotlightPadding={2}
+        locale={this.state.locale}
         styles={{ options: defaultOptions }}
       />
     )
@@ -71,6 +79,7 @@ class IntroTour extends Component {
 
 IntroTour.propTypes = {
   showTour: PropTypes.bool.isRequired,
+  resetIntroTour: PropTypes.func,
 }
 
 const mapStateToProps = state => {
@@ -79,4 +88,15 @@ const mapStateToProps = state => {
   }
 }
 
-export default connect(mapStateToProps)(IntroTour)
+const mapDispatchToProps = dispatch => {
+  return {
+    resetIntroTour: () => {
+      dispatch({ type: USER_TOUR, payload: false })
+    },
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(IntroTour)

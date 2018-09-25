@@ -20,6 +20,7 @@ class ProfileHeader extends PureComponent {
   constructor(props) {
     super(props)
     this.userPayout = this.userPayout.bind(this)
+    this.showIntroTour = this.showIntroTour.bind(this)
   }
 
   userPayout(event) {
@@ -30,6 +31,11 @@ class ProfileHeader extends PureComponent {
     }
 
     this.props.onUserPayout()
+  }
+
+  showIntroTour(event) {
+    event.preventDefault()
+    this.props.showIntroTour()
   }
 
   render() {
@@ -67,6 +73,14 @@ class ProfileHeader extends PureComponent {
             </DropdownItem>
             <DropdownItem divider />
             <DropdownItem>
+              <li className="nav-item">
+                <a href="" className="" onClick={this.showIntroTour}>
+                  Show Intro Tour
+                </a>
+              </li>
+            </DropdownItem>
+            <DropdownItem divider />
+            <DropdownItem>
               <LogoutButtonContainer />
             </DropdownItem>
           </DropdownMenu>
@@ -90,6 +104,7 @@ class ProfileHeader extends PureComponent {
 ProfileHeader.propTypes = {
   user: PropTypes.object,
   userPayout: PropTypes.func,
+  showIntroTour: PropTypes.func,
 }
 
 export default ProfileHeader

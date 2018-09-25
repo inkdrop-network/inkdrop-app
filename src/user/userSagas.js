@@ -260,7 +260,7 @@ function* userUpdateRequested({ user, buffer }) {
     payload: newUser,
   })
   // upload image to ipfs
-  let ipfsHash = yield call(ipfsUploadRequested, { buffer })
+  let ipfsHash = buffer instanceof Buffer ? yield call(ipfsUploadRequested, { buffer }) : ''
   // merge ipfsHash with newUser
   newUser = {
     ...newUser,
