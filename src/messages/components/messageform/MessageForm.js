@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Button, Form, FormGroup, Input, Card, CardBody } from 'reactstrap'
 import InputRangeSlider from '../rangeslider/InputRangeSlider'
+import ProfilePicture from '../../../user/components/profilepicture/ProfilePicture'
 import { roundFloat3 } from '../../../utils/rounder'
 
 import iconPhoto from '../../../icons/icon-photo.svg'
@@ -19,27 +20,11 @@ class MessageForm extends PureComponent {
     this.state = {
       content: '',
       drops: 0,
-      focus: true,
     }
 
     this.onContentChange = this.onContentChange.bind(this)
     this.onDropsChange = this.onDropsChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
-    this.onBlur = this.onBlur.bind(this)
-    this.onFocus = this.onFocus.bind(this)
-  }
-
-  onFocus() {
-    this.setState({ focus: true })
-  }
-
-  onBlur() {
-    this.setState({ focus: true })
-  }
-
-  getClass() {
-    if (this.state.focus === true) return 'selected'
-    else return ''
   }
 
   onContentChange(event) {
@@ -80,86 +65,80 @@ class MessageForm extends PureComponent {
     }
 
     this.props.onCreateMessage(newMsg)
-    // TODO: delete content after TX_BROADCAST
+    // Delete content after TX_BROADCAST
     this.setState({ content: '', drops: 0 })
   }
 
   render() {
-    let inputClass = this.getClass()
     let currentBalance = roundFloat3(this.web3.utils.fromWei(`${this.props.balance}`, 'ether'))
 
     return (
-      <div id="post-message" className={inputClass}>
-        <Card className="message-card">
-          <CardBody className="d-flex flex-row pb-2">
-            <img
-              id="post-message-profile-picture"
-              className="mr-2 profile-img"
-              src={this.props.user.imgUrl || 'https://via.placeholder.com/50/85bd3e/85bd3e'}
-              alt="profile"
-            />
-            <div>
-              <strong id="post-message-username" className="align-top d-block card-username">
-                @{this.props.user.name}
-              </strong>
-              <span className="card-message-time">now</span>
-            </div>
-          </CardBody>
-          <CardBody className="py-2">
-            <div id="send-area">
-              <Form onSubmit={this.handleSubmit}>
-                <FormGroup className="mb-0">
-                  <Input
-                    type="textarea"
-                    name="text"
-                    rows="2"
-                    id="content"
-                    className="mb-3"
-                    placeholder="Share something valuable"
-                    value={this.state.content}
-                    onChange={this.onContentChange}
-                    onBlur={this.onBlur}
-                    onFocus={this.onFocus}
-                  />
-                  {currentBalance > 0.001 && (
-                    <div>
-                      <label>Add ETH to boost your post</label>
-                      <InputRangeSlider
-                        minValue={0}
-                        maxValue={currentBalance}
-                        value={this.state.drops}
-                        onChange={this.onDropsChange}
-                      />
-                    </div>
-                  )}
-                </FormGroup>
-                <Button color="green" block className="mt-3">
-                  Send
-                </Button>
-              </Form>
-            </div>
-          </CardBody>
-          <CardBody className="pt-2">
-            <div className="row">
-              <div className="col">
-                <div id="write-message-photo" className="float-left">
-                  <img src={iconPhoto} width="20" height="20" className="" alt="add snapshot" />
-                </div>
-              </div>
-              <div className="col">
-                <div id="write-message-video" className="mx-auto">
-                  <img src={iconVideo} width="20" height="20" className="" alt="add video" />
-                </div>
-              </div>
-              <div className="col text-right">
-                <div id="write-message-place" className="float-right mr-3">
-                  <img src={iconPlace} width="20" height="20" className="" alt="add location" />
-                </div>
+      <Card className="message-card">
+        <CardBody className="d-flex flex-row pb-2">
+          <ProfilePicture
+            diameter={50}
+            address={this.props.accounts[0]}
+            url={this.props.user.imgUrl}
+          />
+          <div className="ml-2">
+            <strong id="post-message-username" className="align-top d-block card-username">
+              @{this.props.user.name}
+            </strong>
+            <span className="card-message-time">now</span>
+          </div>
+        </CardBody>
+        <CardBody className="py-2">
+          <div id="send-area">
+            <Form onSubmit={this.handleSubmit}>
+              <FormGroup className="mb-0">
+                <Input
+                  type="textarea"
+                  name="text"
+                  rows="2"
+                  id="content"
+                  className="mb-3"
+                  placeholder="Share something valuable"
+                  value={this.state.content}
+                  onChange={this.onContentChange}
+                />
+                {currentBalance > 0.001 && (
+                  <div>
+                    <label>Add ETH to boost your post</label>
+                    <InputRangeSlider
+                      minValue={0}
+                      maxValue={currentBalance}
+                      value={this.state.drops}
+                      onChange={this.onDropsChange}
+                    />
+                  </div>
+                )}
+              </FormGroup>
+              <Button color="green" block className="mt-3">
+                Send
+              </Button>
+            </Form>
+          </div>
+        </CardBody>
+        <CardBody className="pt-2">
+          <div className="row">
+            <div className="col">
+              <div id="write-message-photo" className="float-left">
+                <img src={iconPhoto} width="20" height="20" className="" alt="add snapshot" />
               </div>
             </div>
-          </CardBody>
-        </Card>
-      </div>
+            <div className="col">
+              <div id="write-message-video" className="mx-auto">
+                <img src={iconVideo} width="20" height="20" className="" alt="add video" />
+              </div>
+            </div>
+            <div className="col text-right">
+              <div id="write-message-place" className="float-right mr-3">
+                <img src={iconPlace} width="20" height="20" className="" alt="add location" />
+              </div>
+            </div>
+          </div>
+        </CardBody>
+      </Card>
     )
   }
 }

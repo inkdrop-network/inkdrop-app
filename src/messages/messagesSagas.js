@@ -407,7 +407,7 @@ function* parseUser(id, user) {
   return {
     id: id,
     username: drizzle.web3.utils.toUtf8(user.username),
-    userUrl: `https://gateway.ipfs.io/ipfs/${user.ipfsHash}`,
+    userUrl: user.ipfsHash.length > 0 ? `https://gateway.ipfs.io/ipfs/${user.ipfsHash}` : '',
   }
 }
 
@@ -415,7 +415,7 @@ function* parseCompleteUser(user) {
   const drizzle = yield getContext('drizzle')
   return {
     username: drizzle.web3.utils.toUtf8(user.username),
-    userUrl: `https://gateway.ipfs.io/ipfs/${user.ipfsHash}`,
+    userUrl: user.ipfsHash.length > 0 ? `https://gateway.ipfs.io/ipfs/${user.ipfsHash}` : '',
     drops: roundFloat3(drizzle.web3.utils.fromWei(user.drops, 'ether')), //parseInt(user.drops, 10) / 100,
     bio: user.bio,
     followers: parseInt(user.followers, 10),

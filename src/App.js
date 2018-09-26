@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react'
 import { Link } from 'react-router'
-import { HiddenOnlyAuth, VisibleOnlyAuth } from './utils/wrappers.js'
 import { Navbar, Nav, NavItem } from 'reactstrap'
+import { HiddenOnlyAuth, VisibleOnlyAuth } from './utils/wrappers.js'
 
 // UI Components
 import LoginButtonContainer from './user/components/loginbutton/LoginButtonContainer'

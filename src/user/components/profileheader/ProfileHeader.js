@@ -11,6 +11,7 @@ import {
   DropdownItem,
 } from 'reactstrap'
 import LogoutButtonContainer from '../logoutbutton/LogoutButtonContainer'
+import ProfilePicture from '../profilepicture/ProfilePicture'
 import { roundFloat3 } from '../../../utils/rounder'
 
 import iconEther from '../../../icons/icon-ether.svg'
@@ -19,6 +20,7 @@ class ProfileHeader extends PureComponent {
   constructor(props) {
     super(props)
     this.userPayout = this.userPayout.bind(this)
+    this.showIntroTour = this.showIntroTour.bind(this)
   }
 
   userPayout(event) {
@@ -31,16 +33,20 @@ class ProfileHeader extends PureComponent {
     this.props.onUserPayout()
   }
 
+  showIntroTour(event) {
+    event.preventDefault()
+    this.props.showIntroTour()
+  }
+
   render() {
     return (
-      <Nav navbar className="d-inline-flex flex-row">
+      <Nav navbar id="profile-header" className="d-inline-flex flex-row">
         <UncontrolledDropdown nav inNavbar>
-          <DropdownToggle nav caret className="py-0">
-            <img
-              id="profile-picture"
-              className="mr-1 profile-img"
-              src={this.props.user.imgUrl}
-              alt="profile"
+          <DropdownToggle nav caret className="py-0" style={{ height: '50px' }}>
+            <ProfilePicture
+              diameter={50}
+              address={this.props.user.address}
+              url={this.props.user.imgUrl}
             />
           </DropdownToggle>
           <DropdownMenu right>
@@ -62,6 +68,14 @@ class ProfileHeader extends PureComponent {
               <li className="nav-item">
                 <a href="" className="" onClick={this.userPayout}>
                   Payout
+                </a>
+              </li>
+            </DropdownItem>
+            <DropdownItem divider />
+            <DropdownItem>
+              <li className="nav-item">
+                <a href="" className="" onClick={this.showIntroTour}>
+                  Show Intro Tour
                 </a>
               </li>
             </DropdownItem>
@@ -90,6 +104,7 @@ class ProfileHeader extends PureComponent {
 ProfileHeader.propTypes = {
   user: PropTypes.object,
   userPayout: PropTypes.func,
+  showIntroTour: PropTypes.func,
 }
 
 export default ProfileHeader

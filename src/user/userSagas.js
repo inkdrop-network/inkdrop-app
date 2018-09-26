@@ -9,7 +9,9 @@ import {
   USER_TX_MSG,
   USER_ERROR,
   USER_PAYOUT,
+  USER_TOUR,
 } from './userReducer'
+import { roundFloat3 } from '../utils/rounder'
 import ipfs from '../ipfs'
 
 // saga actions actions
@@ -83,11 +85,11 @@ function* loginRequested({ user }) {
       let newUser = {
         name: drizzle.web3.utils.toUtf8(tmpUser.username),
         bio: tmpUser.bio,
-        drops:
-          Math.round(parseFloat(drizzle.web3.utils.fromWei(tmpUser.drops, 'ether')) * 1e3) / 1e3,
+        drops: roundFloat3(drizzle.web3.utils.fromWei(tmpUser.drops, 'ether')),
         address: user.address,
         ipfsHash: tmpUser.ipfsHash,
-        imgUrl: `https://gateway.ipfs.io/ipfs/${tmpUser.ipfsHash}`,
+        imgUrl:
+          tmpUser.ipfsHash.length > 0 ? `https://gateway.ipfs.io/ipfs/${tmpUser.ipfsHash}` : '',
         followers: parseInt(tmpUser.followers, 10),
       }
       // update store
@@ -141,7 +143,7 @@ function* signupRequested({ user, buffer }) {
 
   if (!userTest) {
     // upload image to ipfs
-    let ipfsHash = yield call(ipfsUploadRequested, { buffer })
+    let ipfsHash = buffer instanceof Buffer ? yield call(ipfsUploadRequested, { buffer }) : ''
 
     // show message in the UI
     yield put({
@@ -188,7 +190,7 @@ function* signupRequested({ user, buffer }) {
             drops: 0,
             address: user.address,
             ipfsHash: ipfsHash,
-            imgUrl: `https://gateway.ipfs.io/ipfs/${ipfsHash}`,
+            imgUrl: ipfsHash.length > 0 ? `https://gateway.ipfs.io/ipfs/${ipfsHash}` : '',
             followers: 0,
           }
 
@@ -205,6 +207,11 @@ function* signupRequested({ user, buffer }) {
           } else {
             yield browserHistory.push('/newsfeed')
           }
+          // Show intro tour
+          yield put({
+            type: USER_TOUR,
+            payload: true,
+          })
         } else if (event.type === TX_ERROR) {
           console.log('ERROR')
           yield put({
@@ -253,12 +260,12 @@ function* userUpdateRequested({ user, buffer }) {
     payload: newUser,
   })
   // upload image to ipfs
-  let ipfsHash = yield call(ipfsUploadRequested, { buffer })
+  let ipfsHash = buffer instanceof Buffer ? yield call(ipfsUploadRequested, { buffer }) : ''
   // merge ipfsHash with newUser
   newUser = {
     ...newUser,
     ipfsHash: ipfsHash,
-    imgUrl: `https://gateway.ipfs.io/ipfs/${ipfsHash}`,
+    imgUrl: ipfsHash.length > 0 ? `https://gateway.ipfs.io/ipfs/${ipfsHash}` : '',
   }
   // update store
   yield put({

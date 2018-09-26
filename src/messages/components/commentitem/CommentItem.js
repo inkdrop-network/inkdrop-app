@@ -4,6 +4,7 @@ import { Link } from 'react-router'
 import Linkify from 'react-linkify'
 import { CardFooter } from 'reactstrap'
 import Moment from 'react-moment'
+import ProfilePicture from '../../../user/components/profilepicture/ProfilePicture'
 
 import loadingSpinner from '../../../icons/loading-spinner.svg'
 
@@ -46,12 +47,12 @@ class CommentItem extends PureComponent {
         className={`comment-card mb-4 ${this.props.comment.fromBlockchain ? '' : 'muted'}`}>
         <div>
           <div className="d-flex flex-row">
-            <img
-              className="mr-2 profile-img"
-              src={this.props.comment.userUrl || 'https://via.placeholder.com/50/85bd3e/85bd3e'}
-              alt="profile"
+            <ProfilePicture
+              diameter={50}
+              address={this.props.comment.userAdr}
+              url={this.props.comment.userUrl}
             />
-            <div>
+            <div className="ml-2">
               <Link to={`/user/${this.props.comment.userAdr}`} className="message-header-link">
                 <strong className="align-top d-block card-username">
                   @{this.props.comment.username}

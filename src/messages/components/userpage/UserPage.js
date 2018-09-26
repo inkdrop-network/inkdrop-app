@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import Linkify from 'react-linkify'
+import ProfilePicture from '../../../user/components/profilepicture/ProfilePicture'
 import MessageItemContainer from '../messageitem/MessageItemContainer'
 
 // icons
@@ -50,12 +51,7 @@ class UserPage extends PureComponent {
         <div className="container">
           <div className="row my-4">
             <div id="profile" className="col-sm-3 mt-2 text-left">
-              <img
-                id="profile-page-picture"
-                className="profile-img-lg"
-                src={user.userUrl || 'https://via.placeholder.com/190/85bd3e/85bd3e'}
-                alt=""
-              />
+              <ProfilePicture diameter={190} address={this.props.address} url={user.userUrl} />
               <h3 id="profile-page-username" className="mt-4 mb-1">
                 @{user.username}
               </h3>

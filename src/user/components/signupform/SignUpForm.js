@@ -4,7 +4,6 @@ import {
   Button,
   Form,
   FormGroup,
-  FormText,
   Input,
   InputGroup,
   InputGroupAddon,
@@ -12,7 +11,10 @@ import {
   CardBody,
   CardFooter,
   Label,
+  CustomInput,
+  Col,
 } from 'reactstrap'
+import ProfilePicture from '../profilepicture/ProfilePicture'
 
 import loadingSpinner from '../../../icons/loading-spinner.svg'
 
@@ -63,6 +65,7 @@ class SignUpForm extends PureComponent {
       address: this.props.accounts[0],
     }
 
+    // console.log(this.state.buffer)
     this.props.onSignupUser(user, this.state.buffer)
   }
 
@@ -135,85 +138,104 @@ class SignUpForm extends PureComponent {
       <Card className="profile-card">
         <CardBody>
           <Form onSubmit={this.handleSubmit}>
-            <FormGroup>
-              <img
-                id="signup-profile-picture"
-                className="profile-img mb-2"
-                src={this.state.userUrl || 'https://via.placeholder.com/150/85bd3e/85bd3e'}
-                alt="profile"
-              />
-              <Input
-                type="file"
-                name="file"
-                id="signup-user-img"
-                onChange={this.captureFile}
-                accept="image/gif, image/jpeg, image/png"
-                required
-              />
-              <FormText color="muted">
+            <FormGroup row>
+              <Label for="name" sm={2}>
+                <strong>Username</strong>
+              </Label>
+              <Col sm={10}>
+                <InputGroup>
+                  <InputGroupAddon addonType="prepend">@</InputGroupAddon>
+                  <Input
+                    id="name"
+                    type="text"
+                    value={this.state.name}
+                    onChange={this.onNameChange}
+                    placeholder="How should we call you"
+                    required
+                  />
+                </InputGroup>
+              </Col>
+            </FormGroup>
+            <FormGroup row className="mt-4">
+              <Label for="bio" sm={2}>
+                <strong>About You</strong>
+              </Label>
+              <Col sm={10}>
+                <Input
+                  id="bio"
+                  type="text"
+                  value={this.state.bio}
+                  onChange={this.onBioChange}
+                  placeholder="Tell the community a little more about yourself (optional)"
+                />
+              </Col>
+            </FormGroup>
+            <FormGroup row>
+              <Label for="file" sm={2}>
+                <strong>Profile Picture</strong>
+              </Label>
+              <Col sm={10}>
+                <ProfilePicture
+                  diameter={100}
+                  address={this.state.address}
+                  url={this.state.userUrl}
+                />
+                <CustomInput
+                  type="file"
+                  name="file"
+                  id="signup-user-img"
+                  onChange={this.captureFile}
+                  accept="image/gif, image/jpeg, image/png"
+                  className="mt-2"
+                  label="Choose your own profile picture (optional)"
+                />
+                {/*<FormText color="muted">
                 Upload an image with square format and a minimum resolution of 150x150px. Only
                 .jpeg, .png and .gif files are allowed.
-              </FormText>
+              </FormText>*/}
+              </Col>
             </FormGroup>
-            <FormGroup>
-              <InputGroup>
-                <InputGroupAddon addonType="prepend">@</InputGroupAddon>
-                <Input
-                  id="name"
-                  type="text"
-                  value={this.state.name}
-                  onChange={this.onNameChange}
-                  placeholder="Your name"
-                  required
-                />
-              </InputGroup>
+            <FormGroup className="mt-4" check row>
+              <Col sm={{ size: 10, offset: 2 }}>
+                <Label check>
+                  <Input
+                    type="checkbox"
+                    name="tos_accepted"
+                    checked={this.tos_accepted}
+                    onChange={this.handleCheckboxChange}
+                  />
+                  I have read and agree to the{' '}
+                  <a
+                    href="https://inkdrop.tech/tos.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-green">
+                    Terms of Service
+                  </a>
+                </Label>
+              </Col>
             </FormGroup>
-            <FormGroup>
-              <Input
-                id="bio"
-                type="text"
-                value={this.state.bio}
-                onChange={this.onBioChange}
-                placeholder="Tell us something about yourself"
-              />
+            <FormGroup check row>
+              <Col sm={{ size: 10, offset: 2 }}>
+                <Label check>
+                  <Input
+                    type="checkbox"
+                    name="privacy_accepted"
+                    checked={this.privacy_accepted}
+                    onChange={this.handleCheckboxChange}
+                  />
+                  I have read and agree to the{' '}
+                  <a
+                    href="https://inkdrop.tech/privacy.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-green">
+                    Privacy Policy
+                  </a>
+                </Label>
+              </Col>
             </FormGroup>
-            <FormGroup check>
-              <Label check>
-                <Input
-                  type="checkbox"
-                  name="tos_accepted"
-                  checked={this.tos_accepted}
-                  onChange={this.handleCheckboxChange}
-                />
-                I have read and agree to the{' '}
-                <a
-                  href="https://inkdrop.tech/tos.html"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-green">
-                  Terms of Service
-                </a>
-              </Label>
-            </FormGroup>
-            <FormGroup check>
-              <Label check>
-                <Input
-                  type="checkbox"
-                  name="privacy_accepted"
-                  checked={this.privacy_accepted}
-                  onChange={this.handleCheckboxChange}
-                />
-                I have read and agree to the{' '}
-                <a
-                  href="https://inkdrop.tech/privacy.html"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-green">
-                  Privacy Policy
-                </a>
-              </Label>
-            </FormGroup>
-            <Button color="green" className="mt-3">
+            <Button color="green" className="mt-4" block>
               Sign Up
             </Button>
           </Form>

@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router'
 import Moment from 'react-moment'
+import ProfilePicture from '../../../../user/components/profilepicture/ProfilePicture'
 // import SVG from 'react-inlinesvg'
 
 // import iconDots from '../../../../../public/icons/icon-dots.svg'
@@ -9,13 +10,9 @@ import Moment from 'react-moment'
 const MessageHeader = ({ msg, extended }) => (
 	<div className="d-flex flex-row">
 		<Link to={`/user/${msg.userAdr}`} className="message-header-link">
-			<img
-				className="mr-2 profile-img"
-				src={msg.userUrl || 'https://via.placeholder.com/50/85bd3e/85bd3e'}
-				alt="profile"
-			/>
+			<ProfilePicture diameter={50} address={msg.userAdr} url={msg.userUrl} />
 		</Link>
-		<div>
+		<div className="ml-2">
 			<Link to={`/user/${msg.userAdr}`} className="message-header-link">
 				<strong className="align-top d-block card-username">@{msg.username}</strong>
 			</Link>

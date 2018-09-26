@@ -173,14 +173,6 @@ footer .list-inline {
   font-weight: bolder;
 }
 
-#post-message {
-  opacity: 0.5;
-}
-
-#post-message.selected {
-  opacity: 1;
-}
-
 .card.message-card,
 .card.profile-card,
 .card.loading-card,
@@ -222,36 +214,6 @@ a.message-header-link:hover {
 .card.message-card .comments-card {
   border-left: 3px solid var(--green);
 }
-
-.card-columns {
-  column-count: 4;
-}
-
-.profile-img {
-  border-radius: 100%;
-  width: 50px;
-  height: 50px;
-}
-
-#profile-update .profile-img,
-#signup-form .profile-img {
-  border-radius: 100%;
-  width: 100px;
-  height: 100px;
-}
-
-.profile-img-lg {
-  border-radius: 100%;
-  width: 190px;
-  height: 190px;
-  /*margin-top: -8.5rem;*/
-}
-
-/*.card .drop-message-button,*/
-/*.card .like-message-button,
-.card .comment-message-button {
-  width: 3rem;
-}*/
 
 #post-message textarea {
   width: 100%;

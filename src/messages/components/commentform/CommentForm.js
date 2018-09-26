@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Form, FormGroup, Input, Button } from 'reactstrap'
+import ProfilePicture from '../../../user/components/profilepicture/ProfilePicture'
 
 class CommentForm extends PureComponent {
   constructor(props) {
@@ -46,13 +47,12 @@ class CommentForm extends PureComponent {
     return (
       <div className="w-100">
         <div className="d-flex flex-row pb-2">
-          <img
-            id="post-message-profile-picture"
-            className="mr-2 profile-img"
-            src={this.props.user.imgUrl || 'https://via.placeholder.com/50/85bd3e/85bd3e'}
-            alt="profile"
+          <ProfilePicture
+            diameter={50}
+            address={this.props.accounts[0]}
+            url={this.props.user.imgUrl}
           />
-          <div>
+          <div className="ml-2">
             <strong id="post-message-username" className="align-top d-block card-username">
               @{this.props.user.name}
             </strong>

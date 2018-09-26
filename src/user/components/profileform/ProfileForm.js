@@ -10,7 +10,11 @@ import {
   Card,
   CardBody,
   CardFooter,
+  CustomInput,
+  Label,
+  Col,
 } from 'reactstrap'
+import ProfilePicture from '../profilepicture/ProfilePicture'
 
 import loadingSpinner from '../../../icons/loading-spinner.svg'
 
@@ -151,44 +155,69 @@ class ProfileForm extends PureComponent {
       <Card className="profile-card">
         <CardBody>
           <Form onSubmit={this.handleSubmit}>
-            <FormGroup>
-              <img
-                id="update-profile-picture"
-                className="profile-img mb-2"
-                src={this.state.imgUrl}
-                alt="profile"
-              />
-              <Input
-                type="file"
-                name="file"
-                id="update-user-img"
-                onChange={this.captureFile}
-                accept="image/gif, image/jpeg, image/png"
-              />
+            <FormGroup row>
+              <Label for="name" sm={2}>
+                <strong>Username</strong>
+              </Label>
+              <Col sm={10}>
+                <InputGroup>
+                  <InputGroupAddon addonType="prepend">@</InputGroupAddon>
+                  <Input
+                    id="name"
+                    type="text"
+                    value={this.state.name}
+                    onChange={this.onNameChange}
+                    placeholder="How should we call you"
+                    required
+                  />
+                </InputGroup>
+              </Col>
             </FormGroup>
-            <FormGroup>
-              <InputGroup>
-                <InputGroupAddon addonType="prepend">@</InputGroupAddon>
+
+            <FormGroup row className="mt-4">
+              <Label for="bio" sm={2}>
+                <strong>About You</strong>
+              </Label>
+              <Col sm={10}>
                 <Input
-                  id="name"
+                  id="bio"
                   type="text"
-                  value={this.state.name}
-                  onChange={this.onNameChange}
-                  placeholder="Your name"
-                  required
+                  value={this.state.bio}
+                  onChange={this.onBioChange}
+                  placeholder="Tell the community a little more about yourself (optional)"
                 />
-              </InputGroup>
+              </Col>
             </FormGroup>
-            <FormGroup>
-              <Input
-                id="bio"
-                type="text"
-                value={this.state.bio}
-                onChange={this.onBioChange}
-                placeholder="Tell us something about yourself"
-              />
+
+            <FormGroup row>
+              <Label for="file" sm={2}>
+                <strong>Profile Picture</strong>
+              </Label>
+              <Col sm={10}>
+                <ProfilePicture
+                  diameter={100}
+                  address={this.state.address}
+                  url={this.state.imgUrl}
+                />
+                <CustomInput
+                  type="file"
+                  name="file"
+                  id="signup-user-img"
+                  onChange={this.captureFile}
+                  accept="image/gif, image/jpeg, image/png"
+                  className="mt-2"
+                  label="Change your profile picture"
+                />
+                {/*<FormText color="muted">
+                Upload an image with square format and a minimum resolution of 150x150px. Only
+                .jpeg, .png and .gif files are allowed.
+              </FormText>*/}
+              </Col>
             </FormGroup>
-            <Button color="green">Update Profile</Button>
+
+            <Button color="green" className="mt-4" block>
+              Update Profile
+            </Button>
           </Form>
         </CardBody>
         {this.renderTxStatus()}
