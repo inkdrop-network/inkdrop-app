@@ -1,6 +1,6 @@
 {
     "name": "InkDrop",
-    "version": "0.0.1",
+    "version": "1.2.3",
     "devDependencies": {
         "openzeppelin-zos": "^1.9.4",
         "truffle": "^4.1.13",
@@ -80,18 +80,16 @@
         "clean": "find . -name '.DS_Store' -delete",
         "compile": "npm run clean && truffle compile",
         "s3_upload": "aws s3 sync build_webpack/ s3://aws-website-inkdrop-beta-hn57w",
-        "cdn_invalidation": "aws cloudfront create-invalidation --distribution-id EFXNQ7A2KLVQZ --paths '/*'",
+        "cdn_invalidation":
+            "aws cloudfront create-invalidation --distribution-id EFXNQ7A2KLVQZ --paths '/*'",
         "deploy": "npm run s3_upload && npm run cdn_invalidation",
         "format": "prettier --write \"src/**/*.{js,jsx,json,css}\"",
-        "chain": "geth --datadir=\"/tmp/eth/60/01\" --nodiscover --maxpeers 0 --port 30301 --rpc --rpcapi \"db,eth,net,web3\" --rpcport 8101 --verbosity 6 console"
+        "chain":
+            "geth --datadir=\"/tmp/eth/60/01\" --nodiscover --maxpeers 0 --port 30301 --rpc --rpcapi \"db,eth,net,web3\" --rpcport 8101 --verbosity 6 console"
     },
     "jest": {
-        "collectCoverageFrom": [
-            "src/**/*.{js,jsx,mjs}"
-        ],
-        "setupFiles": [
-            "<rootDir>/config/polyfills.js"
-        ],
+        "collectCoverageFrom": ["src/**/*.{js,jsx,mjs}"],
+        "setupFiles": ["<rootDir>/config/polyfills.js"],
         "testMatch": [
             "<rootDir>/src/**/__tests__/**/*.{js,jsx,mjs}",
             "<rootDir>/src/**/?(*.)(spec|test).{js,jsx,mjs}"
@@ -103,26 +101,14 @@
             "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
             "^(?!.*\\.(js|jsx|mjs|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
         },
-        "transformIgnorePatterns": [
-            "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs)$"
-        ],
+        "transformIgnorePatterns": ["[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs)$"],
         "moduleNameMapper": {
             "^react-native$": "react-native-web"
         },
-        "moduleFileExtensions": [
-            "web.js",
-            "js",
-            "json",
-            "web.jsx",
-            "jsx",
-            "node",
-            "mjs"
-        ]
+        "moduleFileExtensions": ["web.js", "js", "json", "web.jsx", "jsx", "node", "mjs"]
     },
     "babel": {
-        "presets": [
-            "react-app"
-        ]
+        "presets": ["react-app"]
     },
     "eslintConfig": {
         "extends": "react-app"
