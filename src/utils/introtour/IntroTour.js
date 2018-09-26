@@ -41,9 +41,9 @@ class IntroTour extends Component {
     this.callback = this.callback.bind(this)
   }
 
-  componentDidMount() {
-    this.setState({ run: this.props.showTour })
-  }
+  // componentDidMount() {
+  //   this.setState({ run: this.props.showTour })
+  // }
 
   callback(data) {
     const { type } = data
@@ -54,26 +54,29 @@ class IntroTour extends Component {
   }
 
   render() {
-    const defaultOptions = {
-      arrowColor: '#f1f1f1',
-      backgroundColor: '#fff',
-      overlayColor: 'rgba(0, 0, 0, 0.5)',
-      primaryColor: '#85bd3e',
-      spotlightShadow: '0 2px 6px 0 rgba(0, 0, 0, 0.1)',
-      textColor: '#29313e',
+    if (this.props.showTour) {
+      const defaultOptions = {
+        arrowColor: '#f1f1f1',
+        backgroundColor: '#fff',
+        overlayColor: 'rgba(0, 0, 0, 0.5)',
+        primaryColor: '#85bd3e',
+        spotlightShadow: '0 2px 6px 0 rgba(0, 0, 0, 0.1)',
+        textColor: '#29313e',
+      }
+      return (
+        <Joyride
+          steps={this.state.steps}
+          run={this.props.showTour}
+          callback={this.callback}
+          continuous={true}
+          showProgress={true}
+          spotlightPadding={2}
+          locale={this.state.locale}
+          styles={{ options: defaultOptions }}
+        />
+      )
     }
-    return (
-      <Joyride
-        steps={this.state.steps}
-        run={this.props.showTour}
-        callback={this.callback}
-        continuous={true}
-        showProgress={true}
-        spotlightPadding={2}
-        locale={this.state.locale}
-        styles={{ options: defaultOptions }}
-      />
-    )
+    return null
   }
 }
 
