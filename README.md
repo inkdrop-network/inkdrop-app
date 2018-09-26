@@ -23,3 +23,13 @@ InkDrop's frontend is implemented in React with heavy usage of [Redux](https://r
 3.  Run `npm install`
 4.  Compile and deploy the smart contracts to the testnet (see `DEPLOY_GUIDE.md`)
 5.  Run `npm run start`
+
+## Environment Variables
+
+Set up a `.env` file with the following environment variables:
+
+- REACT_APP_MNEMONIC=''
+- REACT_APP_INFURA_API_KEY=''
+- REACT_APP_GA_ID=''
+- REACT_APP_IPFS_GATEWAY='https://cloudflare-ipfs.com/ipfs/'
+- REACT_APP_MIN_DROP=0.001
