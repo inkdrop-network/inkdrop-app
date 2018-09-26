@@ -101,7 +101,7 @@ class MessageForm extends PureComponent {
                   value={this.state.content}
                   onChange={this.onContentChange}
                 />
-                {currentBalance > 0.001 && (
+                {currentBalance > Number(process.env.REACT_APP_MIN_DROP) && (
                   <div>
                     <label>Add ETH to boost your post</label>
                     <InputRangeSlider

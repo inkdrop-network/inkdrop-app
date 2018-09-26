@@ -373,7 +373,7 @@ function* parseMessage(id, msg) {
     timetolive: new Date(msg.timetolive * 1000),
     likes: parseInt(msg.likes, 10),
     drops: roundFloat3(drizzle.web3.utils.fromWei(msg.drops, 'ether')), // parseInt(msg.drops, 10) / 100,
-    userUrl: '', //`https://gateway.ipfs.io/ipfs/${tmpUser.ipfsHash}`,
+    userUrl: '', //`${process.env.REACT_APP_IPFS_GATEWAY}${tmpUser.ipfsHash}`,
     userAdr: msg.writtenBy,
     commentIds: msg.comments.map(function(e) {
       return parseInt(e, 10)
@@ -395,7 +395,7 @@ function* parseComment(id, comment) {
     timetolive: new Date(comment.timetolive * 1000),
     likes: parseInt(comment.likes, 10),
     drops: roundFloat3(drizzle.web3.utils.fromWei(comment.drops, 'ether')), //parseInt(comment.drops, 10) / 100,
-    userUrl: '', //`https://gateway.ipfs.io/ipfs/${tmpUser.ipfsHash}`,
+    userUrl: '', //`${process.env.REACT_APP_IPFS_GATEWAY}${tmpUser.ipfsHash}`,
     userAdr: comment.writtenBy,
     fromBlockchain: true,
     initialized: false,
@@ -407,7 +407,8 @@ function* parseUser(id, user) {
   return {
     id: id,
     username: drizzle.web3.utils.toUtf8(user.username),
-    userUrl: user.ipfsHash.length > 0 ? `https://gateway.ipfs.io/ipfs/${user.ipfsHash}` : '',
+    userUrl:
+      user.ipfsHash.length > 0 ? `${process.env.REACT_APP_IPFS_GATEWAY}${user.ipfsHash}` : '',
   }
 }
 
@@ -415,7 +416,8 @@ function* parseCompleteUser(user) {
   const drizzle = yield getContext('drizzle')
   return {
     username: drizzle.web3.utils.toUtf8(user.username),
-    userUrl: user.ipfsHash.length > 0 ? `https://gateway.ipfs.io/ipfs/${user.ipfsHash}` : '',
+    userUrl:
+      user.ipfsHash.length > 0 ? `${process.env.REACT_APP_IPFS_GATEWAY}${user.ipfsHash}` : '',
     drops: roundFloat3(drizzle.web3.utils.fromWei(user.drops, 'ether')), //parseInt(user.drops, 10) / 100,
     bio: user.bio,
     followers: parseInt(user.followers, 10),

@@ -89,7 +89,9 @@ function* loginRequested({ user }) {
         address: user.address,
         ipfsHash: tmpUser.ipfsHash,
         imgUrl:
-          tmpUser.ipfsHash.length > 0 ? `https://gateway.ipfs.io/ipfs/${tmpUser.ipfsHash}` : '',
+          tmpUser.ipfsHash.length > 0
+            ? `${process.env.REACT_APP_IPFS_GATEWAY}${tmpUser.ipfsHash}`
+            : '',
         followers: parseInt(tmpUser.followers, 10),
       }
       // update store
@@ -190,7 +192,7 @@ function* signupRequested({ user, buffer }) {
             drops: 0,
             address: user.address,
             ipfsHash: ipfsHash,
-            imgUrl: ipfsHash.length > 0 ? `https://gateway.ipfs.io/ipfs/${ipfsHash}` : '',
+            imgUrl: ipfsHash.length > 0 ? `${process.env.REACT_APP_IPFS_GATEWAY}${ipfsHash}` : '',
             followers: 0,
           }
 
@@ -265,7 +267,7 @@ function* userUpdateRequested({ user, buffer }) {
   newUser = {
     ...newUser,
     ipfsHash: ipfsHash,
-    imgUrl: ipfsHash.length > 0 ? `https://gateway.ipfs.io/ipfs/${ipfsHash}` : '',
+    imgUrl: ipfsHash.length > 0 ? `${process.env.REACT_APP_IPFS_GATEWAY}${ipfsHash}` : '',
   }
   // update store
   yield put({

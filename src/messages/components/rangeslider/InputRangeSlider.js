@@ -16,7 +16,7 @@ const InputRangeSlider = ({ minValue, maxValue, value, onChange }) => (
 				minValue={minValue}
 				maxValue={maxValue}
 				value={value}
-				step={0.001}
+				step={Number(process.env.REACT_APP_MIN_DROP)}
 				onChange={onChange}
 				formatLabel={() => ''}
 			/>

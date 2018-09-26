@@ -21,7 +21,7 @@ class MessageItem extends PureComponent {
       showActions: false,
       showModal: false,
       showComments: false,
-      drops: 0.001, // 0.001 ETH
+      drops: Number(process.env.REACT_APP_MIN_DROP), // 0.001 ETH
     }
 
     this.toggleActions = this.toggleActions.bind(this)
@@ -43,7 +43,7 @@ class MessageItem extends PureComponent {
         return alert("You don't have enough funds for this post.")
       } else {
         this.props.onMessageDrop(this.props.message, newDrops)
-        this.setState({ drops: 0.001 })
+        this.setState({ drops: Number(process.env.REACT_APP_MIN_DROP) })
       }
     }
   }
@@ -124,7 +124,7 @@ class MessageItem extends PureComponent {
           drops={this.state.drops}
         />
         {this.state.showActions &&
-          currentBalance > 0.001 && (
+          currentBalance > Number(process.env.REACT_APP_MIN_DROP) && (
             <MessageActionsExtend
               maxValue={roundFloat3(this.web3.utils.fromWei(`${this.props.balance}`, 'ether'))}
               value={this.state.drops}
