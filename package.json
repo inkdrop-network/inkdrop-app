@@ -84,6 +84,7 @@
             "aws cloudfront create-invalidation --distribution-id EFXNQ7A2KLVQZ --paths '/*'",
         "deploy": "npm run s3_upload && npm run cdn_invalidation",
         "format": "prettier --write \"src/**/*.{js,jsx,json,css}\"",
+        "symlink": "cd src && ln -s ../build/contracts contracts",
         "chain":
             "geth --datadir=\"/tmp/eth/60/01\" --nodiscover --maxpeers 0 --port 30301 --rpc --rpcapi \"db,eth,net,web3\" --rpcport 8101 --verbosity 6 console"
     },
