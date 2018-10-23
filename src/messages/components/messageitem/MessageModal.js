@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import SVG from 'react-inlinesvg'
+import Linkify from 'react-linkify'
 import { Modal, ModalBody, ModalFooter } from 'reactstrap'
 import MessageHeader from './components/MessageHeader'
 import MessageActionsExtend from './components/MessageActionsExtend'
@@ -38,7 +39,9 @@ class MessageModal extends PureComponent {
 				<ModalBody>
 					<MessageHeader msg={this.props.msg} extended={true} />
 				</ModalBody>
-				<ModalBody>{this.props.msg.content}</ModalBody>
+				<ModalBody>
+					<Linkify properties={{ target: '_blank' }}>{this.props.msg.content}</Linkify>
+				</ModalBody>
 				<ModalBody>
 					<hr className="m-0 mb-3" />
 					<div className="container-fluid">
