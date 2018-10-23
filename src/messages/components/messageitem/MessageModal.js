@@ -75,7 +75,7 @@ class MessageModal extends PureComponent {
 					</div>
 				</ModalBody>
 				{this.state.showActions &&
-					this.props.maxValue > 0.001 && (
+					this.props.maxValue > Number(process.env.REACT_APP_MIN_DROP) && (
 						<MessageActionsExtend
 							maxValue={this.props.maxValue}
 							value={this.props.value}

@@ -67,7 +67,7 @@ class ProfileForm extends PureComponent {
     // // TODO: Chech if double upload is needed
     // let ipfsHash = await ipfs.add(this.state.buffer)
     // this.setState({ ipfsHash: ipfsHash[0].hash })
-    // this.setState({ imgUrl: `https://gateway.ipfs.io/ipfs/${ipfsHash[0].hash}` })
+    // this.setState({ imgUrl: `${process.env.REACT_APP_IPFS_GATEWAY}${ipfsHash[0].hash}` })
 
     // try {
     //   // this.contracts.Authentication.methods.signup
@@ -115,7 +115,7 @@ class ProfileForm extends PureComponent {
     this.setState({ buffer: buffer })
     // let ipfsHash = await ipfs.add(buffer)
     // this.setState({ ipfsHash: ipfsHash[0].hash })
-    // this.setState({ imgUrl: `https://gateway.ipfs.io/ipfs/${ipfsHash[0].hash}` })
+    // this.setState({ imgUrl: `${process.env.REACT_APP_IPFS_GATEWAY}${ipfsHash[0].hash}` })
   }
 
   renderTxStatus() {

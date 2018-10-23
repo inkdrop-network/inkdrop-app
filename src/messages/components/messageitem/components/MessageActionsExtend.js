@@ -8,8 +8,8 @@ const MessageActionsExtend = ({ maxValue, value, onDropsChange, dropMessage }) =
 		<hr className="m-0 mb-4" />
 
 		<InputRangeSlider
-			minValue={0.001}
-			maxValue={maxValue - 0.001}
+			minValue={Number(process.env.REACT_APP_MIN_DROP)}
+			maxValue={maxValue - Number(process.env.REACT_APP_MIN_DROP)}
 			value={value}
 			onChange={onDropsChange}
 		/>
