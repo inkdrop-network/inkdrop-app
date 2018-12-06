@@ -7,3 +7,5 @@ node_modules/
 build/
 build_webpack/
 .zos.session
+zos.rinkeby.json
+zos.development.json
