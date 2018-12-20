@@ -83,3 +83,14 @@ Set up a `.env` file with the following environment variables:
 - REACT_APP_GA_ID=''
 - REACT_APP_IPFS_GATEWAY='https://cloudflare-ipfs.com/ipfs/'
 - REACT_APP_MIN_DROP=0.001
+
+## Contributors
+
+Thanks goes to these wonderful people:
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore -->
+| [<img src="https://avatars1.githubusercontent.com/u/33573806?v=3" width="100px;"/><br /><sub><b>Tobias Schoder</b></sub>](https://github.com/Shoby101) | [<img src="https://avatars1.githubusercontent.com/u/3816690?v=3" width="100px;"/><br /><sub><b>Michael Kaserer</b></sub>](https://github.com/mi-kas) | [<img src="https://avatars1.githubusercontent.com/u/33594251?v=3" width="100px;"/><br /><sub><b>Torben Wollschläger</b></sub>](https://github.com/daaash) | [<img src="https://avatars2.githubusercontent.com/u/26111999?v=3" width="100px;"/><br /><sub><b>Rob Hitchens</b></sub>](https://github.com/rob-Hitchens) | [<img src="https://i.imgflip.com/2pg3da.jpg" width="100px;"/><br /><sub><b>We want you!</b></sub>](mailto:hello@inkdrop.tech)|
+| :---: | :---: | :---: | :---: | :---: |
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
