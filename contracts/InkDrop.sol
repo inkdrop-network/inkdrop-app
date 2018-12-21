@@ -10,8 +10,10 @@ contract InkDrop is Migratable, Ownable, Pausable {
   using SafeMath for uint256;
 
   uint256 constant MULTIPLIER = 100;
+  // reduce dropAmount by 10% (i.e. multiply by 90% or 9/10)
+  uint256 constant DROP_REDUCE = 9;
 
-  struct data {
+  struct Data {
     uint256 value;
     bool isSet;
   }
@@ -24,7 +26,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
     // uint256 followers;
     // User has many followers
     address[] followers; 
-    mapping(address => data) followerPointers;
+    mapping(address => Data) followerPointers;
     // messages of a user
     uint[] messages;
     mapping(uint256 => uint256) messagePointers;
@@ -49,13 +51,13 @@ contract InkDrop is Migratable, Ownable, Pausable {
     // addresses of users' likes
     address[] likes;
     // mapping of message id to position in likes array
-    mapping(address => data) likePointers;
+    mapping(address => Data) likePointers;
     // total drops in wei
     uint256 dropAmount;
     // addresses of users' drops
     address[] drops;
     // mapping of message id to position in drops array
-    mapping(address => data) dropPointers;
+    mapping(address => Data) dropPointers;
     uint[] comments;
   }
   
@@ -100,23 +102,23 @@ contract InkDrop is Migratable, Ownable, Pausable {
     return (messageOrder.length > _parent);
   }
 
-  function getUserCount() public constant returns(uint256 count) {
+  function getUserCount() public view returns(uint256 count) {
     return userList.length;
   }
 
-  function getUserAtIndex(uint256 _index) public constant returns(address userAddress) {
+  function getUserAtIndex(uint256 _index) public view returns(address userAddress) {
     require(_index <= userList.length);
     return userList[_index];
   }
   
-  function getUser(address _userAddress) public constant returns(bytes32 username, string bio, uint256 drops, string ipfsHash, uint256 followers, uint[] messages) {
+  function getUser(address _userAddress) public view returns(bytes32 username, string bio, uint256 drops, string ipfsHash, uint256 followers, uint[] messages) {
     require(isUser(_userAddress)); 
     return (userStructs[_userAddress].username, userStructs[_userAddress].bio, 
       userStructs[_userAddress].dropAmount, userStructs[_userAddress].ipfsHash, 
       userStructs[_userAddress].followers.length, userStructs[_userAddress].messages);
   } 
 
-  function getUserFollowers(address _userAddress) public constant returns(address[] followers) {
+  function getUserFollowers(address _userAddress) public view returns(address[] followers) {
     require(isUser(_userAddress)); 
     return userStructs[_userAddress].followers;
   } 
@@ -216,17 +218,17 @@ contract InkDrop is Migratable, Ownable, Pausable {
     return --userStructs[msg.sender].followers.length;
   }
 
-  function getMessageCount() public constant returns(uint256 count) {
+  function getMessageCount() public view returns(uint256 count) {
     return messageOrder.length;
   }
 
-  function getMessageIdAtIndex(uint256 _index) public constant returns(uint256 msgId) {
+  function getMessageIdAtIndex(uint256 _index) public view returns(uint256 msgId) {
     require(_index < messageOrder.length);
     return messageOrder[_index];
   }
 
   // The stack can only be 7 steps deep - only 7 return values allowed
-  function getMessage(uint256 _id) public constant returns(string content, address writtenBy, uint256 timestamp, uint256 timetolive, uint256 likes, uint256 drops, uint[] comments) {
+  function getMessage(uint256 _id) public view returns(string content, address writtenBy, uint256 timestamp, uint256 timetolive, uint256 likes, uint256 drops, uint[] comments) {
     require(_id < messageOrder.length);
     return (messageStructs[_id].content, messageStructs[_id].writtenBy, messageStructs[_id].timestamp, messageStructs[_id].timetolive, 
       messageStructs[_id].likes.length, messageStructs[_id].dropAmount, messageStructs[_id].comments);
@@ -260,6 +262,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
     require(_id < messageOrder.length);
     // require that a user can not like a message twice
     require(!messageStructs[_id].likePointers[msg.sender].isSet);
+    require(msg.value == 0);
 
     messageStructs[_id].likePointers[msg.sender].value = messageStructs[_id].likes.push(msg.sender) - 1;
     messageStructs[_id].likePointers[msg.sender].isSet = true;
@@ -313,6 +316,9 @@ contract InkDrop is Migratable, Ownable, Pausable {
       userStructs[msg.sender].dropAmount = payout; 
     }
 
+    // msg.sender.transfer(payout);
+    // userStructs[msg.sender].dropAmount = payout;
+
     return payout;
   }
 
@@ -335,17 +341,17 @@ contract InkDrop is Migratable, Ownable, Pausable {
     return commentId;
   }
 
-  function getComment(uint256 _commentId) public constant returns(uint256 parent, string content, address writtenBy, uint256 timestamp, uint256 timetolive, uint256 likes, uint256 drops) {
+  function getComment(uint256 _commentId) public view returns(uint256 parent, string content, address writtenBy, uint256 timestamp, uint256 timetolive, uint256 likes, uint256 drops) {
     require(_commentId < commentList.length);
     return (commentList[_commentId].parent, commentList[_commentId].content, commentList[_commentId].writtenBy, commentList[_commentId].timestamp, 
       commentList[_commentId].timetolive, commentList[_commentId].likes.length, commentList[_commentId].dropAmount);
   }
 
-  function getStats() onlyOwner public constant returns(uint256 users, uint256 messages, uint256 comments) {
+  function getStats() onlyOwner public view returns(uint256 users, uint256 messages, uint256 comments) {
     return (userList.length, messageOrder.length, commentList.length);
   }
 
-  function getMinimumDrop() public constant returns(uint256 min_drop) {
+  function getMinimumDrop() public view returns(uint256 min_drop) {
     return MINIMUM_DROP;
   }
 
@@ -381,7 +387,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
 
   function reduceDrops(uint256 _id) onlyOwner whenNotPaused public payable {
     // reduce dropAmount by 10% (i.e. multiply by 90% or 9/10)
-    messageStructs[_id].dropAmount = messageStructs[_id].dropAmount / 10 * 9;
+    messageStructs[_id].dropAmount = messageStructs[_id].dropAmount * DROP_REDUCE / 10;
   }
 
 }

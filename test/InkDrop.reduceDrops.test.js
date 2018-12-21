@@ -24,7 +24,7 @@ contract('InkDrop reduceDrops', ([_, owner, ...accounts]) => {
 		})
 	})
 
-	it('...should reduce dropAmount by 20%', async () => {
+	it('...should reduce dropAmount by 10%', async () => {
 		let count = await this.inkdropInstance.getMessageCount()
 		assert.equal(count.toNumber(), 3, 'There should me now 3 message.')
 
@@ -43,8 +43,8 @@ contract('InkDrop reduceDrops', ([_, owner, ...accounts]) => {
 		msg0 = await this.inkdropInstance.getMessage(0, { from: accounts[7] })
 		assert.equal(
 			msg0[5].toNumber(),
-			2000000000000000 * 0.8,
-			'The message should have 80% of 2000000000000000 wei.'
+			2000000000000000 * 0.9,
+			'The message should have 90% of 2000000000000000 wei.'
 		)
 	})
 
