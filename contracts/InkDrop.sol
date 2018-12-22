@@ -123,7 +123,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
     return userStructs[_userAddress].followers;
   } 
   
-  function createUser(bytes32 _username, string _bio, string _ipfsHash) whenNotPaused public payable returns(uint256 index) {
+  function createUser(bytes32 _username, string _bio, string _ipfsHash) whenNotPaused public returns(uint256 index) {
     require(!isUser(msg.sender)); 
     require(isValidName(_username));
     
@@ -136,7 +136,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
     return userList.length - 1;
   }
 
-  function deleteUser() whenNotPaused public payable returns(uint256 index) {
+  function deleteUser() whenNotPaused public returns(uint256 index) {
     require(isUser(msg.sender)); 
     // this would break referential integrity
     // require(userStructs[msg.sender].messageIds.length <= 0);
@@ -150,7 +150,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
     return rowToDelete;
   }
   
-  function updateUserIpfsHash(string _ipfsHash) whenNotPaused public payable returns(bool success) {
+  function updateUserIpfsHash(string _ipfsHash) whenNotPaused public returns(bool success) {
     require(isUser(msg.sender)); 
     require(bytes(_ipfsHash).length > 0);
 
@@ -159,7 +159,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
     return true;
   }
 
-  function updateUserBio(string _bio) whenNotPaused public payable returns(bool success) {
+  function updateUserBio(string _bio) whenNotPaused public returns(bool success) {
     require(isUser(msg.sender)); 
     require(bytes(_bio).length > 0);
 
@@ -168,7 +168,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
     return true;
   }
 
-  function updateUsername(bytes32 _username) whenNotPaused public payable returns(bool success) {
+  function updateUsername(bytes32 _username) whenNotPaused public returns(bool success) {
     require(isUser(msg.sender)); 
     require(isValidName(_username));
 
@@ -177,7 +177,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
     return true;
   }
 
-  function updateUser(bytes32 _username, string _bio, string _ipfsHash) whenNotPaused public payable returns(bool success) {
+  function updateUser(bytes32 _username, string _bio, string _ipfsHash) whenNotPaused public returns(bool success) {
     require(isUser(msg.sender)); 
     require(isValidName(_username));
     require(bytes(_bio).length > 0);
@@ -190,7 +190,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
     return true;
   }
   
-  function followUser(address _user) whenNotPaused public payable returns(uint256 followers) {
+  function followUser(address _user) whenNotPaused public returns(uint256 followers) {
     require(isUser(_user));
     require(isUser(msg.sender));
     require(!(msg.sender == _user));
@@ -202,7 +202,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
     return userStructs[msg.sender].followers.length;
   }
   
-  function unfollowUser(address _user) whenNotPaused public payable returns(uint256 followers) {
+  function unfollowUser(address _user) whenNotPaused public returns(uint256 followers) {
     require(isUser(_user));
     require(isUser(msg.sender));
     require(!(msg.sender == _user));
@@ -257,12 +257,11 @@ contract InkDrop is Migratable, Ownable, Pausable {
     return msgId;
   }
 
-  function likeMessage(uint256 _id) whenNotPaused public payable returns(uint256 newlikes) {
+  function likeMessage(uint256 _id) whenNotPaused public returns(uint256 newlikes) {
     require(isUser(msg.sender));
     require(_id < messageOrder.length);
     // require that a user can not like a message twice
     require(!messageStructs[_id].likePointers[msg.sender].isSet);
-    require(msg.value == 0);
 
     messageStructs[_id].likePointers[msg.sender].value = messageStructs[_id].likes.push(msg.sender) - 1;
     messageStructs[_id].likePointers[msg.sender].isSet = true;
@@ -270,7 +269,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
     return messageStructs[_id].likes.length;
   }
 
-  function unlikeMessage(uint256 _id) whenNotPaused public payable returns(uint256 newlikes) {
+  function unlikeMessage(uint256 _id) whenNotPaused public returns(uint256 newlikes) {
     require(isUser(msg.sender));
     require(_id < messageOrder.length);
     require(messageStructs[_id].likes.length > 0);
@@ -304,26 +303,26 @@ contract InkDrop is Migratable, Ownable, Pausable {
     return messageStructs[_id].dropAmount;
   }
 
-  function userPayout() whenNotPaused public payable returns(uint256 payoutamount) {
+  function userPayout() whenNotPaused public returns(uint256 payoutamount) {
     require(isUser(msg.sender));
     require(userStructs[msg.sender].dropAmount > 0);
 
     uint256 payout = userStructs[msg.sender].dropAmount;
+    // userStructs[msg.sender].dropAmount = 0;
+
+    // if (!msg.sender.send(payout)) {
+    //   // reverting state because send failed
+    //   userStructs[msg.sender].dropAmount = payout; 
+    // }
+
+    msg.sender.transfer(payout);
     userStructs[msg.sender].dropAmount = 0;
-
-    if (!msg.sender.send(payout)) {
-      // reverting state because send failed
-      userStructs[msg.sender].dropAmount = payout; 
-    }
-
-    // msg.sender.transfer(payout);
-    // userStructs[msg.sender].dropAmount = payout;
 
     return payout;
   }
 
     // Write a comment
-  function createComment(uint256 _parent, string _content) whenNotPaused public payable returns(uint256 index) {
+  function createComment(uint256 _parent, string _content) whenNotPaused public  returns(uint256 index) {
     require(isUser(msg.sender));
     require(bytes(_content).length > 0);
     require(isMessage(_parent));
@@ -355,7 +354,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
     return MINIMUM_DROP;
   }
 
-  function setMinimumDrop(uint256 _min_drop) onlyOwner whenNotPaused public payable returns(uint256 min_drop) {
+  function setMinimumDrop(uint256 _min_drop) onlyOwner whenNotPaused public  returns(uint256 min_drop) {
     MINIMUM_DROP = _min_drop;
     return MINIMUM_DROP;
   }
@@ -379,13 +378,13 @@ contract InkDrop is Migratable, Ownable, Pausable {
     return true;
   }
     
-  function sort() whenNotPaused public payable {
+  function sort() whenNotPaused public  {
     for(uint256 i = 0; i < messageOrder.length - 1; i++) {
       sort_item(i);
     }
   }
 
-  function reduceDrops(uint256 _id) onlyOwner whenNotPaused public payable {
+  function reduceDrops(uint256 _id) onlyOwner whenNotPaused public  {
     // reduce dropAmount by 10% (i.e. multiply by 90% or 9/10)
     messageStructs[_id].dropAmount = messageStructs[_id].dropAmount * DROP_REDUCE / 10;
   }
