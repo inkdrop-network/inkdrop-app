@@ -13,11 +13,6 @@ contract InkDrop is Migratable, Ownable, Pausable {
   // reduce dropAmount by 10% (i.e. multiply by 90% or 9/10)
   uint256 constant DROP_REDUCE = 9;
 
-  struct Data {
-    uint256 value;
-    bool isSet;
-  }
-
   struct User {
     bytes32 username;
     string bio;
@@ -26,7 +21,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
     // uint256 followers;
     // User has many followers
     address[] followers; 
-    mapping(address => Data) followerPointers;
+    mapping(address => uint256) followerPointers;
     // messages of a user
     uint[] messages;
     mapping(uint256 => uint256) messagePointers;
@@ -51,13 +46,13 @@ contract InkDrop is Migratable, Ownable, Pausable {
     // addresses of users' likes
     address[] likes;
     // mapping of message id to position in likes array
-    mapping(address => Data) likePointers;
+    mapping(address => uint256) likePointers;
     // total drops in wei
     uint256 dropAmount;
     // addresses of users' drops
     address[] drops;
     // mapping of message id to position in drops array
-    mapping(address => Data) dropPointers;
+    mapping(address => uint256) dropPointers;
     uint[] comments;
   }
   
@@ -91,6 +86,13 @@ contract InkDrop is Migratable, Ownable, Pausable {
     return (userList[userStructs[_userAddress].index] == _userAddress);
   }
 
+  function isUserFollower(address _user, address _follower) public view returns(bool isIndeed) {
+    if(userStructs[_user].followers.length == 0) return false;
+
+    uint256 followerRow = userStructs[_user].followerPointers[_follower];
+    return userStructs[_user].followers[followerRow] == _follower;
+  }
+
   function isValidName(bytes32 _username) private pure returns(bool isValid) {
     return (!(_username == 0x0));
   }
@@ -100,6 +102,14 @@ contract InkDrop is Migratable, Ownable, Pausable {
     if(messageOrder.length == 0) return false;
     // true = exists
     return (messageOrder.length > _parent);
+  }
+
+  function isMessageLiker(address _user, uint256 _id) public view returns(bool isIndeed) {
+     // if the list is empty, the requested message is not present
+    if(messageStructs[_id].likes.length == 0) return false;
+    
+    uint256 likerRow = messageStructs[_id].likePointers[_user];
+    return (messageStructs[_id].likes[likerRow] == _user);
   }
 
   function getUserCount() public view returns(uint256 count) {
@@ -195,10 +205,10 @@ contract InkDrop is Migratable, Ownable, Pausable {
     require(isUser(msg.sender));
     require(!(msg.sender == _user));
     // require that a user can not follow a user twice
-    require(!userStructs[msg.sender].followerPointers[_user].isSet);
+    require(!isUserFollower(msg.sender, _user));
 
-    userStructs[msg.sender].followerPointers[_user].value = userStructs[msg.sender].followers.push(_user) - 1;
-    userStructs[msg.sender].followerPointers[_user].isSet = true;
+    userStructs[msg.sender].followerPointers[_user] = userStructs[msg.sender].followers.push(_user) - 1;
+
     return userStructs[msg.sender].followers.length;
   }
   
@@ -208,13 +218,13 @@ contract InkDrop is Migratable, Ownable, Pausable {
     require(!(msg.sender == _user));
     require(userStructs[msg.sender].followers.length > 0);
     // require that a user can not unfollow a user twice
-    require(userStructs[msg.sender].followerPointers[_user].isSet);
+    require(isUserFollower(msg.sender, _user));
     // delete user
-    uint256 rowToDelete = userStructs[msg.sender].followerPointers[_user].value;
+    uint256 rowToDelete = userStructs[msg.sender].followerPointers[_user];
     address keyToMove = userStructs[msg.sender].followers[userStructs[msg.sender].followers.length-1];
     userStructs[msg.sender].followers[rowToDelete] = keyToMove;
-    userStructs[msg.sender].followerPointers[keyToMove].value = rowToDelete; 
-    userStructs[msg.sender].followerPointers[_user].isSet = false;
+    userStructs[msg.sender].followerPointers[keyToMove] = rowToDelete; 
+    delete userStructs[msg.sender].followerPointers[_user];
     return --userStructs[msg.sender].followers.length;
   }
 
@@ -247,8 +257,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
     messageStructs[msgId].timetolive = now;
     messageStructs[msgId].id = msgId;
     messageStructs[msgId].dropAmount = msg.value;
-    messageStructs[msgId].dropPointers[msg.sender].value = messageStructs[msgId].drops.push(msg.sender) - 1;
-    messageStructs[msgId].dropPointers[msg.sender].isSet = true;
+    messageStructs[msgId].dropPointers[msg.sender] = messageStructs[msgId].drops.push(msg.sender) - 1;
 
     messageOrder.push(msgId);
 
@@ -261,10 +270,9 @@ contract InkDrop is Migratable, Ownable, Pausable {
     require(isUser(msg.sender));
     require(_id < messageOrder.length);
     // require that a user can not like a message twice
-    require(!messageStructs[_id].likePointers[msg.sender].isSet);
+    require(!isMessageLiker(msg.sender, _id));
 
-    messageStructs[_id].likePointers[msg.sender].value = messageStructs[_id].likes.push(msg.sender) - 1;
-    messageStructs[_id].likePointers[msg.sender].isSet = true;
+    messageStructs[_id].likePointers[msg.sender] = messageStructs[_id].likes.push(msg.sender) - 1;
     // TODO: prolongue timetolive
     return messageStructs[_id].likes.length;
   }
@@ -274,13 +282,13 @@ contract InkDrop is Migratable, Ownable, Pausable {
     require(_id < messageOrder.length);
     require(messageStructs[_id].likes.length > 0);
     // require that a user can not unlike a message twice
-    require(messageStructs[_id].likePointers[msg.sender].isSet);
+    require(isMessageLiker(msg.sender, _id));
 
-    uint256 rowToDelete = messageStructs[_id].likePointers[msg.sender].value;
+    uint256 rowToDelete = messageStructs[_id].likePointers[msg.sender];
     address keyToMove = messageStructs[_id].likes[messageStructs[_id].likes.length-1];
     messageStructs[_id].likes[rowToDelete] = keyToMove;
-    messageStructs[_id].likePointers[keyToMove].value = rowToDelete; 
-    messageStructs[_id].likePointers[msg.sender].isSet = false;
+    messageStructs[_id].likePointers[keyToMove] = rowToDelete; 
+    delete messageStructs[_id].likePointers[msg.sender];
     return --messageStructs[_id].likes.length;
   }
 
@@ -291,8 +299,7 @@ contract InkDrop is Migratable, Ownable, Pausable {
     require(msg.value >= MINIMUM_DROP);
 
     messageStructs[_id].drops.push(msg.sender);
-    messageStructs[_id].dropPointers[msg.sender].value += msg.value;
-    messageStructs[_id].dropPointers[msg.sender].isSet = true;
+    messageStructs[_id].dropPointers[msg.sender] += msg.value;
     messageStructs[_id].dropAmount += msg.value;
     // LINK: https://ethereum.stackexchange.com/questions/3010/how-does-ethereum-cope-with-division-of-prime-numbers
     userStructs[messageStructs[_id].writtenBy].dropAmount += (msg.value/2);
