@@ -36,3 +36,5 @@ Check the gas limit before the deployment at https://rinkeby.etherscan.io/blocks
 ## Mainnet
 
 "_Well I need a dollar dollar, a dollar is what I need (for mainnet)_" - Aloe Blacc
+
+Help us fund the switch to the mainnet: [0x7dd9540B2FE374E14231fe88c4ed78BfEE64357F](https://rinkeby.etherscan.io/address/0x7dd9540B2FE374E14231fe88c4ed78BfEE64357F)
