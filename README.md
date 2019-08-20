@@ -76,7 +76,7 @@ How you can support the InkDrop project:
 * write some code (features, tests).
 * report bugs.
 * protocol design.
-* send some ETH to fund the switch to the mainnet: [0x7dd9540B2FE374E14231fe88c4ed78BfEE64357F](https://rinkeby.etherscan.io/address/0x7dd9540B2FE374E14231fe88c4ed78BfEE64357F).
+* send some ETH to fund the switch to the mainnet: [0x7dd9540B2FE374E14231fe88c4ed78BfEE64357F](https://etherscan.io/address/0x7dd9540B2FE374E14231fe88c4ed78BfEE64357F).
 
 # Technology Stack
 
